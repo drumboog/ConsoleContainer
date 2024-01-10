@@ -76,7 +76,16 @@ namespace ConsoleContainer.Wpf.ViewModels
 
         public void StopProcess()
         {
-            process?.Kill(true);
+            var p = process;
+            if (p is not null)
+            {
+                p.CancelOutputRead();
+                p.CancelErrorRead();
+                if (!p.CloseMainWindow())
+                {
+                    process?.Kill(true);
+                }
+            }
             ProcessId = null;
             IsRunning = false;
             Output.AddOutput("Process ended", Brushes.Red);
