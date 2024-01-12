@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace ConsoleContainer.Wpf
+namespace ConsoleContainer.Wpf.Controls
 {
     internal class ConsoleLogVM : ViewModel
     {

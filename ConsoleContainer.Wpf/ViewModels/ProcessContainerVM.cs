@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using ConsoleContainer.Wpf.Domain;
+using System.Collections.ObjectModel;
 
 namespace ConsoleContainer.Wpf.ViewModels
 {
@@ -6,16 +7,22 @@ namespace ConsoleContainer.Wpf.ViewModels
     {
         public ObservableCollection<ProcessVM> Processes { get; } = new ObservableCollection<ProcessVM>();
 
+        public bool ShowSettings
+        {
+            get => GetProperty(true);
+            set => SetProperty(value);
+        }
+
         public ProcessContainerVM()
         {
-            Processes.Add(new ProcessVM("Zookeeper", new ProcessInformation(@"C:\kafka_2.13-3.6.0\bin\windows\zookeeper-server-start.bat")
-            {
-                Arguments = @"C:\kafka_2.13-3.6.0\config\zookeeper.properties"
-            }));
-            Processes.Add(new ProcessVM("Kafka Server", new ProcessInformation(@"C:\kafka_2.13-3.6.0\bin\windows\kafka-server-start.bat")
-            {
-                Arguments = @"C:\kafka_2.13-3.6.0\config\server.properties"
-            }));
+            //Processes.Add(new ProcessVM("Zookeeper", new ProcessInformation("", @"C:\kafka_2.13-3.6.0\bin\windows\zookeeper-server-start.bat")
+            //{
+            //    Arguments = @"C:\kafka_2.13-3.6.0\config\zookeeper.properties"
+            //}));
+            //Processes.Add(new ProcessVM("Kafka Server", new ProcessInformation(@"C:\kafka_2.13-3.6.0\bin\windows\kafka-server-start.bat")
+            //{
+            //    Arguments = @"C:\kafka_2.13-3.6.0\config\server.properties"
+            //}));
         }
     }
 }

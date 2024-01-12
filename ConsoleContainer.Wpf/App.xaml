@@ -2,8 +2,28 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:ConsoleContainer.Wpf"
+             xmlns:converters="clr-namespace:ConsoleContainer.Wpf.ValueConverters"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <converters:BoolToVisibilityConverter x:Key="BoolToCollapsedConverter"
+                                              TrueValue="Visible"
+                                              FalseValue="Collapsed"></converters:BoolToVisibilityConverter>
+
+        <ControlTemplate x:Key="ValidationTemplate">
+            <DockPanel>
+                <Image Source="pack://application:,,,/ConsoleContainer.Wpf;component/Resources/Images/validation-error.png"
+                       ToolTip="{Binding Path=/ErrorContent}"
+                       ToolTipService.InitialShowDelay="0"
+                       Height="15"
+                       Margin="0 0 5 0"
+                       VerticalAlignment="Center" />
+                <AdornedElementPlaceholder/>
+            </DockPanel>
+        </ControlTemplate>
+
+        <Style x:Key="Validatable" TargetType="{x:Type TextBox}">
+            <Setter Property="Margin" Value="20 0 0 0" />
+            <Setter Property="Validation.ErrorTemplate" Value="{StaticResource ValidationTemplate}" />
+        </Style>
     </Application.Resources>
 </Application>

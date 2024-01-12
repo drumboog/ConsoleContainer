@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ConsoleContainer.Wpf
+namespace ConsoleContainer.Wpf.Controls
 {
     /// <summary>
     /// Interaction logic for ProcessControl.xaml

@@ -1,25 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ConsoleContainer.Wpf.Domain;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace ConsoleContainer.Wpf.ViewModels
 {
-    internal class ProcessInformation
-    {
-        public string FileName { get; }
-        public string? Arguments { get; init; }
-        public string? WorkingDirectory { get; init; }
-
-        public ProcessInformation(string fileName)
-        {
-            FileName = fileName;
-        }
-    }
-
     internal class ProcessVM : ViewModel
     {
         private Process? process;

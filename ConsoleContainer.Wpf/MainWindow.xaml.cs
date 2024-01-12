@@ -1,29 +1,40 @@
-﻿using ConsoleContainer.Wpf.ViewModels;
-using System.Text;
+﻿using ConsoleContainer.Wpf.Eventing;
+using ConsoleContainer.Wpf.Eventing.Events;
+using ConsoleContainer.Wpf.ViewModels;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ConsoleContainer.Wpf
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IHandle<ClosingSettingsEvent>
     {
-        private ProcessContainerVM ViewModel = new ProcessContainerVM();
+        private ProcessContainerVM viewModel = new ProcessContainerVM();
 
         public MainWindow()
         {
             InitializeComponent();
 
-            DataContext = ViewModel;
+            DataContext = viewModel;
+
+            EventAggregator.Instance.SubscribeOnUIThread(this);
+        }
+
+        private void miSettings_Click(object sender, RoutedEventArgs e)
+        {
+            viewModel.ShowSettings = true;
+        }
+
+        private void miExit_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        public Task HandleAsync(ClosingSettingsEvent message, CancellationToken cancellationToken)
+        {
+            viewModel.ShowSettings = false;
+            return Task.CompletedTask;
         }
     }
 }

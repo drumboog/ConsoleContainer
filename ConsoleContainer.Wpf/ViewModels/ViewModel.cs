@@ -1,11 +1,34 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 
 namespace ConsoleContainer.Wpf
 {
-    internal class ViewModel : INotifyPropertyChanged
+    internal class ViewModel : INotifyPropertyChanged, IDataErrorInfo
     {
         private Dictionary<string, object?> propertyValues = new Dictionary<string, object?>();
+
+        public string Error => string.Empty;
+
+        public string this[string columnName]
+        {
+            get
+            {
+                var validationResults = new List<ValidationResult>();
+
+                var pi = GetType().GetProperty(columnName);
+                if (pi is null)
+                {
+                    return string.Empty;
+                }
+                if (Validator.TryValidateProperty(pi.GetValue(this), new ValidationContext(this) { MemberName = columnName }, validationResults))
+                {
+                    return string.Empty;
+                }
+
+                return validationResults.FirstOrDefault()?.ErrorMessage ?? string.Empty;
+            }
+        }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
