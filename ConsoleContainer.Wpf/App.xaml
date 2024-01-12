@@ -9,6 +9,8 @@
                                               TrueValue="Visible"
                                               FalseValue="Collapsed"></converters:BoolToVisibilityConverter>
 
+        <converters:MultiValueConverter x:Key="MultiValueConverter"></converters:MultiValueConverter>
+
         <ControlTemplate x:Key="ValidationTemplate">
             <DockPanel>
                 <Image Source="pack://application:,,,/ConsoleContainer.Wpf;component/Resources/Images/validation-error.png"

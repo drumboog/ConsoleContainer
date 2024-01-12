@@ -13,6 +13,7 @@ namespace ConsoleContainer.Wpf.Domain
         [JsonProperty]
         public string GroupName { get; private set; }
 
+        [JsonConstructor]
         public ProcessGroup(string groupName)
             : this(groupName, Enumerable.Empty<ProcessInformation>())
         {

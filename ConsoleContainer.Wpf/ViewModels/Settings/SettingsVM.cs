@@ -2,6 +2,7 @@
 using ConsoleContainer.Wpf.Exceptions;
 using ConsoleContainer.Wpf.Repositories;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace ConsoleContainer.Wpf.ViewModels.Settings
 {
@@ -38,11 +39,64 @@ namespace ConsoleContainer.Wpf.ViewModels.Settings
             ProcessGroups.Move(index, newIndex);
         }
 
+        public void AddGroup()
+        {
+            ProcessGroups.Add(new SettingsProcessGroupVM());
+        }
+
+        public void RemoveGroup(SettingsProcessGroupVM group)
+        {
+            ProcessGroups.Remove(group);
+        }
+
+        public void Load()
+        {
+            try
+            {
+                ErrorMessages.Clear();
+
+                var repo = new ProcessGroupCollectionRepository();
+                var processGroups = repo.Read();
+
+                ProcessGroups.Clear();
+
+                foreach (var g in processGroups.ProcessGroups)
+                {
+                    var group = new SettingsProcessGroupVM()
+                    {
+                        GroupName = g.GroupName
+                    };
+                    foreach(var p in g.Processes)
+                    {
+                        group.Processes.Add(new SettingsProcessInformationVM()
+                        {
+                            ProcessName = p.ProcessName,
+                            FileName = p.FileName,
+                            Arguments = p.Arguments,
+                            WorkingDirectory = p.WorkingDirectory
+                        });
+                    }
+                    ProcessGroups.Add(group);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessages.Add(ex.Message);
+            }
+        }
+
         public void Save()
         {
             try
             {
                 ErrorMessages.Clear();
+
+                var validationResults = new List<ValidationResult>();
+                if (!Validator.TryValidateObject(this, new ValidationContext(this), validationResults, true))
+                {
+                    validationResults.ForEach(x => ErrorMessages.Add(x.ErrorMessage ?? ""));
+                    return;
+                }
 
                 var collection = new ProcessGroupCollection();
                 collection.Update(ProcessGroups);
@@ -50,9 +104,9 @@ namespace ConsoleContainer.Wpf.ViewModels.Settings
                 var repo = new ProcessGroupCollectionRepository();
                 repo.Save(collection);
             }
-            catch (ValidationException ex)
+            catch (Exceptions.ValidationException ex)
             {
-                ErrorMessages.Add(ex.Message);
+                ErrorMessages.Add(ex.ValidationError);
             }
             catch (Exception ex)
             {

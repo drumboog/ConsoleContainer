@@ -17,30 +17,8 @@ namespace ConsoleContainer.Wpf.Controls
         {
             InitializeComponent();
 
-            for (var i = 1; i < 10; i++)
-            {
-                var group = new SettingsProcessGroupVM()
-                {
-                    GroupName = $"Group {i}"
-                };
-                for (var j = 1; j < 5; j++)
-                {
-                    group.Processes.Add(new SettingsProcessInformationVM()
-                    {
-                        ProcessName = $"Test Process {j}",
-                        FileName = $"Test File {j}",
-                        Arguments = $"Test Arguments {j}",
-                        WorkingDirectory = $"Test Working Directory {j}"
-                    });
-                }
-                viewModel.ProcessGroups.Add(group);
-            }
+            viewModel.Load();
             DataContext = viewModel;
-        }
-
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            _ = EventAggregator.Instance.PublishOnCurrentThreadAsync(new ClosingSettingsEvent());
         }
 
         private void MoveProcessGroupUpButton_Click(object sender, RoutedEventArgs e)
@@ -63,9 +41,50 @@ namespace ConsoleContainer.Wpf.Controls
             viewModel.MoveGroupDown(group);
         }
 
+        private void AddGroup_Click(object sender, RoutedEventArgs e)
+        {
+            viewModel.AddGroup();
+        }
+
+        private void RemoveGroup_Click(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is Button button) || !(button.CommandParameter is SettingsProcessGroupVM group))
+            {
+                return;
+            }
+            viewModel.RemoveGroup(group);
+        }
+
+        private void AddProcess_Click(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is Button button) || !(button.CommandParameter is SettingsProcessGroupVM group))
+            {
+                return;
+            }
+            group.AddProcess();
+        }
+
+        private void RemoveProcess_Click(object sender, RoutedEventArgs e)
+        {
+            if (!(sender is Button button) || !(button.CommandParameter is object[] data))
+            {
+                return;
+            }
+            if (data.Length != 2 || !(data[0] is SettingsProcessGroupVM group) || !(data[1] is SettingsProcessInformationVM process))
+            {
+                return;
+            }
+            group.RemoveProcess(process);
+        }
+
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             viewModel.Save();
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            _ = EventAggregator.Instance.PublishOnCurrentThreadAsync(new ClosingSettingsEvent());
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)

@@ -54,6 +54,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
@@ -81,7 +82,10 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            <ScrollViewer Grid.Row="3">
+            <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="5">
+                <Button Click="AddGroup_Click">Add Group</Button>
+            </StackPanel>
+            <ScrollViewer Grid.Row="4">
                 <ItemsControl ItemsSource="{Binding ProcessGroups}" HorizontalAlignment="Stretch" ScrollViewer.CanContentScroll="False" AlternationCount="2">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -103,31 +107,31 @@
                                                     VerticalAlignment="Center" />
                                         </Button>
                                         <TextBlock DockPanel.Dock="Left" Margin="0 0 10 0">Group:</TextBlock>
-                                        <TextBox Style="{StaticResource ValidatableWithRightMargin}">
-                                            <TextBox.Text>
-                                                <Binding Path="GroupName" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                                                    <Binding.ValidationRules>
-                                                        <val:RequiredRule />
-                                                    </Binding.ValidationRules>
-                                                </Binding>
-                                            </TextBox.Text>
-                                        </TextBox>
+                                        <TextBox Style="{StaticResource ValidatableWithRightMargin}" Text="{Binding GroupName, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}" />
                                     </DockPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="5 0">
+                                        <Button Margin="0 0 5 0" Click="AddProcess_Click" CommandParameter="{Binding .}">Add Process</Button>
+                                        <Button Click="RemoveGroup_Click" CommandParameter="{Binding .}">Delete Group</Button>
+                                    </StackPanel>
                                     <ItemsControl ItemsSource="{Binding Processes}" Margin="10 0 0 0" ScrollViewer.CanContentScroll="False">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <StackPanel>
                                                     <DockPanel>
                                                         <TextBlock Margin="0 0 10 0">Process Name:</TextBlock>
-                                                        <TextBox Style="{StaticResource ValidatableWithRightMargin}">
-                                                            <TextBox.Text>
-                                                                <Binding Path="ProcessName" UpdateSourceTrigger="PropertyChanged">
-                                                                    <Binding.ValidationRules>
-                                                                        <val:RequiredRule />
-                                                                    </Binding.ValidationRules>
-                                                                </Binding>
-                                                            </TextBox.Text>
-                                                        </TextBox>
+                                                        <Button DockPanel.Dock="Right" Click="RemoveProcess_Click" Background="Transparent" BorderThickness="0">
+                                                            <Button.CommandParameter>
+                                                                <MultiBinding Converter="{StaticResource MultiValueConverter}">
+                                                                    <Binding Path="DataContext" ElementName="processGroup" />
+                                                                    <Binding Path="." />
+                                                                </MultiBinding>
+                                                            </Button.CommandParameter>
+                                                            <Image Source="pack://application:,,,/ConsoleContainer.Wpf;component/Resources/Images/close.png"
+                                                               ToolTip="Delete"
+                                                               Height="15"
+                                                               VerticalAlignment="Center" />
+                                                        </Button>
+                                                        <TextBox Style="{StaticResource ValidatableWithRightMargin}" Text="{Binding ProcessName, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}" />
                                                     </DockPanel>
                                                     <Grid Margin="10 0 0 0">
                                                         <Grid.ColumnDefinitions>
@@ -143,17 +147,9 @@
 
                                                         <TextBlock Grid.Row="0">File Path:</TextBlock>
                                                         <TextBox Style="{StaticResource ValidatableWithRightMargin}"
+                                                                 Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}"
                                                                  Grid.Row="0"
-                                                                 Grid.Column="2">
-                                                            <TextBox.Text>
-                                                                <Binding Path="FileName" UpdateSourceTrigger="PropertyChanged">
-                                                                    <Binding.ValidationRules>
-                                                                        <val:RequiredRule />
-                                                                        <val:ValidPathRule />
-                                                                    </Binding.ValidationRules>
-                                                                </Binding>
-                                                            </TextBox.Text>
-                                                        </TextBox>
+                                                                 Grid.Column="2" />
 
                                                         <TextBlock Grid.Row="1">Arguments:</TextBlock>
                                                         <TextBox Style="{StaticResource ValidatableWithRightMargin}" Text="{Binding Arguments}" Grid.Row="1" Grid.Column="2"></TextBox>
@@ -187,7 +183,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </ScrollViewer>
-            <StackPanel Grid.Row="4" Orientation="Horizontal">
+            <StackPanel Grid.Row="5" Orientation="Horizontal">
                 <Button Click="Save_Click" Margin="5">Save</Button>
                 <Button Click="Cancel_Click" Margin="5">Cancel</Button>
             </StackPanel>
