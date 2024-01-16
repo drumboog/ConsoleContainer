@@ -80,6 +80,7 @@ namespace ConsoleContainer.Wpf.Controls
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             viewModel.Save();
+            _ = EventAggregator.Instance.PublishOnCurrentThreadAsync(new ClosingSettingsEvent());
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

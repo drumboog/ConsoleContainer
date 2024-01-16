@@ -10,7 +10,7 @@ namespace ConsoleContainer.Wpf
     /// </summary>
     public partial class MainWindow : Window, IHandle<ClosingSettingsEvent>
     {
-        private ProcessContainerVM viewModel = new ProcessContainerVM();
+        private readonly ProcessContainerVM viewModel = ProcessContainerVM.Instance;
 
         public MainWindow()
         {

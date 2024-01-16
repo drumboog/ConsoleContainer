@@ -8,12 +8,6 @@
         mc:Ignorable="d"
         WindowState="Maximized"
         Title="Console Container" Height="450" Width="800">
-    <Window.Resources>
-        <vm:ProcessContainerVM x:Key="DesignViewModel" />
-    </Window.Resources>
-    <Window.DataContext>
-        <Binding Source="{StaticResource DesignViewModel}" />
-    </Window.DataContext>
     <Grid>
         <DockPanel>
             <Menu DockPanel.Dock="Top">
@@ -24,43 +18,43 @@
                 </MenuItem>
             </Menu>
 
-                <TabControl ItemsSource="{Binding Processes}" TabStripPlacement="Left">
-                    <TabControl.Template>
-                        <ControlTemplate TargetType="TabControl">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-                                <ScrollViewer HorizontalScrollBarVisibility="Hidden"
-                                              VerticalScrollBarVisibility="Auto" >
-                                    <TabPanel x:Name="HeaderPanel"
-                                      Panel.ZIndex ="1" 
-                                      KeyboardNavigation.TabIndex="1"
-                                      Grid.Column="0"
-                                      Grid.Row="0"
-                                      Margin="2,2,2,2"
-                                      IsItemsHost="true"
-                                      Background="LightGray" />
-                                </ScrollViewer>
-                                <ContentPresenter x:Name="PART_SelectedContentHost"
-                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                                  Margin="{TemplateBinding Padding}"
-                                                  ContentSource="SelectedContent" Grid.Column="1"/>
-                            </Grid>
-                        </ControlTemplate>
-                    </TabControl.Template>
-                    <TabControl.ItemContainerStyle>
-                        <Style TargetType="TabItem">
-                            <Setter Property="Header" Value="{Binding DisplayName}"/>
-                        </Style>
-                    </TabControl.ItemContainerStyle>
-                    <TabControl.ContentTemplate>
-                        <DataTemplate>
-                            <local:ProcessControl Process="{Binding .}"></local:ProcessControl>
-                        </DataTemplate>
-                    </TabControl.ContentTemplate>
-                </TabControl>
+            <TabControl ItemsSource="{Binding ProcessGroups}" TabStripPlacement="Left">
+                <TabControl.Template>
+                    <ControlTemplate TargetType="TabControl">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <ScrollViewer HorizontalScrollBarVisibility="Hidden"
+                                            VerticalScrollBarVisibility="Auto" >
+                                <TabPanel x:Name="HeaderPanel"
+                                    Panel.ZIndex ="1" 
+                                    KeyboardNavigation.TabIndex="1"
+                                    Grid.Column="0"
+                                    Grid.Row="0"
+                                    Margin="2,2,2,2"
+                                    IsItemsHost="true"
+                                    Background="LightGray" />
+                            </ScrollViewer>
+                            <ContentPresenter x:Name="PART_SelectedContentHost"
+                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                Margin="{TemplateBinding Padding}"
+                                                ContentSource="SelectedContent" Grid.Column="1"/>
+                        </Grid>
+                    </ControlTemplate>
+                </TabControl.Template>
+                <TabControl.ItemContainerStyle>
+                    <Style TargetType="TabItem">
+                        <Setter Property="Header" Value="{Binding GroupName}"/>
+                    </Style>
+                </TabControl.ItemContainerStyle>
+                <TabControl.ContentTemplate>
+                    <DataTemplate>
+                        <local:ProcessGroupControl ProcessGroup="{Binding .}"></local:ProcessGroupControl>
+                    </DataTemplate>
+                </TabControl.ContentTemplate>
+            </TabControl>
         </DockPanel>
 
         <Grid Visibility="{Binding ShowSettings, Converter={StaticResource BoolToCollapsedConverter}}">

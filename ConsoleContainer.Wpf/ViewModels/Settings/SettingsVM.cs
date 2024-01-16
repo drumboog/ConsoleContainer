@@ -1,5 +1,6 @@
 ﻿using ConsoleContainer.Wpf.Domain;
-using ConsoleContainer.Wpf.Exceptions;
+using ConsoleContainer.Wpf.Eventing.Events;
+using ConsoleContainer.Wpf.Eventing;
 using ConsoleContainer.Wpf.Repositories;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -11,6 +12,12 @@ namespace ConsoleContainer.Wpf.ViewModels.Settings
         public ObservableCollection<SettingsProcessGroupVM> ProcessGroups { get; } = new();
 
         public ObservableCollection<string> ErrorMessages { get; } = new();
+
+        public bool CanUpdateSettings
+        {
+            get => GetProperty(false);
+            set => SetProperty(value);
+        }
 
         public bool HasErrors => ErrorMessages.Any();
 
@@ -55,6 +62,8 @@ namespace ConsoleContainer.Wpf.ViewModels.Settings
             {
                 ErrorMessages.Clear();
 
+                VerifyEditability();
+
                 var repo = new ProcessGroupCollectionRepository();
                 var processGroups = repo.Read();
 
@@ -91,6 +100,8 @@ namespace ConsoleContainer.Wpf.ViewModels.Settings
             {
                 ErrorMessages.Clear();
 
+                VerifyEditability();
+
                 var validationResults = new List<ValidationResult>();
                 if (!Validator.TryValidateObject(this, new ValidationContext(this), validationResults, true))
                 {
@@ -103,6 +114,8 @@ namespace ConsoleContainer.Wpf.ViewModels.Settings
 
                 var repo = new ProcessGroupCollectionRepository();
                 repo.Save(collection);
+
+                _ = EventAggregator.Instance.PublishOnCurrentThreadAsync(new SettingsSavedEvent());
             }
             catch (Exceptions.ValidationException ex)
             {
@@ -112,6 +125,24 @@ namespace ConsoleContainer.Wpf.ViewModels.Settings
             {
                 ErrorMessages.Add(ex.Message);
             }
+        }
+
+        private void VerifyEditability()
+        {
+            if (AreProcessesRunning())
+            {
+                CanUpdateSettings = false;
+                ErrorMessages.Add("Settings cannot be updated while processes are running.");
+            }
+            else
+            {
+                CanUpdateSettings = true;
+            }
+        }
+
+        private bool AreProcessesRunning()
+        {
+            return ProcessContainerVM.Instance.ProcessGroups.SelectMany(x => x.Processes).Any(x => x.IsRunning);
         }
     }
 }

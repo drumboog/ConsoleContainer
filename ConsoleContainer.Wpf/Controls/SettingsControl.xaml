@@ -184,7 +184,7 @@
                 </ItemsControl>
             </ScrollViewer>
             <StackPanel Grid.Row="5" Orientation="Horizontal">
-                <Button Click="Save_Click" Margin="5">Save</Button>
+                <Button Click="Save_Click" Margin="5" IsEnabled="{Binding CanUpdateSettings}">Save</Button>
                 <Button Click="Cancel_Click" Margin="5">Cancel</Button>
             </StackPanel>
         </Grid>

@@ -30,9 +30,9 @@ namespace ConsoleContainer.Wpf.ViewModels
 
         public bool CanStop => IsRunning;
 
-        public ProcessVM(string displayName, ProcessInformation processInformation)
+        public ProcessVM(ProcessInformation processInformation)
         {
-            DisplayName = displayName;
+            DisplayName = processInformation.ProcessName;
             ProcessInformation = processInformation;
         }
 
