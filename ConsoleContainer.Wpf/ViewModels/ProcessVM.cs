@@ -38,6 +38,11 @@ namespace ConsoleContainer.Wpf.ViewModels
 
         public void StartProcess()
         {
+            if (IsRunning)
+            {
+                return;
+            }
+
             process = new Process();
             process.StartInfo.FileName = ProcessInformation.FileName;
             process.StartInfo.WorkingDirectory = ProcessInformation.WorkingDirectory;
@@ -47,6 +52,7 @@ namespace ConsoleContainer.Wpf.ViewModels
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.UseShellExecute = false;
+            process.StartInfo.LoadUserProfile = true;
             process.OutputDataReceived += Process_OutputDataReceived;
             process.ErrorDataReceived += Process_ErrorDataReceived;
             process.Start();
@@ -69,10 +75,10 @@ namespace ConsoleContainer.Wpf.ViewModels
                 {
                     process?.Kill(true);
                 }
+                Output.AddOutput("Process ended", Brushes.Red);
             }
             ProcessId = null;
             IsRunning = false;
-            Output.AddOutput("Process ended", Brushes.Red);
         }
 
         public void ClearOutput()

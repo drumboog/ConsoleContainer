@@ -6,16 +6,22 @@
              xmlns:local="clr-namespace:ConsoleContainer.Wpf.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <TabControl ItemsSource="{Binding Processes}" TabStripPlacement="Top">
-        <TabControl.ItemContainerStyle>
-            <Style TargetType="TabItem">
-                <Setter Property="Header" Value="{Binding DisplayName}"/>
-            </Style>
-        </TabControl.ItemContainerStyle>
-        <TabControl.ContentTemplate>
-            <DataTemplate>
-                <local:ProcessControl Process="{Binding .}"></local:ProcessControl>
-            </DataTemplate>
-        </TabControl.ContentTemplate>
-    </TabControl>
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+            <Button Click="StartAll_Click" Margin="5">Start All</Button>
+            <Button Click="StopAll_Click" Margin="5">Stop All</Button>
+        </StackPanel>
+        <TabControl ItemsSource="{Binding Processes}" TabStripPlacement="Top">
+            <TabControl.ItemContainerStyle>
+                <Style TargetType="TabItem">
+                    <Setter Property="Header" Value="{Binding DisplayName}"/>
+                </Style>
+            </TabControl.ItemContainerStyle>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <local:ProcessControl Process="{Binding .}"></local:ProcessControl>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+    </DockPanel>
 </UserControl>

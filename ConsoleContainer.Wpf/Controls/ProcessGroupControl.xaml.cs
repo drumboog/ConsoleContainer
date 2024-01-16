@@ -33,5 +33,15 @@ namespace ConsoleContainer.Wpf.Controls
         {
             InitializeComponent();
         }
+
+        private void StartAll_Click(object sender, RoutedEventArgs e)
+        {
+            ProcessGroup.StartAll();
+        }
+
+        private void StopAll_Click(object sender, RoutedEventArgs e)
+        {
+            ProcessGroup.StopAll();
+        }
     }
 }

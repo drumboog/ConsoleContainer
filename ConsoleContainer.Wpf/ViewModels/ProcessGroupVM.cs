@@ -11,5 +11,21 @@ namespace ConsoleContainer.Wpf.ViewModels
         }
 
         public ObservableCollection<ProcessVM> Processes { get; } = new();
+
+        public void StartAll()
+        {
+            foreach (ProcessVM process in Processes)
+            {
+                process.StartProcess();
+            }
+        }
+
+        public void StopAll()
+        {
+            foreach (ProcessVM process in Processes)
+            {
+                process.StopProcess();
+            }
+        }
     }
 }
