@@ -11,7 +11,7 @@
             <Button Click="StartAll_Click" Margin="5">Start All</Button>
             <Button Click="StopAll_Click" Margin="5">Stop All</Button>
         </StackPanel>
-        <TabControl ItemsSource="{Binding Processes}" TabStripPlacement="Top">
+        <TabControl ItemsSource="{Binding Processes}" TabStripPlacement="Top" SelectedIndex="{Binding SelectedIndex}">
             <TabControl.ItemContainerStyle>
                 <Style TargetType="TabItem">
                     <Setter Property="Header" Value="{Binding DisplayName}"/>

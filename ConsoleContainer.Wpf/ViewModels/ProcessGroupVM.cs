@@ -10,6 +10,12 @@ namespace ConsoleContainer.Wpf.ViewModels
             set => SetProperty(value);
         }
 
+        public int SelectedIndex
+        {
+            get => GetProperty(0);
+            set => SetProperty(value);
+        }
+
         public ObservableCollection<ProcessVM> Processes { get; } = new();
 
         public void StartAll()

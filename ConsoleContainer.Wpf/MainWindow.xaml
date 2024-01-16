@@ -18,7 +18,7 @@
                 </MenuItem>
             </Menu>
 
-            <TabControl ItemsSource="{Binding ProcessGroups}" TabStripPlacement="Left">
+            <TabControl ItemsSource="{Binding ProcessGroups}" TabStripPlacement="Left" SelectedIndex="0">
                 <TabControl.Template>
                     <ControlTemplate TargetType="TabControl">
                         <Grid>
