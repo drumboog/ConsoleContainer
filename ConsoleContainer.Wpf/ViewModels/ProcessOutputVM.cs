@@ -5,7 +5,7 @@ namespace ConsoleContainer.Wpf.ViewModels
 {
     internal class ProcessOutputVM : ViewModel
     {
-        public ConsoleLog ConsoleLog { get; } = new ConsoleLog();
+        public ConsoleLogControl ConsoleLog { get; } = new();
 
         public void AddOutput(string? message, Brush? foreground = null)
         {

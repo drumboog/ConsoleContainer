@@ -10,6 +10,8 @@ namespace ConsoleContainer.Wpf.ViewModels
             set => SetProperty(value);
         }
 
+        public List<ProcessGroupViewType> ViewTypes { get; }
+
         public int SelectedIndex
         {
             get => GetProperty(0);
@@ -17,6 +19,11 @@ namespace ConsoleContainer.Wpf.ViewModels
         }
 
         public ObservableCollection<ProcessVM> Processes { get; } = new();
+
+        public ProcessGroupVM()
+        {
+            ViewTypes = ProcessGroupViewType.ViewTypes.ToList();
+        }
 
         public void StartAll()
         {

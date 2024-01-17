@@ -17,14 +17,14 @@ namespace ConsoleContainer.Wpf.Controls
     /// <summary>
     /// Interaction logic for ConsoleLog.xaml
     /// </summary>
-    public partial class ConsoleLog : UserControl
+    public partial class ConsoleLogControl : UserControl
     {
         private const int BUFFER_SIZE = 500_000;
 
         private ConsoleLogVM viewModel = new ConsoleLogVM();
         private int currentLength = 0;
 
-        public ConsoleLog()
+        public ConsoleLogControl()
         {
             InitializeComponent();
             viewModel.PropertyChanged += ViewModel_PropertyChanged;
