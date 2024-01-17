@@ -15,7 +15,7 @@
 
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <local:ProcessControl Process="{Binding .}" MinHeight="500"></local:ProcessControl>
+                <local:ProcessControl Process="{Binding .}"></local:ProcessControl>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
     </ItemsControl>
