@@ -15,26 +15,13 @@
 
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
                 <TextBlock Margin="5" VerticalAlignment="Center">View As:</TextBlock>
-                <ComboBox Margin="5" SelectedIndex="0">
-                    <ComboBoxItem>Tabs</ComboBoxItem>
-                    <ComboBoxItem>List</ComboBoxItem>
-                    <ComboBoxItem>2 Columns</ComboBoxItem>
-                    <ComboBoxItem>3 Columns</ComboBoxItem>
-                    <ComboBoxItem>4 Columns</ComboBoxItem>
+                <ComboBox Margin="5"
+                          ItemsSource="{Binding ViewTypes}"
+                          DisplayMemberPath="DisplayName"
+                          SelectedValue="{Binding SelectedViewType}">
                 </ComboBox>
             </StackPanel>
         </DockPanel>
-        <TabControl ItemsSource="{Binding Processes}" TabStripPlacement="Top" SelectedIndex="{Binding SelectedIndex}">
-            <TabControl.ItemContainerStyle>
-                <Style TargetType="TabItem">
-                    <Setter Property="Header" Value="{Binding DisplayName}"/>
-                </Style>
-            </TabControl.ItemContainerStyle>
-            <TabControl.ContentTemplate>
-                <DataTemplate>
-                    <local:ProcessControl Process="{Binding .}"></local:ProcessControl>
-                </DataTemplate>
-            </TabControl.ContentTemplate>
-        </TabControl>
+        <ContentControl Content="{Binding SelectedViewType.Control}"></ContentControl>
     </DockPanel>
 </UserControl>

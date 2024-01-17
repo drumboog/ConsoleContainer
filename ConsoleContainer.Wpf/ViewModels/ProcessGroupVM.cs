@@ -12,6 +12,12 @@ namespace ConsoleContainer.Wpf.ViewModels
 
         public List<ProcessGroupViewType> ViewTypes { get; }
 
+        public ProcessGroupViewType SelectedViewType
+        {
+            get => GetProperty(() => ViewTypes.First());
+            set => SetProperty(value);
+        }
+
         public int SelectedIndex
         {
             get => GetProperty(0);
