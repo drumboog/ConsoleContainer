@@ -46,5 +46,13 @@ namespace ConsoleContainer.Wpf.ViewModels
                 process.StopProcess();
             }
         }
+
+        public void ClearAll()
+        {
+            foreach (ProcessVM process in Processes)
+            {
+                process.ClearOutput();
+            }
+        }
     }
 }

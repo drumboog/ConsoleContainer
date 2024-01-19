@@ -43,5 +43,10 @@ namespace ConsoleContainer.Wpf.Controls
         {
             ProcessGroup.StopAll();
         }
+
+        private void ClearAll_Click(object sender, RoutedEventArgs e)
+        {
+            ProcessGroup.ClearAll();
+        }
     }
 }

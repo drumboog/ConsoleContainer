@@ -11,6 +11,7 @@
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                 <Button Click="StartAll_Click" Margin="5">Start All</Button>
                 <Button Click="StopAll_Click" Margin="5">Stop All</Button>
+                <Button Click="ClearAll_Click" Margin="5">Clear All</Button>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
