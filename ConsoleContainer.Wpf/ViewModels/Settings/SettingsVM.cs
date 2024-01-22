@@ -142,7 +142,8 @@ namespace ConsoleContainer.Wpf.ViewModels.Settings
 
         private bool AreProcessesRunning()
         {
-            return ProcessContainerVM.Instance.ProcessGroups.SelectMany(x => x.Processes).Any(x => x.IsRunning);
+            //return ProcessContainerVM.Instance.ProcessGroups.SelectMany(x => x.Processes).Any(x => x.IsRunning);
+            return true;
         }
     }
 }

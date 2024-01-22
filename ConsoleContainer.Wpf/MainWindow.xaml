@@ -4,10 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ConsoleContainer.Wpf.Controls"
+        xmlns:converters="clr-namespace:ConsoleContainer.Wpf.ValueConverters"
         xmlns:vm="clr-namespace:ConsoleContainer.Wpf.ViewModels"
+        xmlns:dd="clr-namespace:ConsoleContainer.Wpf.DesignData"
         mc:Ignorable="d"
         WindowState="Maximized"
-        Title="Console Container" Height="450" Width="800">
+        Title="Console Container" Height="450" Width="800"
+        d:DataContext="{x:Static dd:ViewModelLocator.ProcessContainer}">
     <Grid>
         <DockPanel>
             <Menu DockPanel.Dock="Top">
@@ -19,36 +22,38 @@
             </Menu>
 
             <TabControl ItemsSource="{Binding ProcessGroups}" TabStripPlacement="Left" SelectedIndex="0">
-                <TabControl.Template>
-                    <ControlTemplate TargetType="TabControl">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <ScrollViewer HorizontalScrollBarVisibility="Hidden"
-                                            VerticalScrollBarVisibility="Auto" >
-                                <TabPanel x:Name="HeaderPanel"
-                                    Panel.ZIndex ="1" 
-                                    KeyboardNavigation.TabIndex="1"
-                                    Grid.Column="0"
-                                    Grid.Row="0"
-                                    Margin="2,2,2,2"
-                                    IsItemsHost="true"
-                                    Background="LightGray" />
-                            </ScrollViewer>
-                            <ContentPresenter x:Name="PART_SelectedContentHost"
-                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                                Margin="{TemplateBinding Padding}"
-                                                ContentSource="SelectedContent" Grid.Column="1"/>
-                        </Grid>
-                    </ControlTemplate>
-                </TabControl.Template>
-                <TabControl.ItemContainerStyle>
+                <TabControl.Resources>
                     <Style TargetType="TabItem">
-                        <Setter Property="Header" Value="{Binding GroupName}"/>
+                        <Setter Property="Header" Value="{Binding GroupName}" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TabItem">
+                                    <DockPanel Name="Item" HorizontalAlignment="Stretch" LastChildFill="False">
+                                        <ContentPresenter x:Name="ContentSite"
+                                                          DockPanel.Dock="Left"
+                                                          VerticalAlignment="Center"
+                                                          HorizontalAlignment="Left"
+                                                          ContentSource="Header"
+                                                          Margin="10,2" />
+                                        <TextBlock DockPanel.Dock="Right"
+                                                   VerticalAlignment="Center"
+                                                   Margin="10,2">
+                                            <Run>(</Run><Run Text="{Binding RunningProcesses, Mode=OneWay}" /><Run>/</Run><Run Text="{Binding TotalProcesses, Mode=OneWay}" /><Run>)</Run>
+                                        </TextBlock>
+                                    </DockPanel>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="Item" Property="Background" Value="LightSkyBlue" />
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="False">
+                                            <Setter TargetName="Item" Property="Background" Value="GhostWhite" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
                     </Style>
-                </TabControl.ItemContainerStyle>
+                </TabControl.Resources>
                 <TabControl.ContentTemplate>
                     <DataTemplate>
                         <local:ProcessGroupControl ProcessGroup="{Binding .}"></local:ProcessGroupControl>

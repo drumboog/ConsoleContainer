@@ -1,6 +1,7 @@
 ﻿using ConsoleContainer.Wpf.Eventing;
 using ConsoleContainer.Wpf.Eventing.Events;
 using ConsoleContainer.Wpf.ViewModels;
+using System.ComponentModel;
 using System.Windows;
 
 namespace ConsoleContainer.Wpf
@@ -10,15 +11,20 @@ namespace ConsoleContainer.Wpf
     /// </summary>
     public partial class MainWindow : Window, IHandle<ClosingSettingsEvent>
     {
-        private readonly ProcessContainerVM viewModel = ProcessContainerVM.Instance;
+        private readonly ProcessContainerVM viewModel;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            DataContext = viewModel;
+            viewModel = new ProcessContainerVM();
+            if (!DesignerProperties.GetIsInDesignMode(this))
+            {
+                viewModel.RefreshProcesses();
+                DataContext = viewModel;
 
-            EventAggregator.Instance.SubscribeOnUIThread(this);
+                EventAggregator.Instance.SubscribeOnUIThread(this);
+            }
         }
 
         private void miSettings_Click(object sender, RoutedEventArgs e)

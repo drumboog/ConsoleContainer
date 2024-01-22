@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace ConsoleContainer.Wpf
 {
-    internal class ViewModel : INotifyPropertyChanged, IDataErrorInfo
+    public class ViewModel : INotifyPropertyChanged, IDataErrorInfo
     {
         private Dictionary<string, object?> propertyValues = new Dictionary<string, object?>();
 

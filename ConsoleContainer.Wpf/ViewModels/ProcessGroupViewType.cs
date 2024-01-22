@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace ConsoleContainer.Wpf.ViewModels
 {
-    internal class ProcessGroupViewType
+    public class ProcessGroupViewType
     {
         public string DisplayName { get; }
         public Control Control { get; }

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Data;
+﻿using System.Globalization;
 using System.Windows;
+using System.Windows.Data;
 
 namespace ConsoleContainer.Wpf.ValueConverters
 {
@@ -22,16 +17,14 @@ namespace ConsoleContainer.Wpf.ValueConverters
             FalseValue = Visibility.Collapsed;
         }
 
-        public object Convert(object value, Type targetType,
-            object parameter, CultureInfo culture)
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is bool))
+            if (!(value is bool val))
                 return null;
-            return (bool)value ? TrueValue : FalseValue;
+            return val ? TrueValue : FalseValue;
         }
 
-        public object ConvertBack(object value, Type targetType,
-            object parameter, CultureInfo culture)
+        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (Equals(value, TrueValue))
                 return true;

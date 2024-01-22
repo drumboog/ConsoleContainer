@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace ConsoleContainer.Wpf.ViewModels
 {
-    internal class ProcessVM : ViewModel
+    public class ProcessVM : ViewModel
     {
         private Process? process;
 
@@ -34,6 +34,13 @@ namespace ConsoleContainer.Wpf.ViewModels
         {
             DisplayName = processInformation.ProcessName;
             ProcessInformation = processInformation;
+        }
+
+        internal ProcessVM(ProcessInformation processInformation, int? processId, bool isRunning)
+            : this(processInformation)
+        {
+            ProcessId = processId;
+            IsRunning = isRunning;
         }
 
         public void StartProcess()

@@ -23,7 +23,7 @@ namespace ConsoleContainer.Wpf.Controls
     {
         public static DependencyProperty ProcessGroupProperty = DependencyProperty.Register("ProcessGroup", typeof(ProcessGroupVM), typeof(ProcessGroupControl));
 
-        internal ProcessGroupVM ProcessGroup
+        public ProcessGroupVM ProcessGroup
         {
             get { return (ProcessGroupVM)GetValue(ProcessGroupProperty); }
             set { SetValue(ProcessGroupProperty, value); }

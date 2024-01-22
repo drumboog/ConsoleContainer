@@ -8,9 +8,6 @@ namespace ConsoleContainer.Wpf.ViewModels
 {
     internal class ProcessContainerVM : ViewModel, IHandle<SettingsSavedEvent>
     {
-        public static ProcessContainerVM Instance { get; } = new ProcessContainerVM();
-
-        public ObservableCollection<ProcessVM> Processes { get; } = new();
         public ObservableCollection<ProcessGroupVM> ProcessGroups { get; } = new();
 
         public bool ShowSettings
@@ -19,10 +16,9 @@ namespace ConsoleContainer.Wpf.ViewModels
             set => SetProperty(value);
         }
 
-        private ProcessContainerVM()
+        public ProcessContainerVM()
         {
             EventAggregator.Instance.SubscribeOnUIThread(this);
-            RefreshProcesses();
         }
 
         public void RefreshProcesses()

@@ -4,12 +4,27 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ConsoleContainer.Wpf.Controls"
+             xmlns:dd="clr-namespace:ConsoleContainer.Wpf.DesignData"
              mc:Ignorable="d" 
              Background="White"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             d:DataContext="{x:Static dd:ViewModelLocator.Process}">
     <DockPanel>
         <StackPanel DockPanel.Dock="Top">
-            <TextBlock Text="{Binding DisplayName}" />
+            <TextBlock Text="{Binding DisplayName}" FontSize="16" FontWeight="Bold">
+                <TextBlock.Resources>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                <Setter Property="Foreground" Value="Green" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsRunning}" Value="False">
+                                <Setter Property="Foreground" Value="Red" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Resources>
+            </TextBlock>
             <StackPanel Orientation="Horizontal">
                 <TextBlock>Process ID:</TextBlock>
                 <TextBlock Text="{Binding ProcessId}" />
