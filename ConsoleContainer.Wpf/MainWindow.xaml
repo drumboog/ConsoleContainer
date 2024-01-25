@@ -33,6 +33,9 @@
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
                             <DockPanel Grid.Column="0">
+                                <Border DockPanel.Dock="Top" Padding="5 5 5 1" BorderBrush="Black" BorderThickness="0 0 0 1" Margin="0 0 0 5">
+                                    <TextBlock FontWeight="Bold" FontSize="20">Process Groups</TextBlock>
+                                </Border>
                                 <StackPanel DockPanel.Dock="Bottom" Margin="5">
                                     <Button Click="CreateProcessGroup_Click">Create Group</Button>
                                 </StackPanel>
@@ -58,93 +61,98 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Grid>
-        <DockPanel>
-            <TabControl ItemsSource="{Binding ProcessGroups}" TabStripPlacement="Left" SelectedIndex="0" Style="{StaticResource ConsoleContainerTabControl}">
-                <TabControl.Resources>
-                    <Style TargetType="TabItem">
-                        <Setter Property="Header" Value="{Binding GroupName}" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="TabItem">
-                                    <DockPanel Name="Item" HorizontalAlignment="Stretch" LastChildFill="False">
-                                        <ContentPresenter x:Name="ContentSite"
-                                                          DockPanel.Dock="Left"
-                                                          VerticalAlignment="Center"
-                                                          HorizontalAlignment="Left"
-                                                          ContentSource="Header"
-                                                          Margin="10,5" />
+    <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0 1 0 0">
+        <Border.BorderBrush>
+            <SolidColorBrush Color="Black" Opacity="0.5" />
+        </Border.BorderBrush>
+        <Grid>
+            <DockPanel>
+                <TabControl ItemsSource="{Binding ProcessGroups}" TabStripPlacement="Left" SelectedIndex="0" Style="{StaticResource ConsoleContainerTabControl}">
+                    <TabControl.Resources>
+                        <Style TargetType="TabItem">
+                            <Setter Property="Header" Value="{Binding GroupName}" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="TabItem">
+                                        <DockPanel Name="Item" HorizontalAlignment="Stretch" LastChildFill="False">
+                                            <ContentPresenter x:Name="ContentSite"
+                                                              DockPanel.Dock="Left"
+                                                              VerticalAlignment="Center"
+                                                              HorizontalAlignment="Left"
+                                                              ContentSource="Header"
+                                                              Margin="10,5" />
 
-                                        <StackPanel DockPanel.Dock="Right" VerticalAlignment="Center" Orientation="Horizontal">
-                                            <Button Click="EditProcessGroup_Click"
-                                                    CommandParameter="{Binding .}"
-                                                    Background="Transparent"
-                                                    BorderThickness="0">
-                                                <Image Source="pack://application:,,,/ConsoleContainer.Wpf;component/Resources/Images/edit.png"
-                                                       ToolTip="Delete"
-                                                       Height="15"
-                                                       Margin="0,0,5,0" />
-                                            </Button>
+                                            <StackPanel DockPanel.Dock="Right" VerticalAlignment="Center" Orientation="Horizontal">
+                                                <Button Click="EditProcessGroup_Click"
+                                                        CommandParameter="{Binding .}"
+                                                        Background="Transparent"
+                                                        BorderThickness="0">
+                                                    <Image Source="pack://application:,,,/ConsoleContainer.Wpf;component/Resources/Images/edit.png"
+                                                           ToolTip="Delete"
+                                                           Height="15"
+                                                           Margin="0,0,5,0" />
+                                                </Button>
 
-                                            <Button Click="DeleteProcessGroup_Click"
-                                                    CommandParameter="{Binding .}"
-                                                    Background="Transparent"
-                                                    BorderThickness="0">
-                                                <Image Source="pack://application:,,,/ConsoleContainer.Wpf;component/Resources/Images/trash-can.png"
-                                                       ToolTip="Delete"
-                                                       Height="15"
-                                                       Margin="0,0,5,0" />
-                                            </Button>
-                                        </StackPanel>
+                                                <Button Click="DeleteProcessGroup_Click"
+                                                        CommandParameter="{Binding .}"
+                                                        Background="Transparent"
+                                                        BorderThickness="0">
+                                                    <Image Source="pack://application:,,,/ConsoleContainer.Wpf;component/Resources/Images/trash-can.png"
+                                                           ToolTip="Delete"
+                                                           Height="15"
+                                                           Margin="0,0,5,0" />
+                                                </Button>
+                                            </StackPanel>
 
-                                        <TextBlock DockPanel.Dock="Right"
-                                                   VerticalAlignment="Center"
-                                                   Margin="10,0">
-                                            <Run>(</Run><Run Text="{Binding RunningProcesses, Mode=OneWay}" /><Run>/</Run><Run Text="{Binding TotalProcesses, Mode=OneWay}" /><Run>)</Run>
-                                        </TextBlock>
-                                    </DockPanel>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsSelected" Value="True">
-                                            <Setter TargetName="Item" Property="Background" Value="LightSkyBlue" />
-                                        </Trigger>
-                                        <Trigger Property="IsSelected" Value="False">
-                                            <Setter TargetName="Item" Property="Background" Value="GhostWhite" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </TabControl.Resources>
-                <TabControl.ContentTemplate>
-                    <DataTemplate>
-                        <local:ProcessGroupControl
-                            ProcessContainer="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DockPanel}}, Path=DataContext, Mode=OneWay}"
-                            ProcessGroup="{Binding .}" />
-                    </DataTemplate>
-                </TabControl.ContentTemplate>
-            </TabControl>
-        </DockPanel>
+                                            <TextBlock DockPanel.Dock="Right"
+                                                       VerticalAlignment="Center"
+                                                       Margin="10,0">
+                                                <Run>(</Run><Run Text="{Binding RunningProcesses, Mode=OneWay}" /><Run>/</Run><Run Text="{Binding TotalProcesses, Mode=OneWay}" /><Run>)</Run>
+                                            </TextBlock>
+                                        </DockPanel>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Item" Property="Background" Value="LightSkyBlue" />
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="False">
+                                                <Setter TargetName="Item" Property="Background" Value="GhostWhite" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </TabControl.Resources>
+                    <TabControl.ContentTemplate>
+                        <DataTemplate>
+                            <local:ProcessGroupControl
+                                ProcessContainer="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DockPanel}}, Path=DataContext, Mode=OneWay}"
+                                ProcessGroup="{Binding .}" />
+                        </DataTemplate>
+                    </TabControl.ContentTemplate>
+                </TabControl>
+            </DockPanel>
 
-        <Grid Visibility="{Binding Dialog, Converter={StaticResource NullToCollapsedConverter}}">
-            <Grid.Background>
-                <SolidColorBrush Color="Gray" Opacity="0.8" />
-            </Grid.Background>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="4*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="10*" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <ContentControl Grid.Column="1"
-                            Grid.Row="1"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            Content="{Binding Dialog}"></ContentControl>
+            <Grid Visibility="{Binding Dialog, Converter={StaticResource NullToCollapsedConverter}}">
+                <Grid.Background>
+                    <SolidColorBrush Color="Gray" Opacity="0.8" />
+                </Grid.Background>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="4*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="10*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <ContentControl Grid.Column="1"
+                                Grid.Row="1"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Content="{Binding Dialog}"></ContentControl>
+            </Grid>
         </Grid>
-    </Grid>
+    </Border>
 </Window>
