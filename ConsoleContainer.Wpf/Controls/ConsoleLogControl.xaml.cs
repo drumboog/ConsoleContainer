@@ -49,7 +49,7 @@ namespace ConsoleContainer.Wpf.Controls
         {
             Dispatcher.Invoke(() =>
             {
-                TextRange txt = new TextRange(rtbLog.Document.ContentStart, rtbLog.Document.ContentEnd);
+                TextRange txt = new TextRange(rtbFlowDoc.ContentStart, rtbFlowDoc.ContentEnd);
                 txt.Text = "";
                 currentLength = 0;
             });
@@ -60,18 +60,18 @@ namespace ConsoleContainer.Wpf.Controls
             var run = new Run(message);
             run.Foreground = foreground ?? Brushes.White;
             var paragraph = new Paragraph(run);
-            rtbLog.Document.Blocks.Add(paragraph);
+            rtbFlowDoc.Blocks.Add(paragraph);
             currentLength += message?.Length ?? 1;
             while (currentLength > BUFFER_SIZE)
             {
-                var firstBlock = rtbLog.Document.Blocks.FirstOrDefault();
+                var firstBlock = rtbFlowDoc.Blocks.FirstOrDefault();
                 if (firstBlock is null)
                 {
                     break;
                 }
                 TextRange content = new TextRange(firstBlock.ContentStart, firstBlock.ContentEnd);
                 currentLength -= content.Text.Length;
-                rtbLog.Document.Blocks.Remove(firstBlock);
+                rtbFlowDoc.Blocks.Remove(firstBlock);
             }
             if (viewModel.AutoScroll)
             {

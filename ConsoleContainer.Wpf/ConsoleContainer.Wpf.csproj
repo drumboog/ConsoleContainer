@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Images\app-icon.png" />
     <None Remove="Resources\Images\close.png" />
     <None Remove="Resources\Images\edit.png" />
     <None Remove="Resources\Images\move-down.png" />
@@ -20,7 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Resources\Images\app-icon.ico" />
+    <Resource Include="Resources\Images\app-icon.ico" />
+    <Resource Include="Resources\Images\app-icon.png" />
   </ItemGroup>
 
   <ItemGroup>
