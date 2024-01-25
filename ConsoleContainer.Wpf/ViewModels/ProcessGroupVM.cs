@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using ConsoleContainer.Wpf.Domain;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 
@@ -81,6 +82,11 @@ namespace ConsoleContainer.Wpf.ViewModels
             {
                 process.ClearOutput();
             }
+        }
+
+        public void AddProcess(ProcessInformation processInformation)
+        {
+            Processes.Add(new ProcessVM(processInformation));
         }
 
         private void Process_PropertyChanged(object? sender, PropertyChangedEventArgs e)

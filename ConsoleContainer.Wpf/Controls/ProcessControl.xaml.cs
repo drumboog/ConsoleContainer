@@ -1,4 +1,6 @@
-﻿using ConsoleContainer.Wpf.ViewModels;
+﻿using ConsoleContainer.Wpf.Eventing;
+using ConsoleContainer.Wpf.Eventing.Events;
+using ConsoleContainer.Wpf.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,19 +36,29 @@ namespace ConsoleContainer.Wpf.Controls
             InitializeComponent();
         }
 
-        private void btnStart_Click(object sender, RoutedEventArgs e)
+        private void Start_Click(object sender, RoutedEventArgs e)
         {
             Process.StartProcess();
         }
 
-        private void btnStop_Click(object sender, RoutedEventArgs e)
+        private void Stop_Click(object sender, RoutedEventArgs e)
         {
             Process.StopProcess();
         }
 
-        private void btnClearOutput_Click(object sender, RoutedEventArgs e)
+        private void ClearOutput_Click(object sender, RoutedEventArgs e)
         {
             Process.ClearOutput();
+        }
+
+        private void Edit_Click(object sender, RoutedEventArgs e)
+        {
+            _ = EventAggregator.Instance.PublishOnCurrentThreadAsync(new EditProcessEvent(Process));
+        }
+
+        private void Delete_Click(object sender, RoutedEventArgs e)
+        {
+            _ = EventAggregator.Instance.PublishOnCurrentThreadAsync(new DeleteProcessEvent(Process));
         }
     }
 }

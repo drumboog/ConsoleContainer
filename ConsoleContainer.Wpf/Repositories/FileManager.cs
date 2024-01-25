@@ -29,6 +29,19 @@ namespace ConsoleContainer.Wpf.Repositories
             }
         }
 
+        public async Task<T> ReadAsync()
+        {
+            try
+            {
+                var data = await File.ReadAllBytesAsync(GetFilePath());
+                return serializer.Deserialize<T>(data) ?? factory();
+            }
+            catch
+            {
+                return factory();
+            }
+        }
+
         public void Save(T obj)
         {
             var data = serializer.Serialize(obj);
@@ -39,6 +52,18 @@ namespace ConsoleContainer.Wpf.Repositories
                 Directory.CreateDirectory(dir);
             }
             File.WriteAllBytes(filePath, data);
+        }
+
+        public async Task SaveAsync(T obj)
+        {
+            var data = serializer.Serialize(obj);
+            var filePath = GetFilePath();
+            var dir = Path.GetDirectoryName(filePath);
+            if (dir is not null)
+            {
+                Directory.CreateDirectory(dir);
+            }
+            await File.WriteAllBytesAsync(filePath, data);
         }
 
         private string GetFilePath()

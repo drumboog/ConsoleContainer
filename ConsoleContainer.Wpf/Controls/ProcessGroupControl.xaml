@@ -15,6 +15,7 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                <Button Margin="5 5 20 5" Click="CreateProcess_Click">Create Process</Button>
                 <TextBlock Margin="5" VerticalAlignment="Center">View As:</TextBlock>
                 <ComboBox Margin="5"
                           ItemsSource="{Binding ViewTypes}"

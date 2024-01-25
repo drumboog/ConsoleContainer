@@ -21,9 +21,19 @@ namespace ConsoleContainer.Wpf.Repositories
             return fileManager.Read();
         }
 
+        public Task<T> ReadAsync()
+        {
+            return fileManager.ReadAsync();
+        }
+
         public void Save(T data)
         {
             fileManager.Save(data);
+        }
+
+        public Task SaveAsync(T data)
+        {
+            return fileManager.SaveAsync(data);
         }
     }
 }

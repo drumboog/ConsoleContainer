@@ -10,17 +10,21 @@
 
   <ItemGroup>
     <None Remove="Resources\Images\close.png" />
+    <None Remove="Resources\Images\edit.png" />
     <None Remove="Resources\Images\move-down.png" />
     <None Remove="Resources\Images\move-up-down.png" />
     <None Remove="Resources\Images\move-up.png" />
+    <None Remove="Resources\Images\trash-can.png" />
     <None Remove="Resources\Images\validation-error.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Resources\Images\close.png" />
+    <Resource Include="Resources\Images\edit.png" />
     <Resource Include="Resources\Images\move-up.png" />
     <Resource Include="Resources\Images\move-down.png" />
     <Resource Include="Resources\Images\move-up-down.png" />
+    <Resource Include="Resources\Images\trash-can.png" />
     <Resource Include="Resources\Images\validation-error.png" />
   </ItemGroup>
 

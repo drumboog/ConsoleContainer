@@ -29,11 +29,17 @@
                 <TextBlock>Process ID:</TextBlock>
                 <TextBlock Text="{Binding ProcessId}" />
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Button Click="btnStart_Click" Margin="0 0 10 0" IsEnabled="{Binding CanStart}">Start</Button>
-                <Button Click="btnStop_Click" Margin="0 0 10 0" IsEnabled="{Binding CanStop}">Stop</Button>
-                <Button Click="btnClearOutput_Click">Clear Output</Button>
-            </StackPanel>
+            <DockPanel LastChildFill="False">
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                    <Button Click="Start_Click" Margin="0 0 10 0" IsEnabled="{Binding CanStart}">Start</Button>
+                    <Button Click="Stop_Click" Margin="0 0 10 0" IsEnabled="{Binding CanStop}">Stop</Button>
+                    <Button Click="ClearOutput_Click">Clear Output</Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                    <Button Click="Edit_Click" Margin="10 0 0 0">Edit</Button>
+                    <Button Click="Delete_Click" Margin="10 0 0 0">Delete</Button>
+                </StackPanel>
+            </DockPanel>
         </StackPanel>
         <ContentControl Content="{Binding Output.ConsoleLog}"></ContentControl>
     </DockPanel>

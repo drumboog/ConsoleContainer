@@ -21,7 +21,14 @@ namespace ConsoleContainer.Wpf.Controls
     /// </summary>
     public partial class ProcessGroupControl : UserControl
     {
+        public static DependencyProperty ProcessContainerProperty = DependencyProperty.Register("ProcessContainer", typeof(ProcessContainerVM), typeof(ProcessGroupControl));
         public static DependencyProperty ProcessGroupProperty = DependencyProperty.Register("ProcessGroup", typeof(ProcessGroupVM), typeof(ProcessGroupControl));
+
+        public ProcessContainerVM ProcessContainer
+        {
+            get { return (ProcessContainerVM)GetValue(ProcessContainerProperty); }
+            set { SetValue(ProcessContainerProperty, value); }
+        }
 
         public ProcessGroupVM ProcessGroup
         {
@@ -47,6 +54,11 @@ namespace ConsoleContainer.Wpf.Controls
         private void ClearAll_Click(object sender, RoutedEventArgs e)
         {
             ProcessGroup.ClearAll();
+        }
+
+        private void CreateProcess_Click(object sender, RoutedEventArgs e)
+        {
+            _ = ProcessContainer.CreateProcessAsync(ProcessGroup);
         }
     }
 }

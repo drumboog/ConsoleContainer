@@ -9,6 +9,10 @@
                                               TrueValue="Visible"
                                               FalseValue="Collapsed"></converters:BoolToVisibilityConverter>
 
+        <converters:NullToVisibilityConverter x:Key="NullToCollapsedConverter"
+                                              NonNullValue="Visible"
+                                              NullValue="Collapsed"></converters:NullToVisibilityConverter>
+
         <converters:MultiValueConverter x:Key="MultiValueConverter"></converters:MultiValueConverter>
 
         <ControlTemplate x:Key="ValidationTemplate">

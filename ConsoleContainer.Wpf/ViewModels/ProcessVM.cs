@@ -8,9 +8,17 @@ namespace ConsoleContainer.Wpf.ViewModels
     {
         private Process? process;
 
-        public string DisplayName { get; }
+        public string DisplayName
+        {
+            get => GetProperty<string>()!;
+            private set => SetProperty(value);
+        }
 
-        public ProcessInformation ProcessInformation { get; }
+        public ProcessInformation ProcessInformation
+        {
+            get => GetProperty<ProcessInformation>()!;
+            private set => SetProperty(value);
+        }
 
         public ProcessOutputVM Output { get; } = new ProcessOutputVM();
 
@@ -41,6 +49,17 @@ namespace ConsoleContainer.Wpf.ViewModels
         {
             ProcessId = processId;
             IsRunning = isRunning;
+        }
+
+        public void Update(ProcessInformation processInformation)
+        {
+            if (IsRunning)
+            {
+                throw new Exception("Can't update process while it is running");
+            }
+
+            DisplayName = processInformation.ProcessName;
+            ProcessInformation = processInformation;
         }
 
         public void StartProcess()

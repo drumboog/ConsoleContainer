@@ -1,0 +1,74 @@
+﻿<UserControl x:Class="ConsoleContainer.Wpf.Controls.Dialogs.EditProcessControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ConsoleContainer.Wpf.Controls.Dialogs"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Border Grid.Row="0" CornerRadius="5" BorderBrush="#666666" BorderThickness="2" Background="White">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Margin="10 5 10 5" VerticalAlignment="Center">Process Group</TextBlock>
+                <StackPanel Grid.Column="1" Margin="10 5 10 5">
+                    <Button Click="CloseButton_Click" Background="Transparent" BorderThickness="0">
+                        <Image Source="pack://application:,,,/ConsoleContainer.Wpf;component/Resources/Images/close.png"
+                               ToolTip="Close"
+                               Height="25"
+                               Width="25"
+                               VerticalAlignment="Center" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+            <Rectangle Grid.Row="1" Fill="DarkGray" Height="2"></Rectangle>
+            <ItemsControl Grid.Row="2" Background="Red" ItemsSource="{Binding ErrorMessages}" Padding="5" Visibility="{Binding HasErrors, Converter={StaticResource BoolToCollapsedConverter}}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding .}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Grid Grid.Row="4" Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="25" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0">Process Name:</TextBlock>
+                <TextBox Grid.Column="2" Text="{Binding ProcessName}" />
+
+                <TextBlock Grid.Column="0" Grid.Row="1">File Path:</TextBlock>
+                <TextBox Grid.Column="2" Grid.Row="1" Text="{Binding FilePath}" />
+
+                <TextBlock Grid.Column="0" Grid.Row="2">Arguments:</TextBlock>
+                <TextBox Grid.Column="2" Grid.Row="2" Text="{Binding Arguments}" />
+
+                <TextBlock Grid.Column="0" Grid.Row="3">Working Directory:</TextBlock>
+                <TextBox Grid.Column="2" Grid.Row="3" Text="{Binding WorkingDirectory}" />
+            </Grid>
+            <StackPanel Grid.Row="5" Orientation="Horizontal">
+                <Button Click="Save_Click" Margin="5" IsEnabled="{Binding CanUpdateSettings}">Save</Button>
+                <Button Click="Cancel_Click" Margin="5">Cancel</Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

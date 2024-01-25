@@ -1,13 +1,19 @@
 ﻿using ConsoleContainer.Wpf.Domain;
+using ConsoleContainer.Wpf.Domain.Contracts;
 using ConsoleContainer.Wpf.Eventing;
 using ConsoleContainer.Wpf.Eventing.Events;
 using ConsoleContainer.Wpf.Repositories;
+using ConsoleContainer.Wpf.Services;
+using ConsoleContainer.Wpf.ViewModels.Dialogs;
 using System.Collections.ObjectModel;
+using System.Windows.Controls;
 
 namespace ConsoleContainer.Wpf.ViewModels
 {
-    internal class ProcessContainerVM : ViewModel, IHandle<SettingsSavedEvent>
+    public class ProcessContainerVM : ViewModel, IHandle<SettingsSavedEvent>, IHandle<EditProcessEvent>, IHandle<DeleteProcessEvent>
     {
+        private IDialogService dialogService;
+
         public ObservableCollection<ProcessGroupVM> ProcessGroups { get; } = new();
 
         public bool ShowSettings
@@ -16,9 +22,65 @@ namespace ConsoleContainer.Wpf.ViewModels
             set => SetProperty(value);
         }
 
+        public Control? Dialog
+        {
+            get => GetProperty<Control>();
+            set => SetProperty(value);
+        }
+
         public ProcessContainerVM()
         {
+            dialogService = DialogService.Instance;
+
             EventAggregator.Instance.SubscribeOnUIThread(this);
+        }
+
+        public async Task CreateProcessGroupAsync()
+        {
+            var newGroup = await dialogService.CreateProcessGroupAsync();
+            if (newGroup is null)
+            {
+                return;
+            }
+
+            ProcessGroups.Add(new ProcessGroupVM() { GroupName = newGroup.GroupName });
+            await SaveAsync();
+        }
+
+        public async Task EditProcessGroupAsync(ProcessGroupVM processGroup)
+        {
+            var vm = new EditProcessGroupVM() { GroupName = processGroup.GroupName };
+            if (!await dialogService.EditProcessGroupAsync(vm))
+            {
+                return;
+            }
+
+            processGroup.GroupName = vm.GroupName;
+            await SaveAsync();
+        }
+
+        public async Task DeleteProcessGroupAsync(ProcessGroupVM processGroup)
+        {
+            var result = await dialogService.ShowConfirmationDialogAsync(new ConfirmationDialogVM("Delete Process Group?", $"Are you sure you want to delete the process group: {processGroup.GroupName}?"));
+            if (!result)
+            {
+                return;
+            }
+
+            ProcessGroups.Remove(processGroup);
+            await SaveAsync();
+        }
+
+        public async Task CreateProcessAsync(ProcessGroupVM processGroup)
+        {
+            var result = await dialogService.CreateProcessAsync();
+            if (result is null)
+            {
+                return;
+            }
+
+            processGroup.AddProcess(new ProcessInformation(result.ProcessName, result.FilePath, result.Arguments, result.WorkingDirectory));
+            await SaveAsync();
         }
 
         public void RefreshProcesses()
@@ -48,21 +110,67 @@ namespace ConsoleContainer.Wpf.ViewModels
             vm.GroupName = processGroup.GroupName;
             foreach(var p in processGroup.Processes)
             {
-                vm.Processes.Add(CreateProcess(p));
+                vm.Processes.Add(new ProcessVM(p));
             }
 
             return vm;
-        }
-
-        private ProcessVM CreateProcess(ProcessInformation processInformation)
-        {
-            return new ProcessVM(processInformation);
         }
 
         public Task HandleAsync(SettingsSavedEvent message, CancellationToken cancellationToken)
         {
             RefreshProcesses();
             return Task.CompletedTask;
+        }
+
+        public async Task HandleAsync(EditProcessEvent message, CancellationToken cancellationToken)
+        {
+            var process = message.Process;
+            var vm = new EditProcessVM()
+            {
+                ProcessName = process.ProcessInformation.ProcessName,
+                FilePath = process.ProcessInformation.FileName,
+                Arguments = process.ProcessInformation.Arguments,
+                WorkingDirectory = process.ProcessInformation.WorkingDirectory
+            };
+            if (!await dialogService.EditProcessAsync(vm))
+            {
+                return;
+            }
+
+            process.Update(new ProcessInformation(vm.ProcessName, vm.FilePath, vm.Arguments, vm.WorkingDirectory));
+            await SaveAsync();
+        }
+
+        public async Task HandleAsync(DeleteProcessEvent message, CancellationToken cancellationToken)
+        {
+            var process = message.Process;
+            var result = await dialogService.ShowConfirmationDialogAsync(new ConfirmationDialogVM("Delete Process?", $"Are you sure you want to delete the process: {process.DisplayName}?"));
+            if (!result)
+            {
+                return;
+            }
+
+            foreach (var group in ProcessGroups)
+            {
+                group.Processes.Remove(process);
+            }
+            await SaveAsync();
+        }
+
+        private async Task SaveAsync()
+        {
+            var collection = new ProcessGroupCollection();
+            foreach (var group in ProcessGroups)
+            {
+                var newGroup = collection.AddGroup(group.GroupName);
+                foreach (var process in group.Processes)
+                {
+                    newGroup.AddProcess(process.ProcessInformation);
+                }
+            }
+
+            var repo = new ProcessGroupCollectionRepository();
+            await repo.SaveAsync(collection);
         }
     }
 }
