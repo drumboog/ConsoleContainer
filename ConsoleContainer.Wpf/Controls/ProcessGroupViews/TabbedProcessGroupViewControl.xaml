@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:ConsoleContainer.Wpf.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <TabControl ItemsSource="{Binding Processes}" TabStripPlacement="Top" SelectedIndex="{Binding SelectedIndex}">
+    <TabControl ItemsSource="{Binding Processes}" TabStripPlacement="Top" SelectedIndex="{Binding SelectedIndex}" Padding="0">
         <TabControl.Resources>
             <Style TargetType="TabItem">
                 <Setter Property="Template">
