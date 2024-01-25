@@ -13,14 +13,6 @@
         d:DataContext="{x:Static dd:ViewModelLocator.ProcessContainer}">
     <Grid>
         <DockPanel>
-            <Menu DockPanel.Dock="Top">
-                <MenuItem Header="_File">
-                    <MenuItem Header="_Settings" Click="miSettings_Click" />
-                    <Separator></Separator>
-                    <MenuItem Header="_Exit" Click="miExit_Click" />
-                </MenuItem>
-            </Menu>
-
             <TabControl ItemsSource="{Binding ProcessGroups}" TabStripPlacement="Left" SelectedIndex="0">
                 <TabControl.Resources>
                     <Style TargetType="TabControl">
@@ -133,23 +125,6 @@
                 </TabControl.ContentTemplate>
             </TabControl>
         </DockPanel>
-
-        <Grid Visibility="{Binding ShowSettings, Converter={StaticResource BoolToCollapsedConverter}}">
-            <Grid.Background>
-                <SolidColorBrush Color="Gray" Opacity="0.8" />
-            </Grid.Background>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="4*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="10*" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <local:SettingsControl Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></local:SettingsControl>
-        </Grid>
 
         <Grid Visibility="{Binding Dialog, Converter={StaticResource NullToCollapsedConverter}}">
             <Grid.Background>

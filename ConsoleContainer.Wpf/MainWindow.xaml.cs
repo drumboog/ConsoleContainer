@@ -11,7 +11,7 @@ namespace ConsoleContainer.Wpf
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IHandle<ClosingSettingsEvent>, IHandle<ShowDialogEvent>
+    public partial class MainWindow : Window, IHandle<ShowDialogEvent>
     {
         private readonly ProcessContainerVM viewModel;
 
@@ -27,22 +27,6 @@ namespace ConsoleContainer.Wpf
 
                 EventAggregator.Instance.SubscribeOnUIThread(this);
             }
-        }
-
-        private void miSettings_Click(object sender, RoutedEventArgs e)
-        {
-            viewModel.ShowSettings = true;
-        }
-
-        private void miExit_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
-        public Task HandleAsync(ClosingSettingsEvent message, CancellationToken cancellationToken)
-        {
-            viewModel.ShowSettings = false;
-            return Task.CompletedTask;
         }
 
         public Task HandleAsync(ShowDialogEvent message, CancellationToken cancellationToken)

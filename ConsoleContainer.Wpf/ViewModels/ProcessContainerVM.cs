@@ -10,17 +10,11 @@ using System.Windows.Controls;
 
 namespace ConsoleContainer.Wpf.ViewModels
 {
-    public class ProcessContainerVM : ViewModel, IHandle<SettingsSavedEvent>, IHandle<EditProcessEvent>, IHandle<DeleteProcessEvent>
+    public class ProcessContainerVM : ViewModel, IHandle<EditProcessEvent>, IHandle<DeleteProcessEvent>
     {
         private IDialogService dialogService;
 
         public ObservableCollection<ProcessGroupVM> ProcessGroups { get; } = new();
-
-        public bool ShowSettings
-        {
-            get => GetProperty(false);
-            set => SetProperty(value);
-        }
 
         public Control? Dialog
         {
@@ -114,12 +108,6 @@ namespace ConsoleContainer.Wpf.ViewModels
             }
 
             return vm;
-        }
-
-        public Task HandleAsync(SettingsSavedEvent message, CancellationToken cancellationToken)
-        {
-            RefreshProcesses();
-            return Task.CompletedTask;
         }
 
         public async Task HandleAsync(EditProcessEvent message, CancellationToken cancellationToken)
