@@ -1,5 +1,6 @@
 ﻿using ConsoleContainer.Wpf.Domain;
 using System.Diagnostics;
+using System.Management;
 using System.Windows.Media;
 
 namespace ConsoleContainer.Wpf.ViewModels
@@ -99,7 +100,7 @@ namespace ConsoleContainer.Wpf.ViewModels
                 p.CancelErrorRead();
                 if (!p.CloseMainWindow())
                 {
-                    process?.Kill(true);
+                    KillProcessAndChildren(p.Id);
                 }
                 Output.AddOutput("Process ended", Brushes.Red);
             }
@@ -120,6 +121,31 @@ namespace ConsoleContainer.Wpf.ViewModels
         private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
             Output.AddOutput(e.Data, Brushes.DarkRed);
+        }
+
+        private static void KillProcessAndChildren(int pid)
+        {
+            // Cannot close 'system idle process'.
+            if (pid == 0)
+            {
+                return;
+            }
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher
+                    ("Select * From Win32_Process Where ParentProcessID=" + pid);
+            ManagementObjectCollection moc = searcher.Get();
+            foreach (ManagementObject mo in moc)
+            {
+                KillProcessAndChildren(Convert.ToInt32(mo["ProcessID"]));
+            }
+            try
+            {
+                Process proc = Process.GetProcessById(pid);
+                proc.Kill();
+            }
+            catch (ArgumentException)
+            {
+                // Process already exited.
+            }
         }
     }
 }
