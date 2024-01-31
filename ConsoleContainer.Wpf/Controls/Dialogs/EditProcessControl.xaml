@@ -21,7 +21,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Margin="10 5 10 5" VerticalAlignment="Center">Process Group</TextBlock>
+                <TextBlock Grid.Column="0" Margin="10 5 10 5" VerticalAlignment="Center">Process</TextBlock>
                 <StackPanel Grid.Column="1" Margin="10 5 10 5">
                     <Button Click="CloseButton_Click" Background="Transparent" BorderThickness="0">
                         <Image Source="pack://application:,,,/ConsoleContainer.Wpf;component/Resources/Images/close.png"
