@@ -10,7 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\Images\app-icon.png" />
     <None Remove="Resources\Images\close.png" />
     <None Remove="Resources\Images\edit.png" />
     <None Remove="Resources\Images\move-down.png" />
@@ -22,7 +21,6 @@
 
   <ItemGroup>
     <Resource Include="Resources\Images\app-icon.ico" />
-    <Resource Include="Resources\Images\app-icon.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,6 +36,10 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Management" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\Images\Source\" />
   </ItemGroup>
 
 </Project>
