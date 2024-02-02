@@ -3,9 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dd="clr-namespace:ConsoleContainer.Wpf.DesignData"
              xmlns:local="clr-namespace:ConsoleContainer.Wpf.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" d:Background="White"
+             d:DataContext="{x:Static dd:ViewModelLocator.ProcessGroup}">
     <ItemsControl ItemsSource="{Binding Processes}" HorizontalAlignment="Stretch" ScrollViewer.CanContentScroll="False">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>

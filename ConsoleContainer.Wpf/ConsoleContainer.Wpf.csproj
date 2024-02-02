@@ -42,4 +42,8 @@
     <Folder Include="Resources\Images\Source\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ConsoleContainer.ProcessManagement\ConsoleContainer.ProcessManagement.csproj" />
+  </ItemGroup>
+
 </Project>

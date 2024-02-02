@@ -1,0 +1,6 @@
+@ConsoleContainer.WorkerService_HostAddress = http://localhost:5128
+
+GET {{ConsoleContainer.WorkerService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -3,17 +3,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dd="clr-namespace:ConsoleContainer.Wpf.DesignData"
              xmlns:local="clr-namespace:ConsoleContainer.Wpf.Controls"
+             xmlns:converters="clr-namespace:ConsoleContainer.Wpf.ValueConverters"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" d:Background="White"
+             d:DataContext="{x:Static dd:ViewModelLocator.ProcessGroup}">
     <TabControl ItemsSource="{Binding Processes}" TabStripPlacement="Top" SelectedIndex="{Binding SelectedIndex}" Padding="0">
         <TabControl.Resources>
+            <converters:ProcessStatusToTabbedRunningIndicatorBrushConverter x:Key="ProcessStatusToTabbedRunningIndicatorBrushConverter" />
             <Style TargetType="TabItem">
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="TabItem">
                             <StackPanel>
-                                <Border x:Name="RunningIndicator" Margin="-1,0,0,0" Height="4" CornerRadius="3,3,0,0"  BorderBrush="#666666" BorderThickness="1,1,1,0" />
+                                <Border x:Name="RunningIndicator" Margin="-1,0,0,0" Height="4" CornerRadius="3,3,0,0"  BorderBrush="#666666" BorderThickness="1,1,1,0" Background="{Binding State, Converter={StaticResource ProcessStatusToTabbedRunningIndicatorBrushConverter}}" />
                                 <Border Name="Border" Margin="-1,0,0,0" Background="Transparent" BorderBrush="#666666" BorderThickness="1,0,1,0">
                                     <TextBlock x:Name="DisplayName" Text="{Binding DisplayName}" Margin="12,2,12,2" VerticalAlignment="Center" />
                                 </Border>
@@ -28,12 +32,6 @@
                                     <Setter TargetName="RunningIndicator" Property="CornerRadius" Value="5 5 0 0" />
                                     <Setter TargetName="DisplayName" Property="FontWeight" Value="Bold" />
                                 </Trigger>
-                                <DataTrigger Binding="{Binding IsRunning}" Value="True">
-                                    <Setter TargetName="RunningIndicator" Property="Background" Value="Green" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding IsRunning}" Value="False">
-                                    <Setter TargetName="RunningIndicator" Property="Background" Value="Red" />
-                                </DataTrigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>

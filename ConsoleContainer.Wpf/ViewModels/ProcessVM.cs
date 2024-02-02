@@ -1,39 +1,28 @@
-﻿using ConsoleContainer.Wpf.Domain;
-using System.Diagnostics;
-using System.Management;
+﻿using ConsoleContainer.ProcessManagement;
+using ConsoleContainer.Wpf.Domain;
 using System.Windows.Media;
 
 namespace ConsoleContainer.Wpf.ViewModels
 {
     public class ProcessVM : ViewModel
     {
-        private Process? process;
+        private IProcessWrapper process;
 
-        public string DisplayName
-        {
-            get => GetProperty<string>()!;
-            private set => SetProperty(value);
-        }
+        public string DisplayName => ProcessInformation.ProcessName;
 
         public ProcessInformation ProcessInformation
         {
             get => GetProperty<ProcessInformation>()!;
-            private set => SetProperty(value);
+            private set => SetProperty(value, [nameof(DisplayName)]);
         }
 
         public ProcessOutputVM Output { get; } = new ProcessOutputVM();
 
-        public int? ProcessId
-        {
-            get => GetProperty<int?>();
-            private set => SetProperty(value);
-        }
+        public int? ProcessId => process.ProcessId;
 
-        public bool IsRunning
-        {
-            get => GetProperty<bool>();
-            private set => SetProperty(value, [nameof(CanStart), nameof(CanStop)]);
-        }
+        public ProcessState State => process.State;
+
+        public bool IsRunning => State is ProcessState.Starting or ProcessState.Running or ProcessState.Stopping;
 
         public bool CanStart => !IsRunning;
 
@@ -41,26 +30,25 @@ namespace ConsoleContainer.Wpf.ViewModels
 
         public ProcessVM(ProcessInformation processInformation)
         {
-            DisplayName = processInformation.ProcessName;
             ProcessInformation = processInformation;
+            process = CreateProcessWrapper(processInformation);
         }
 
-        internal ProcessVM(ProcessInformation processInformation, int? processId, bool isRunning)
-            : this(processInformation)
+        internal ProcessVM(string processName, IProcessWrapper processWrapper)
         {
-            ProcessId = processId;
-            IsRunning = isRunning;
+            process = processWrapper;
+            ProcessInformation = new ProcessInformation(processName, processWrapper.ProcessDetails.FileName, processWrapper.ProcessDetails.Arguments, process.ProcessDetails.WorkingDirectory);
         }
 
         public void Update(ProcessInformation processInformation)
         {
-            if (IsRunning)
+            if (process is not null && process.State is ProcessState.Idle)
             {
                 throw new Exception("Can't update process while it is running");
             }
 
-            DisplayName = processInformation.ProcessName;
             ProcessInformation = processInformation;
+            process = CreateProcessWrapper(processInformation);
         }
 
         public void StartProcess()
@@ -70,42 +58,12 @@ namespace ConsoleContainer.Wpf.ViewModels
                 return;
             }
 
-            process = new Process();
-            process.StartInfo.FileName = ProcessInformation.FileName;
-            process.StartInfo.WorkingDirectory = ProcessInformation.WorkingDirectory;
-            process.StartInfo.Arguments = ProcessInformation.Arguments;
-            process.StartInfo.RedirectStandardInput = true;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.LoadUserProfile = true;
-            process.OutputDataReceived += Process_OutputDataReceived;
-            process.ErrorDataReceived += Process_ErrorDataReceived;
-            process.Start();
-            ChildProcessTracker.AddProcess(process);
-            Output.AddOutput("Process started", Brushes.Green);
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-            ProcessId = process.Id;
-            IsRunning = true;
+            process.StartProcess();
         }
 
         public void StopProcess()
         {
-            var p = process;
-            if (p is not null)
-            {
-                p.CancelOutputRead();
-                p.CancelErrorRead();
-                if (!p.CloseMainWindow())
-                {
-                    KillProcessAndChildren(p.Id);
-                }
-                Output.AddOutput("Process ended", Brushes.Red);
-            }
-            ProcessId = null;
-            IsRunning = false;
+            process.StopProcess();
         }
 
         public void ClearOutput()
@@ -113,39 +71,43 @@ namespace ConsoleContainer.Wpf.ViewModels
             Output.ClearLogs();
         }
 
-        private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        private ProcessWrapper CreateProcessWrapper(ProcessInformation processInformation)
         {
-            Output.AddOutput(e.Data);
+            var details = new ProcessDetails(Guid.NewGuid().ToString(), processInformation.FileName, processInformation.Arguments, processInformation.WorkingDirectory);
+            var result = new ProcessWrapper(details);
+            result.OutputDataReceived += Result_OutputDataReceived;
+            result.StateChanged += Result_StateChanged;
+            return result;
         }
 
-        private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        private void Result_OutputDataReceived(object? sender, ProcessOutputDataEventArgs e)
         {
-            Output.AddOutput(e.Data, Brushes.DarkRed);
+            Output.AddOutput(e.Data.Data, e.Data.IsProcessError ? Brushes.DarkRed : null);
         }
 
-        private static void KillProcessAndChildren(int pid)
+        private void Result_StateChanged(object? sender, ProcessStateChangedEventArgs e)
         {
-            // Cannot close 'system idle process'.
-            if (pid == 0)
+            switch (e.State)
             {
-                return;
+                case ProcessState.Idle:
+                    Output.AddOutput("Process stopped", Brushes.Red);
+                    break;
+                case ProcessState.Starting:
+                    Output.AddOutput("Process starting", Brushes.Green);
+                    break;
+                case ProcessState.Running:
+                    Output.AddOutput("Process started", Brushes.LightGreen);
+                    break;
+                case ProcessState.Stopping:
+                    Output.AddOutput("Stopping process", Brushes.IndianRed);
+                    break;
             }
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher
-                    ("Select * From Win32_Process Where ParentProcessID=" + pid);
-            ManagementObjectCollection moc = searcher.Get();
-            foreach (ManagementObject mo in moc)
-            {
-                KillProcessAndChildren(Convert.ToInt32(mo["ProcessID"]));
-            }
-            try
-            {
-                Process proc = Process.GetProcessById(pid);
-                proc.Kill();
-            }
-            catch (ArgumentException)
-            {
-                // Process already exited.
-            }
+
+            OnPropertyChanged(nameof(ProcessId));
+            OnPropertyChanged(nameof(State));
+            OnPropertyChanged(nameof(IsRunning));
+            OnPropertyChanged(nameof(CanStart));
+            OnPropertyChanged(nameof(CanStop));
         }
     }
 }
