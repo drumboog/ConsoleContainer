@@ -1,5 +1,5 @@
-﻿using ConsoleContainer.Wpf.Domain;
-using ConsoleContainer.Wpf.Domain.Contracts;
+﻿using ConsoleContainer.Eventing;
+using ConsoleContainer.Wpf.Domain;
 using ConsoleContainer.Wpf.Eventing;
 using ConsoleContainer.Wpf.Eventing.Events;
 using ConsoleContainer.Wpf.Repositories;
@@ -26,7 +26,7 @@ namespace ConsoleContainer.Wpf.ViewModels
         {
             dialogService = DialogService.Instance;
 
-            EventAggregator.Instance.SubscribeOnUIThread(this);
+            App.EventAggregator.SubscribeOnUIThread(this);
         }
 
         public async Task CreateProcessGroupAsync()
@@ -116,7 +116,7 @@ namespace ConsoleContainer.Wpf.ViewModels
             var vm = new EditProcessVM()
             {
                 ProcessName = process.ProcessInformation.ProcessName,
-                FilePath = process.ProcessInformation.FileName,
+                FilePath = process.ProcessInformation.FilePath,
                 Arguments = process.ProcessInformation.Arguments,
                 WorkingDirectory = process.ProcessInformation.WorkingDirectory
             };

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Management;
+using ConsoleContainer.ProcessManagement.Events;
 
 namespace ConsoleContainer.ProcessManagement
 {
@@ -55,7 +56,7 @@ namespace ConsoleContainer.ProcessManagement
                 State = ProcessState.Starting;
 
                 process = new Process();
-                process.StartInfo.FileName = ProcessDetails.FileName;
+                process.StartInfo.FileName = ProcessDetails.FilePath;
                 process.StartInfo.WorkingDirectory = ProcessDetails.WorkingDirectory;
                 process.StartInfo.Arguments = ProcessDetails.Arguments;
                 process.StartInfo.RedirectStandardInput = true;

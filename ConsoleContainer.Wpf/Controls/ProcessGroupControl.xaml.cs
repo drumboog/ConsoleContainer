@@ -1,4 +1,5 @@
-﻿using ConsoleContainer.Wpf.ViewModels;
+﻿using ConsoleContainer.Contracts;
+using ConsoleContainer.Wpf.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,7 +59,14 @@ namespace ConsoleContainer.Wpf.Controls
 
         private void CreateProcess_Click(object sender, RoutedEventArgs e)
         {
-            _ = ProcessContainer.CreateProcessAsync(ProcessGroup);
+            App.ProcessHub.AddProcess(new NewProcessDto()
+            {
+                ProcessLocator = Guid.NewGuid().ToString(),
+                FilePath = "File Path",
+                Arguments = "Arguments",
+                WorkingDirectory = "Working Directory"
+            });
+            //_ = ProcessContainer.CreateProcessAsync(ProcessGroup);
         }
     }
 }

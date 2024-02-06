@@ -1,4 +1,5 @@
 ﻿using ConsoleContainer.ProcessManagement;
+using ConsoleContainer.ProcessManagement.Events;
 using ConsoleContainer.Wpf.Domain;
 using System.Windows.Media;
 
@@ -37,7 +38,7 @@ namespace ConsoleContainer.Wpf.ViewModels
         internal ProcessVM(string processName, IProcessWrapper processWrapper)
         {
             process = processWrapper;
-            ProcessInformation = new ProcessInformation(processName, processWrapper.ProcessDetails.FileName, processWrapper.ProcessDetails.Arguments, process.ProcessDetails.WorkingDirectory);
+            ProcessInformation = new ProcessInformation(processName, processWrapper.ProcessDetails.FilePath, processWrapper.ProcessDetails.Arguments, process.ProcessDetails.WorkingDirectory);
         }
 
         public void Update(ProcessInformation processInformation)
@@ -73,7 +74,7 @@ namespace ConsoleContainer.Wpf.ViewModels
 
         private ProcessWrapper CreateProcessWrapper(ProcessInformation processInformation)
         {
-            var details = new ProcessDetails(Guid.NewGuid().ToString(), processInformation.FileName, processInformation.Arguments, processInformation.WorkingDirectory);
+            var details = new ProcessDetails(Guid.NewGuid().ToString(), processInformation.FilePath, processInformation.Arguments, processInformation.WorkingDirectory);
             var result = new ProcessWrapper(details);
             result.OutputDataReceived += Result_OutputDataReceived;
             result.StateChanged += Result_StateChanged;

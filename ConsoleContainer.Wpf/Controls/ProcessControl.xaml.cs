@@ -1,20 +1,9 @@
-﻿using ConsoleContainer.Wpf.Eventing;
+﻿using ConsoleContainer.Eventing;
+using ConsoleContainer.Wpf.Eventing;
 using ConsoleContainer.Wpf.Eventing.Events;
 using ConsoleContainer.Wpf.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ConsoleContainer.Wpf.Controls
 {
@@ -24,6 +13,7 @@ namespace ConsoleContainer.Wpf.Controls
     public partial class ProcessControl : UserControl
     {
         public static DependencyProperty ProcessProperty = DependencyProperty.Register("Process", typeof(ProcessVM), typeof(ProcessControl));
+        private IEventAggregator eventAggregator = App.EventAggregator;
 
         internal ProcessVM Process
         {
@@ -53,12 +43,12 @@ namespace ConsoleContainer.Wpf.Controls
 
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
-            _ = EventAggregator.Instance.PublishOnCurrentThreadAsync(new EditProcessEvent(Process));
+            _ = eventAggregator.PublishOnCurrentThreadAsync(new EditProcessEvent(Process));
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            _ = EventAggregator.Instance.PublishOnCurrentThreadAsync(new DeleteProcessEvent(Process));
+            _ = eventAggregator.PublishOnCurrentThreadAsync(new DeleteProcessEvent(Process));
         }
     }
 }

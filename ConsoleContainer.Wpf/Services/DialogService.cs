@@ -1,4 +1,5 @@
-﻿using ConsoleContainer.Wpf.Controls.Dialogs;
+﻿using ConsoleContainer.Eventing;
+using ConsoleContainer.Wpf.Controls.Dialogs;
 using ConsoleContainer.Wpf.Eventing;
 using ConsoleContainer.Wpf.Eventing.Events;
 using ConsoleContainer.Wpf.ViewModels.Dialogs;
@@ -8,6 +9,8 @@ namespace ConsoleContainer.Wpf.Services
 {
     public class DialogService : IDialogService
     {
+        private readonly IEventAggregator eventAggregator = App.EventAggregator;
+
         public static DialogService Instance { get; } = new DialogService();
 
         private DialogService() { }
@@ -69,7 +72,7 @@ namespace ConsoleContainer.Wpf.Services
 
             control.DialogClosed += closeHandler;
 
-            _ = EventAggregator.Instance.PublishOnUIThreadAsync(showDialogEvent);
+            _ = eventAggregator.PublishOnUIThreadAsync(showDialogEvent);
 
             return taskCompletionSource.Task;
         }

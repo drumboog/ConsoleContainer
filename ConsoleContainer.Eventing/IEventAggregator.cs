@@ -1,4 +1,12 @@
-﻿namespace ConsoleContainer.Wpf.Eventing
+﻿// Source obtained from https://github.com/Caliburn-Micro/Caliburn.Micro
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleContainer.Eventing
 {
     /// <summary>
     /// Enables loosely-coupled publication of and subscription to events.

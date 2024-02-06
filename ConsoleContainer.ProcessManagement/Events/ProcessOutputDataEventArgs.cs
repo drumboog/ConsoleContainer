@@ -1,4 +1,4 @@
-﻿namespace ConsoleContainer.ProcessManagement
+﻿namespace ConsoleContainer.ProcessManagement.Events
 {
     public class ProcessOutputDataEventArgs
     {

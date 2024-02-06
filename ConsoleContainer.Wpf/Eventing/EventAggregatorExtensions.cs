@@ -1,4 +1,6 @@
-﻿namespace ConsoleContainer.Wpf.Eventing
+﻿using ConsoleContainer.Eventing;
+
+namespace ConsoleContainer.Wpf.Eventing
 {
     public static class EventAggregatorExtensions
     {

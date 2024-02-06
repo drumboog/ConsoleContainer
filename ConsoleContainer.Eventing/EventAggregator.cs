@@ -1,12 +1,11 @@
-﻿using System.Reflection;
+﻿// Source obtained from https://github.com/Caliburn-Micro/Caliburn.Micro
 
-namespace ConsoleContainer.Wpf.Eventing
+using System.Reflection;
+
+namespace ConsoleContainer.Eventing
 {
     public class EventAggregator : IEventAggregator
     {
-        public static IEventAggregator Instance { get; } = new EventAggregator();
-
-
         private readonly List<Handler> _handlers = new List<Handler>();
 
         public virtual bool HandlerExistsFor(Type messageType)

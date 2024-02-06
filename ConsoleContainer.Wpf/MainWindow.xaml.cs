@@ -1,4 +1,4 @@
-﻿using ConsoleContainer.Wpf.Controls.Dialogs;
+﻿using ConsoleContainer.Eventing;
 using ConsoleContainer.Wpf.Eventing;
 using ConsoleContainer.Wpf.Eventing.Events;
 using ConsoleContainer.Wpf.ViewModels;
@@ -25,7 +25,7 @@ namespace ConsoleContainer.Wpf
                 viewModel.RefreshProcesses();
                 DataContext = viewModel;
 
-                EventAggregator.Instance.SubscribeOnUIThread(this);
+                App.EventAggregator.SubscribeOnUIThread(this);
             }
         }
 

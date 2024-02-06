@@ -3,14 +3,14 @@
     public class ProcessInformation
     {
         public string ProcessName { get; }
-        public string FileName { get; }
+        public string FilePath { get; }
         public string? Arguments { get; init; }
         public string? WorkingDirectory { get; init; }
 
-        public ProcessInformation(string processName, string fileName, string? arguments = null, string? workingDirectory = null)
+        public ProcessInformation(string processName, string filePath, string? arguments = null, string? workingDirectory = null)
         {
             ProcessName = processName;
-            FileName = fileName;
+            FilePath = filePath;
             Arguments = arguments;
             WorkingDirectory = workingDirectory;
         }

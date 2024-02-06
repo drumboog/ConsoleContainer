@@ -1,8 +1,18 @@
+using ConsoleContainer.Contracts;
+using ConsoleContainer.Eventing;
+using ConsoleContainer.ProcessManagement;
 using ConsoleContainer.WorkerService;
+using ConsoleContainer.WorkerService.Hubs;
+using ConsoleContainer.WorkerService.HubSubscriptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddTransient<IProcessHubSubscription, ProcessHubSubscription>();
+
+builder.Services.AddEventing();
+builder.Services.AddProcessManagement();
+builder.Services.AddSignalR();
 builder.Services.AddHostedService<ProcessWorker>();
 
 builder.Services.AddControllers();
@@ -24,5 +34,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ProcessHub>("/signalr/Process");
 
 app.Run();

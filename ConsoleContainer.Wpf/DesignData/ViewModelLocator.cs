@@ -1,4 +1,5 @@
 ﻿using ConsoleContainer.ProcessManagement;
+using ConsoleContainer.ProcessManagement.Events;
 using ConsoleContainer.Wpf.ViewModels;
 using System.Collections.ObjectModel;
 
