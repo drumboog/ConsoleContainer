@@ -22,9 +22,9 @@ namespace ConsoleContainer.Wpf.ViewModels
             set => SetProperty(value);
         }
 
-        public ProcessContainerVM()
+        public ProcessContainerVM(IDialogService dialogService)
         {
-            dialogService = DialogService.Instance;
+            this.dialogService = dialogService;
 
             App.EventAggregator.SubscribeOnUIThread(this);
         }

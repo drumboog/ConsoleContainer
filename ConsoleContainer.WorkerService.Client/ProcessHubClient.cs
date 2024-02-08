@@ -6,6 +6,8 @@ namespace ConsoleContainer.WorkerService.Client
 {
     public class ProcessHubClient : HubClient, IProcessHubClient
     {
+        private bool disposedValue;
+
         public ProcessHubClient(string hubConnectionUrl, string hubProxyName)
             : base(hubConnectionUrl, hubProxyName)
         {
@@ -14,6 +16,26 @@ namespace ConsoleContainer.WorkerService.Client
         public IDisposable CreateSubscription(IProcessHubSubscription hub)
         {
             return HubConnection.Register(hub);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    CloseHubAsync().Wait();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

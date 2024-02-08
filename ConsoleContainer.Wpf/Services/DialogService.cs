@@ -6,14 +6,8 @@ using System.Windows.Controls;
 
 namespace ConsoleContainer.Wpf.Services
 {
-    public class DialogService : IDialogService
+    public class DialogService(IEventAggregator eventAggregator) : IDialogService
     {
-        private readonly IEventAggregator eventAggregator = App.EventAggregator;
-
-        public static DialogService Instance { get; } = new DialogService();
-
-        private DialogService() { }
-
         public async Task<EditProcessGroupVM?> CreateProcessGroupAsync()
         {
             var vm = new EditProcessGroupVM();

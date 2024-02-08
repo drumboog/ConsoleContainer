@@ -1,6 +1,7 @@
 ﻿using ConsoleContainer.WorkerService.Client;
 using ConsoleContainer.Wpf.Eventing;
 using ConsoleContainer.Wpf.Hubs;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 
 namespace ConsoleContainer.Wpf
@@ -10,37 +11,33 @@ namespace ConsoleContainer.Wpf
     /// </summary>
     public partial class App : Application
     {
-        public static IEventAggregator EventAggregator { get; } = new EventAggregator();
+        public static IEventAggregator EventAggregator => ServiceProvider.GetRequiredService<IEventAggregator>();
 
-        private ProcessHubClient? processHubClient;
+        private static Lazy<IServiceProvider> serviceProvider = new Lazy<IServiceProvider>(CreateServiceProvider);
+        public static IServiceProvider ServiceProvider => serviceProvider.Value;
+
+        private IProcessHubClient ProcessHubClient => ServiceProvider.GetRequiredService<IProcessHubClient>();
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            _ = StartProcessHubClientAsync();
+            ProcessHubClient.StartAsync().Wait();
 
             base.OnStartup(e);
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
-            try
-            {
-                processHubClient?.CloseHubAsync()?.Wait();
-            }
-            catch { }
+            ProcessHubClient.Dispose();
 
             base.OnExit(e);
         }
 
-        private async Task StartProcessHubClientAsync()
+        private static IServiceProvider CreateServiceProvider()
         {
-            try
-            {
-                processHubClient = new ProcessHubClient("https://localhost:7276/signalr/Process", "Process");
-                processHubClient.CreateSubscription(new ProcessHubSubscription(EventAggregator));
-                await processHubClient.StartAsync();
-            }
-            catch { }
+            IServiceCollection services = new ServiceCollection();
+            services.AddWpf();
+
+            return services.BuildServiceProvider();
         }
     }
 }

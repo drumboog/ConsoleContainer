@@ -219,7 +219,11 @@ namespace ConsoleContainer.WorkerService.Services
         private void EnsureProcessIsStopped(Guid processLocator)
         {
             var p = processManager.GetProcess(processLocator);
-            if (p?.State != ProcessState.Idle)
+            if (p is null)
+            {
+                return;
+            }
+            if (p.State != ProcessState.Idle)
             {
                 throw new Exception($"Cannot update running process: {processLocator}");
             }

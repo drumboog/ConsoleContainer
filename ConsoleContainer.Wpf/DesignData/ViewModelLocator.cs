@@ -16,7 +16,7 @@ namespace ConsoleContainer.Wpf.DesignData
 
         private static ProcessContainerVM CreateProcessContainer()
         {
-            var result = new ProcessContainerVM();
+            var result = new ProcessContainerVM(null!);
             result.ProcessGroups.Add(
                 CreateProcessGroup(
                     "Application Processes",
