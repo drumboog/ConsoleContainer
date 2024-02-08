@@ -1,6 +1,6 @@
-﻿using System.Diagnostics;
+﻿using ConsoleContainer.ProcessManagement.Events;
+using System.Diagnostics;
 using System.Management;
-using ConsoleContainer.ProcessManagement.Events;
 
 namespace ConsoleContainer.ProcessManagement
 {
@@ -16,10 +16,9 @@ namespace ConsoleContainer.ProcessManagement
 
         public int? ProcessId => process?.Id;
 
-        public Guid ProcessLocator => processDetails.ProcessLocator;
+        public Guid ProcessLocator => ProcessDetails.ProcessLocator;
 
-        private ProcessDetails processDetails;
-        public ProcessDetails ProcessDetails => processDetails;
+        public ProcessDetails ProcessDetails { get; private set; }
 
         private ProcessState state;
         public ProcessState State
@@ -41,7 +40,7 @@ namespace ConsoleContainer.ProcessManagement
 
         public ProcessWrapper(ProcessDetails processDetails)
         {
-            this.processDetails = processDetails;
+            ProcessDetails = processDetails;
         }
 
         public Task StartProcessAsync()
@@ -101,6 +100,21 @@ namespace ConsoleContainer.ProcessManagement
                 process = null;
 
                 State = ProcessState.Idle;
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public Task UpdateProcessDetails(ProcessDetails processDetails)
+        {
+            lock(lockTarget)
+            {
+                if (process is not null)
+                {
+                    throw new Exception("Process cannot be updated if it is running");
+                }
+
+                ProcessDetails = processDetails;
             }
 
             return Task.CompletedTask;

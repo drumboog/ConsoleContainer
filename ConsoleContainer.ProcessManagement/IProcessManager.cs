@@ -10,5 +10,6 @@ namespace ConsoleContainer.ProcessManagement
         IEnumerable<IProcessWrapper> GetProcesses();
         IProcessWrapper? GetProcess(Guid processLocator);
         Task<IProcessWrapper> CreateProcessAsync(ProcessDetails processDetails);
+        Task<bool> DeleteProcessAsync(Guid processLocator);
     }
 }

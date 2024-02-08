@@ -89,6 +89,11 @@ namespace ConsoleContainer.Wpf.DesignData
             {
                 return Task.CompletedTask;
             }
+
+            public Task UpdateProcessDetails(ProcessDetails processDetails)
+            {
+                return Task.CompletedTask;
+            }
         }
     }
 }

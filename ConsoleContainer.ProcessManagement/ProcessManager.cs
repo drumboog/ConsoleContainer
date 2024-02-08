@@ -45,7 +45,22 @@ namespace ConsoleContainer.ProcessManagement
             return Task.FromResult(process);
         }
 
-        public async Task<bool> RemoveProcessAsync(Guid processLocator)
+        public Task UpdateProcessAsync(ProcessDetails processDetails)
+        {
+            var process = processes.AddOrUpdate(
+                processDetails.ProcessLocator,
+                locator => throw new Exception($"Process does not exist with process locator {locator}"),
+                (locator, pw) =>
+                {
+                    pw.UpdateProcessDetails(processDetails);
+                    return pw;
+                }
+            );
+
+            return Task.CompletedTask;
+        }
+
+        public async Task<bool> DeleteProcessAsync(Guid processLocator)
         {
             if (!processes.Remove(processLocator, out var process))
             {

@@ -66,10 +66,8 @@ namespace ConsoleContainer.WorkerService.Services
                     return false;
                 }
 
-                var processes = group.Processes.Select(p => processManager.GetProcess(p.ProcessLocator));
-                var runningProcesses = processes.Where(p => p is not null && p.State != ProcessState.Idle);
-                var stopTasks = runningProcesses.Select(p => p.StopProcessAsync());
-                await Task.WhenAll(stopTasks);
+                var deleteProcessTasks = group.Processes.Select(p => processManager.DeleteProcessAsync(p.ProcessLocator));
+                await Task.WhenAll(deleteProcessTasks);
 
                 var result = collection.DeleteGroup(processGroupId);
 
@@ -99,6 +97,8 @@ namespace ConsoleContainer.WorkerService.Services
                     throw new Exception($"Process already exists with locator {processInformation.ProcessLocator}");
                 }
 
+                await processManager.CreateProcessAsync(new ProcessDetails(processInformation.ProcessLocator.Required(), processInformation.FilePath.Required(), processInformation.Arguments, processInformation.WorkingDirectory));
+
                 var newProcess = group.AddProcess(processInformation.ProcessLocator.Required(), processInformation);
 
                 context.QueuePostProcessingAction(() => processHubSubscription.ProcessCreatedAsync(processGroupId, processMapper.Map(newProcess)));
@@ -119,6 +119,9 @@ namespace ConsoleContainer.WorkerService.Services
                 }
 
                 EnsureProcessIsStopped(processLocator);
+
+                var currentProcess = processManager.GetProcess(processLocator);
+                currentProcess?.UpdateProcessDetails(new ProcessDetails(processLocator, processInformation.FilePath.Required(), processInformation.Arguments, processInformation.WorkingDirectory));
 
                 var newProcess = group.ReplaceProcess(processLocator, processInformation);
                 if (newProcess is null)
@@ -144,6 +147,8 @@ namespace ConsoleContainer.WorkerService.Services
                 }
 
                 EnsureProcessIsStopped(processLocator);
+
+                await processManager.DeleteProcessAsync(processLocator);
 
                 var result = group.DeleteProcess(processLocator);
 

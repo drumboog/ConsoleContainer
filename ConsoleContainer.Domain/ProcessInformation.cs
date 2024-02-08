@@ -1,6 +1,6 @@
 ﻿using ConsoleContainer.Domain.Contracts;
 using ConsoleContainer.Kernel.Validation;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace ConsoleContainer.Domain
 {

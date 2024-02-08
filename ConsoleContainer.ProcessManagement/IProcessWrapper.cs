@@ -18,5 +18,7 @@ namespace ConsoleContainer.ProcessManagement
 
         Task StartProcessAsync();
         Task StopProcessAsync();
+
+        Task UpdateProcessDetails(ProcessDetails processDetails);
     }
 }
