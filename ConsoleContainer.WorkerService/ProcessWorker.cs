@@ -26,42 +26,24 @@ namespace ConsoleContainer.WorkerService
 
         private void ProcessManager_ProcessAdded(object? sender, ProcessAddedEventArgs e)
         {
-            try
-            {
-                var process = e.Process;
-                processHubSubscription.ProcessAdded(new ProcessDto()
-                {
-                    ProcessLocator = process.ProcessLocator,
-                    ProcessId = process.ProcessId,
-                    FilePath = process.ProcessDetails.FilePath,
-                    Arguments = process.ProcessDetails.Arguments,
-                    WorkingDirectory = process.ProcessDetails.WorkingDirectory
-                });
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "An exception was thrown while notifying of a added process: {0}", e.Process.ProcessLocator);
-            }
+            var process = e.Process;
+            process.OutputDataReceived += Process_OutputDataReceived;
         }
 
         private void ProcessManager_ProcessRemoved(object? sender, ProcessRemovedEventArgs e)
         {
-            try
+            var process = e.Process;
+            process.OutputDataReceived -= Process_OutputDataReceived;
+        }
+
+        private void Process_OutputDataReceived(object? sender, ProcessOutputDataEventArgs e)
+        {
+            logger.LogInformation($"Sending output data to process {e.ProcessDetails.ProcessLocator}: {e.Data}");
+            _ = processHubSubscription.ProcessOutputDataReceivedAsync(e.ProcessDetails.ProcessLocator, new ProcessOutputDataDto()
             {
-                var process = e.Process;
-                processHubSubscription.ProcessRemoved(new ProcessDto()
-                {
-                    ProcessLocator = process.ProcessLocator,
-                    ProcessId = process.ProcessId,
-                    FilePath = process.ProcessDetails.FilePath,
-                    Arguments = process.ProcessDetails.Arguments,
-                    WorkingDirectory = process.ProcessDetails.WorkingDirectory
-                });
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "An exception was thrown while notifying of a removed process: {0}", e.Process.ProcessLocator);
-            }
+                Data = e.Data.Data,
+                IsProcessError = e.Data.IsProcessError
+            });
         }
     }
 }

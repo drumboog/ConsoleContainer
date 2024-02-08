@@ -9,14 +9,14 @@ namespace ConsoleContainer.ProcessManagement
 
         int? ProcessId { get; }
 
-        string ProcessLocator { get; }
+        Guid ProcessLocator { get; }
         ProcessDetails ProcessDetails { get; }
 
         ProcessState State { get; }
 
         IReadOnlyCollection<ProcessOutputData> OutputData { get; }
 
-        void StartProcess();
-        void StopProcess();
+        Task StartProcessAsync();
+        Task StopProcessAsync();
     }
 }

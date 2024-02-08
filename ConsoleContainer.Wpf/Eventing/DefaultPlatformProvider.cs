@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// Source based on https://github.com/Caliburn-Micro/Caliburn.Micro
 
 namespace ConsoleContainer.Wpf.Eventing
 {

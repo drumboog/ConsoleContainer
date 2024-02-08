@@ -2,10 +2,12 @@
 {
     public class ProcessOutputDataEventArgs
     {
+        public ProcessDetails ProcessDetails { get; }
         public ProcessOutputData Data { get; }
 
-        public ProcessOutputDataEventArgs(ProcessOutputData data)
+        public ProcessOutputDataEventArgs(ProcessDetails processDetails, ProcessOutputData data)
         {
+            ProcessDetails = processDetails;
             Data = data;
         }
     }

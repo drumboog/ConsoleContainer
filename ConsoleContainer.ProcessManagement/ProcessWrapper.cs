@@ -16,7 +16,7 @@ namespace ConsoleContainer.ProcessManagement
 
         public int? ProcessId => process?.Id;
 
-        public string ProcessLocator => processDetails.ProcessLocator;
+        public Guid ProcessLocator => processDetails.ProcessLocator;
 
         private ProcessDetails processDetails;
         public ProcessDetails ProcessDetails => processDetails;
@@ -44,13 +44,13 @@ namespace ConsoleContainer.ProcessManagement
             this.processDetails = processDetails;
         }
 
-        public void StartProcess()
+        public Task StartProcessAsync()
         {
             lock (lockTarget)
             {
                 if (process is not null)
                 {
-                    return;
+                    return Task.CompletedTask;
                 }
 
                 State = ProcessState.Starting;
@@ -76,15 +76,17 @@ namespace ConsoleContainer.ProcessManagement
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
             }
+
+            return Task.CompletedTask;
         }
 
-        public void StopProcess()
+        public Task StopProcessAsync()
         {
             lock (lockTarget)
             {
                 if (process is null)
                 {
-                    return;
+                    return Task.CompletedTask;
                 }
 
                 State = ProcessState.Stopping;
@@ -100,6 +102,8 @@ namespace ConsoleContainer.ProcessManagement
 
                 State = ProcessState.Idle;
             }
+
+            return Task.CompletedTask;
         }
 
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
@@ -114,13 +118,13 @@ namespace ConsoleContainer.ProcessManagement
 
         private void Process_Exited(object? sender, EventArgs e)
         {
-            StopProcess();
+            _ = StopProcessAsync();
         }
 
         private void AddOutputData(ProcessOutputData outputData)
         {
             this.outputData.Add(outputData);
-            OnOutputDataReceived(new ProcessOutputDataEventArgs(outputData));
+            OnOutputDataReceived(new ProcessOutputDataEventArgs(ProcessDetails, outputData));
         }
 
         protected virtual void OnOutputDataReceived(ProcessOutputDataEventArgs e)

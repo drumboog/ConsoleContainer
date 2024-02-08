@@ -1,14 +1,16 @@
-﻿namespace ConsoleContainer.Wpf.Eventing.Events
+﻿using ConsoleContainer.Contracts;
+
+namespace ConsoleContainer.Wpf.Eventing.Events
 {
     public class ProcessStartedEvent
     {
-        public string ProcessLocator { get; }
-        public int ProcessId { get; }
+        public Guid ProcessGroupId { get; }
+        public ProcessInformationDto ProcessInformation { get; }
 
-        public ProcessStartedEvent(string processLocator, int processId)
+        public ProcessStartedEvent(Guid processGroupId, ProcessInformationDto processInformation)
         {
-            ProcessLocator = processLocator;
-            ProcessId = processId;
+            ProcessGroupId = processGroupId;
+            ProcessInformation = processInformation;
         }
     }
 }

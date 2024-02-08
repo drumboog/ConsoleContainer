@@ -1,4 +1,4 @@
-﻿using ConsoleContainer.Eventing;
+﻿// Source based on https://github.com/Caliburn-Micro/Caliburn.Micro
 
 namespace ConsoleContainer.Wpf.Eventing
 {

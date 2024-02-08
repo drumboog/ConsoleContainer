@@ -1,35 +1,35 @@
 using ConsoleContainer.Contracts;
+using ConsoleContainer.WorkerService.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ConsoleContainer.WorkerService.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class ProcessController : ControllerBase
+    [Route("ProcessGroup/{processGroupId}/[controller]")]
+    public class ProcessController(
+        ILogger<ProcessController> logger,
+        IProcessGroupService processGroupService
+    ) : ControllerBase
     {
-        private readonly ILogger<ProcessController> _logger;
-
-        public ProcessController(ILogger<ProcessController> logger)
+        [HttpPost(Name = "CreateProcess")]
+        public async Task Create(Guid processGroupId, ProcessInformationDto process)
         {
-            _logger = logger;
+            logger.LogInformation("Creating Process");
+            await processGroupService.CreateProcessAsync(processGroupId, process);
         }
 
-        [HttpGet(Name = "GetProcesses")]
-        public IEnumerable<ProcessDto> Get()
+        [HttpPut("{processLocator}", Name = "UpdateProcess")]
+        public async Task Update(Guid processGroupId, Guid processLocator, ProcessInformationUpdateDto process)
         {
-            var rand = new Random();
-            return Enumerable.Range(1, 5).Select(index => {
-                var id = rand.Next(10000, 100000);
-                return new ProcessDto
-                {
-                    ProcessLocator = $"Process{id}",
-                    ProcessId = id,
-                    FilePath = $@"C:\Processes\{id}\{id}.exe",
-                    Arguments = $"Argument {id}",
-                    WorkingDirectory = $@"C:\Processes\{id}"
-                };
-            })
-            .ToArray();
+            logger.LogInformation("Updating Process");
+            await processGroupService.UpdateProcessAsync(processGroupId, processLocator, process);
+        }
+
+        [HttpDelete("{processLocator}", Name = "DeleteProcess")]
+        public async Task Delete(Guid processGroupId, Guid processLocator)
+        {
+            logger.LogInformation("Deleting Process");
+            await processGroupService.DeleteProcessAsync(processGroupId, processLocator);
         }
     }
 }

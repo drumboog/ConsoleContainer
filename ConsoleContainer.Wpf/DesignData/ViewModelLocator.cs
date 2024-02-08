@@ -56,7 +56,7 @@ namespace ConsoleContainer.Wpf.DesignData
                 displayName,
                 new MockProcessWrapper()
                 {
-                    ProcessDetails = new ProcessDetails(Guid.NewGuid().ToString(), filePath, arguments, workingDirectory),
+                    ProcessDetails = new ProcessDetails(Guid.NewGuid(), filePath, arguments, workingDirectory),
                     ProcessId = pid,
                     State = state
                 }
@@ -71,21 +71,23 @@ namespace ConsoleContainer.Wpf.DesignData
 
             public int? ProcessId { get; set; }
 
-            public string ProcessLocator { get; } = Guid.NewGuid().ToString();
+            public Guid ProcessLocator { get; } = Guid.NewGuid();
 
-            public ProcessDetails ProcessDetails { get; set; } = new ProcessDetails(Guid.NewGuid().ToString(), string.Empty);
+            public ProcessDetails ProcessDetails { get; set; } = new ProcessDetails(Guid.NewGuid(), string.Empty);
 
             public ProcessState State { get; set; }
 
             public List<ProcessOutputData> OutputData = new List<ProcessOutputData>();
             IReadOnlyCollection<ProcessOutputData> IProcessWrapper.OutputData => OutputData;
 
-            public void StartProcess()
+            public Task StartProcessAsync()
             {
+                return Task.CompletedTask;
             }
 
-            public void StopProcess()
+            public Task StopProcessAsync()
             {
+                return Task.CompletedTask;
             }
         }
     }

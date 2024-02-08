@@ -3,11 +3,9 @@ using TypedSignalR.Client;
 
 namespace ConsoleContainer.WorkerService.Client
 {
-    public abstract class HubClient<T>
+    public abstract class HubClient
     {
         protected HubConnection HubConnection { get; }
-
-        protected T Hub { get; }
 
         public string HubConnectionUrl { get; }
         public string HubProxyName { get; }
@@ -23,10 +21,7 @@ namespace ConsoleContainer.WorkerService.Client
             HubProxyName = hubProxyName;
 
             HubConnection = CreateConnection();
-            Hub = CreateHub(HubConnection);
         }
-
-        protected abstract T CreateHub(HubConnection connection);
 
         private HubConnection CreateConnection()
         {
@@ -81,5 +76,18 @@ namespace ConsoleContainer.WorkerService.Client
             //HubClientEvents.Log.ClientEvents("_hubConnection_Reconnected New State:" + _hubConnection.State + " " + _hubConnection.ConnectionId);
             return Task.CompletedTask;
         }
+    }
+
+    public abstract class HubClient<T> : HubClient
+    {
+        protected T Hub { get; }
+
+        protected HubClient(string hubConnectionUrl, string hubProxyName)
+            : base(hubConnectionUrl, hubProxyName)
+        {
+            Hub = CreateHub(HubConnection);
+        }
+
+        protected abstract T CreateHub(HubConnection connection);
     }
 }

@@ -5,7 +5,7 @@ namespace ConsoleContainer.ProcessManagement
 {
     public class ProcessManager : IProcessManager
     {
-        private readonly ConcurrentDictionary<string, IProcessWrapper> processes = new();
+        private readonly ConcurrentDictionary<Guid, IProcessWrapper> processes = new();
         private readonly IProcessWrapperFactory processWrapperFactory;
 
         public event EventHandler<ProcessAddedEventArgs>? ProcessAdded;
@@ -26,13 +26,13 @@ namespace ConsoleContainer.ProcessManagement
             return processes.Values;
         }
 
-        public IProcessWrapper? GetProcess(string processLocator)
+        public IProcessWrapper? GetProcess(Guid processLocator)
         {
             processes.TryGetValue(processLocator, out var p);
             return p;
         }
 
-        public IProcessWrapper CreateProcess(ProcessDetails processDetails)
+        public Task<IProcessWrapper> CreateProcessAsync(ProcessDetails processDetails)
         {
             var process = processes.AddOrUpdate(
                 processDetails.ProcessLocator,
@@ -42,17 +42,17 @@ namespace ConsoleContainer.ProcessManagement
 
             OnProcessAdded(new ProcessAddedEventArgs(process));
 
-            return process;
+            return Task.FromResult(process);
         }
 
-        public bool RemoveProcess(string processLocator)
+        public async Task<bool> RemoveProcessAsync(Guid processLocator)
         {
             if (!processes.Remove(processLocator, out var process))
             {
                 return false;
             }
 
-            process.StopProcess();
+            await process.StopProcessAsync();
 
             OnProcessRemoved(new ProcessRemovedEventArgs(process));
 

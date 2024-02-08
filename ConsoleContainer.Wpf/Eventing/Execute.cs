@@ -1,4 +1,6 @@
-﻿namespace ConsoleContainer.Wpf.Eventing
+﻿// Source based on https://github.com/Caliburn-Micro/Caliburn.Micro
+
+namespace ConsoleContainer.Wpf.Eventing
 {
     /// <summary>
     ///   Enables easy marshalling of code to the UI thread.

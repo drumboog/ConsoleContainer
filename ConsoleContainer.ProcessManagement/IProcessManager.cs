@@ -8,7 +8,7 @@ namespace ConsoleContainer.ProcessManagement
         event EventHandler<ProcessRemovedEventArgs>? ProcessRemoved;
 
         IEnumerable<IProcessWrapper> GetProcesses();
-        IProcessWrapper? GetProcess(string processLocator);
-        IProcessWrapper CreateProcess(ProcessDetails processDetails);
+        IProcessWrapper? GetProcess(Guid processLocator);
+        Task<IProcessWrapper> CreateProcessAsync(ProcessDetails processDetails);
     }
 }

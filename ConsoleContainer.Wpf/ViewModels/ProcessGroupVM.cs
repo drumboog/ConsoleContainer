@@ -1,4 +1,4 @@
-﻿using ConsoleContainer.Wpf.Domain;
+﻿using ConsoleContainer.Domain;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -60,28 +60,22 @@ namespace ConsoleContainer.Wpf.ViewModels
             OnPropertyChanged(nameof(TotalProcesses));
         }
 
-        public void StartAll()
+        public async Task StartAllAsync()
         {
-            foreach (ProcessVM process in Processes)
-            {
-                process.StartProcess();
-            }
+            var tasks = Processes.Select(x => x.StartProcessAsync());
+            await Task.WhenAll(tasks);
         }
 
-        public void StopAll()
+        public async Task StopAllAsync()
         {
-            foreach (ProcessVM process in Processes)
-            {
-                process.StopProcess();
-            }
+            var tasks = Processes.Select(x => x.StopProcessAsync());
+            await Task.WhenAll(tasks);
         }
 
-        public void ClearAll()
+        public async Task ClearAllAsync()
         {
-            foreach (ProcessVM process in Processes)
-            {
-                process.ClearOutput();
-            }
+            var tasks = Processes.Select(x => x.ClearOutputAsync());
+            await Task.WhenAll(tasks);
         }
 
         public void AddProcess(ProcessInformation processInformation)

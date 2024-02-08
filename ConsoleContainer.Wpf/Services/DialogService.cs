@@ -1,5 +1,4 @@
-﻿using ConsoleContainer.Eventing;
-using ConsoleContainer.Wpf.Controls.Dialogs;
+﻿using ConsoleContainer.Wpf.Controls.Dialogs;
 using ConsoleContainer.Wpf.Eventing;
 using ConsoleContainer.Wpf.Eventing.Events;
 using ConsoleContainer.Wpf.ViewModels.Dialogs;

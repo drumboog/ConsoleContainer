@@ -1,5 +1,4 @@
-﻿using ConsoleContainer.Eventing;
-using ConsoleContainer.Wpf.Eventing;
+﻿using ConsoleContainer.Wpf.Eventing;
 using ConsoleContainer.Wpf.Eventing.Events;
 using ConsoleContainer.Wpf.ViewModels;
 using System.ComponentModel;
@@ -22,7 +21,7 @@ namespace ConsoleContainer.Wpf
             viewModel = new ProcessContainerVM();
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                viewModel.RefreshProcesses();
+                _ = viewModel.RefreshProcessesAsync();
                 DataContext = viewModel;
 
                 App.EventAggregator.SubscribeOnUIThread(this);

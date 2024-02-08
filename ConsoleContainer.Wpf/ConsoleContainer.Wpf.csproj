@@ -44,8 +44,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ConsoleContainer.Contracts\ConsoleContainer.Contracts.csproj" />
-    <ProjectReference Include="..\ConsoleContainer.Eventing\ConsoleContainer.Eventing.csproj" />
+    <ProjectReference Include="..\ConsoleContainer.Domain\ConsoleContainer.Domain.csproj" />
     <ProjectReference Include="..\ConsoleContainer.ProcessManagement\ConsoleContainer.ProcessManagement.csproj" />
+    <ProjectReference Include="..\ConsoleContainer.Repositories\ConsoleContainer.Repositories.csproj" />
     <ProjectReference Include="..\ConsoleContainer.WorkerService.Client\ConsoleContainer.WorkerService.Client.csproj" />
   </ItemGroup>
 

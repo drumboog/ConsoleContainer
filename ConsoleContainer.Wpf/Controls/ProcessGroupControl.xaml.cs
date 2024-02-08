@@ -1,19 +1,6 @@
-﻿using ConsoleContainer.Contracts;
-using ConsoleContainer.Wpf.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ConsoleContainer.Wpf.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ConsoleContainer.Wpf.Controls
 {
@@ -44,29 +31,22 @@ namespace ConsoleContainer.Wpf.Controls
 
         private void StartAll_Click(object sender, RoutedEventArgs e)
         {
-            ProcessGroup.StartAll();
+            _ = ProcessGroup.StartAllAsync();
         }
 
         private void StopAll_Click(object sender, RoutedEventArgs e)
         {
-            ProcessGroup.StopAll();
+            _ = ProcessGroup.StopAllAsync();
         }
 
         private void ClearAll_Click(object sender, RoutedEventArgs e)
         {
-            ProcessGroup.ClearAll();
+            _ = ProcessGroup.ClearAllAsync();
         }
 
         private void CreateProcess_Click(object sender, RoutedEventArgs e)
         {
-            App.ProcessHub.AddProcess(new NewProcessDto()
-            {
-                ProcessLocator = Guid.NewGuid().ToString(),
-                FilePath = "File Path",
-                Arguments = "Arguments",
-                WorkingDirectory = "Working Directory"
-            });
-            //_ = ProcessContainer.CreateProcessAsync(ProcessGroup);
+            _ = ProcessContainer.CreateProcessAsync(ProcessGroup);
         }
     }
 }

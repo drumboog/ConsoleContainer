@@ -1,8 +1,8 @@
-﻿using ConsoleContainer.Eventing;
-using ConsoleContainer.Wpf.Domain;
+﻿using ConsoleContainer.Contracts;
+using ConsoleContainer.Domain;
+using ConsoleContainer.Repositories;
 using ConsoleContainer.Wpf.Eventing;
 using ConsoleContainer.Wpf.Eventing.Events;
-using ConsoleContainer.Wpf.Repositories;
 using ConsoleContainer.Wpf.Services;
 using ConsoleContainer.Wpf.ViewModels.Dialogs;
 using System.Collections.ObjectModel;
@@ -73,11 +73,19 @@ namespace ConsoleContainer.Wpf.ViewModels
                 return;
             }
 
-            processGroup.AddProcess(new ProcessInformation(result.ProcessName, result.FilePath, result.Arguments, result.WorkingDirectory));
+            processGroup.AddProcess(new ProcessInformation(Guid.NewGuid(), result.ProcessName, result.FilePath, result.Arguments, result.WorkingDirectory));
             await SaveAsync();
+
+            //await App.ProcessHub.AddProcessAsync(new NewProcessDto()
+            //{
+            //    ProcessLocator = Guid.NewGuid(),
+            //    FilePath = result.FilePath,
+            //    Arguments = result.Arguments,
+            //    WorkingDirectory = result.WorkingDirectory
+            //});
         }
 
-        public void RefreshProcesses()
+        public async Task RefreshProcessesAsync()
         {
             var runningProcesses = ProcessGroups.SelectMany(x => x.Processes).Where(x => x.IsRunning);
             if (runningProcesses.Any())
@@ -86,7 +94,7 @@ namespace ConsoleContainer.Wpf.ViewModels
             }
 
             var repo = new ProcessGroupCollectionRepository();
-            var processGroups = repo.Read();
+            var processGroups = await repo.ReadAsync();
 
             var newProcessGroups = new List<ProcessGroupVM>();
             foreach (var processGroup in processGroups.ProcessGroups)
@@ -125,7 +133,7 @@ namespace ConsoleContainer.Wpf.ViewModels
                 return;
             }
 
-            process.Update(new ProcessInformation(vm.ProcessName, vm.FilePath, vm.Arguments, vm.WorkingDirectory));
+            process.Update(new ProcessInformation(process.ProcessInformation.ProcessLocator, vm.ProcessName, vm.FilePath, vm.Arguments, vm.WorkingDirectory));
             await SaveAsync();
         }
 
@@ -150,10 +158,10 @@ namespace ConsoleContainer.Wpf.ViewModels
             var collection = new ProcessGroupCollection();
             foreach (var group in ProcessGroups)
             {
-                var newGroup = collection.AddGroup(group.GroupName);
+                var newGroup = collection.AddGroup(Guid.NewGuid(), group.GroupName);
                 foreach (var process in group.Processes)
                 {
-                    newGroup.AddProcess(process.ProcessInformation);
+                    //newGroup.AddProcess(process.ProcessInformation.ProcessLocator, process.ProcessInformation);
                 }
             }
 

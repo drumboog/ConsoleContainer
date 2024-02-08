@@ -2,9 +2,14 @@
 {
     public interface IProcessHubSubscription
     {
-        Task ProcessAdded(ProcessDto process);
-        Task ProcessStarted(ProcessDto process);
-        Task ProcessStopped(ProcessDto process);
-        Task ProcessRemoved(ProcessDto process);
+        Task ProcessGroupCreatedAsync(ProcessGroupDto processGroup);
+        Task ProcessGroupUpdatedAsync(ProcessGroupDto processGroup);
+        Task ProcessGroupDeletedAsync(Guid processGroupId);
+        Task ProcessCreatedAsync(Guid processGroupId, ProcessInformationDto process);
+        Task ProcessUpdatedAsync(Guid processGroupId, ProcessInformationDto process);
+        Task ProcessStartedAsync(Guid processGroupId, ProcessInformationDto process);
+        Task ProcessStoppedAsync(Guid processGroupId, ProcessInformationDto process);
+        Task ProcessDeletedAsync(Guid processGroupId, Guid processLocator);
+        Task ProcessOutputDataReceivedAsync(Guid processLocator, ProcessOutputDataDto data);
     }
 }

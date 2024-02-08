@@ -1,5 +1,4 @@
-﻿using ConsoleContainer.Eventing;
-using ConsoleContainer.Wpf.Eventing;
+﻿using ConsoleContainer.Wpf.Eventing;
 using ConsoleContainer.Wpf.Eventing.Events;
 using ConsoleContainer.Wpf.ViewModels;
 using System.Windows;
@@ -28,17 +27,17 @@ namespace ConsoleContainer.Wpf.Controls
 
         private void Start_Click(object sender, RoutedEventArgs e)
         {
-            Process.StartProcess();
+            _ = Process.StartProcessAsync();
         }
 
         private void Stop_Click(object sender, RoutedEventArgs e)
         {
-            Process.StopProcess();
+            _ = Process.StopProcessAsync();
         }
 
         private void ClearOutput_Click(object sender, RoutedEventArgs e)
         {
-            Process.ClearOutput();
+            _ = Process.ClearOutputAsync();
         }
 
         private void Edit_Click(object sender, RoutedEventArgs e)
