@@ -12,7 +12,7 @@ namespace ConsoleContainer.Wpf.Controls
     public partial class ProcessControl : UserControl
     {
         public static DependencyProperty ProcessProperty = DependencyProperty.Register("Process", typeof(ProcessVM), typeof(ProcessControl));
-        private IEventAggregator eventAggregator = App.EventAggregator;
+        private IEventAggregator eventAggregator = ServiceLocator.GetService<IEventAggregator>();
 
         internal ProcessVM Process
         {

@@ -19,13 +19,13 @@ namespace ConsoleContainer.Wpf
         {
             InitializeComponent();
 
-            viewModel = App.ServiceProvider.GetRequiredService<ProcessContainerVM>();
+            viewModel = ServiceLocator.GetService<ProcessContainerVM>();
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
                 _ = viewModel.RefreshProcessesAsync();
                 DataContext = viewModel;
 
-                App.EventAggregator.SubscribeOnUIThread(this);
+                ServiceLocator.GetService<IEventAggregator>().SubscribeOnUIThread(this);
             }
         }
 

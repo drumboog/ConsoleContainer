@@ -1,6 +1,9 @@
 ﻿using ConsoleContainer.ProcessManagement;
 using ConsoleContainer.ProcessManagement.Events;
+using ConsoleContainer.Wpf.Eventing;
+using ConsoleContainer.Wpf.Services;
 using ConsoleContainer.Wpf.ViewModels;
+using ConsoleContainer.Wpf.ViewModels.Dialogs;
 using System.Collections.ObjectModel;
 
 namespace ConsoleContainer.Wpf.DesignData
@@ -16,7 +19,7 @@ namespace ConsoleContainer.Wpf.DesignData
 
         private static ProcessContainerVM CreateProcessContainer()
         {
-            var result = new ProcessContainerVM(null!);
+            var result = new ProcessContainerVM(new MockDialogService(), new MockEventAggregator());
             result.ProcessGroups.Add(
                 CreateProcessGroup(
                     "Application Processes",
@@ -93,6 +96,55 @@ namespace ConsoleContainer.Wpf.DesignData
             public Task UpdateProcessDetails(ProcessDetails processDetails)
             {
                 return Task.CompletedTask;
+            }
+        }
+
+        private class MockDialogService : IDialogService
+        {
+            public Task<EditProcessVM?> CreateProcessAsync()
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<EditProcessGroupVM?> CreateProcessGroupAsync()
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<bool> EditProcessAsync(EditProcessVM process)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<bool> EditProcessGroupAsync(EditProcessGroupVM processGroup)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<bool> ShowConfirmationDialogAsync(ConfirmationDialogVM confirmationDialog)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private class MockEventAggregator : IEventAggregator
+        {
+            public bool HandlerExistsFor(Type messageType)
+            {
+                return true;
+            }
+
+            public Task PublishAsync(object message, Func<Func<Task>, Task> marshal, CancellationToken cancellationToken = default)
+            {
+                return Task.CompletedTask;
+            }
+
+            public void Subscribe(object subscriber, Func<Func<Task>, Task> marshal)
+            {
+            }
+
+            public void Unsubscribe(object subscriber)
+            {
             }
         }
     }

@@ -1,5 +1,4 @@
-﻿using ConsoleContainer.Contracts;
-using ConsoleContainer.Domain;
+﻿using ConsoleContainer.Domain;
 using ConsoleContainer.Repositories;
 using ConsoleContainer.Wpf.Eventing;
 using ConsoleContainer.Wpf.Eventing.Events;
@@ -22,11 +21,11 @@ namespace ConsoleContainer.Wpf.ViewModels
             set => SetProperty(value);
         }
 
-        public ProcessContainerVM(IDialogService dialogService)
+        public ProcessContainerVM(IDialogService dialogService, IEventAggregator eventAggregator)
         {
             this.dialogService = dialogService;
 
-            App.EventAggregator.SubscribeOnUIThread(this);
+            eventAggregator.SubscribeOnUIThread(this);
         }
 
         public async Task CreateProcessGroupAsync()
@@ -75,14 +74,6 @@ namespace ConsoleContainer.Wpf.ViewModels
 
             processGroup.AddProcess(new ProcessInformation(Guid.NewGuid(), result.ProcessName, result.FilePath, result.Arguments, result.WorkingDirectory));
             await SaveAsync();
-
-            //await App.ProcessHub.AddProcessAsync(new NewProcessDto()
-            //{
-            //    ProcessLocator = Guid.NewGuid(),
-            //    FilePath = result.FilePath,
-            //    Arguments = result.Arguments,
-            //    WorkingDirectory = result.WorkingDirectory
-            //});
         }
 
         public async Task RefreshProcessesAsync()
