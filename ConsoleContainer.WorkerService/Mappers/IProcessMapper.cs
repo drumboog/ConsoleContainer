@@ -5,6 +5,6 @@ namespace ConsoleContainer.WorkerService.Mappers
 {
     public interface IProcessMapper
     {
-        ProcessInformationDto Map(ProcessInformation pi);
+        ProcessInformationDto Map(Guid processGroupId, ProcessInformation pi);
     }
 }

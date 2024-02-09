@@ -10,6 +10,6 @@
         Task ProcessStartedAsync(Guid processGroupId, ProcessInformationDto process);
         Task ProcessStoppedAsync(Guid processGroupId, ProcessInformationDto process);
         Task ProcessDeletedAsync(Guid processGroupId, Guid processLocator);
-        Task ProcessOutputDataReceivedAsync(Guid processLocator, ProcessOutputDataDto data);
+        Task ProcessOutputDataReceivedAsync(Guid processGroupId, Guid processLocator, ProcessOutputDataDto data);
     }
 }

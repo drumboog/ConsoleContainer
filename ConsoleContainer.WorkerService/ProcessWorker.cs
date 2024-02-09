@@ -9,7 +9,7 @@ namespace ConsoleContainer.WorkerService
     public sealed class ProcessWorker(
         ILogger<ProcessWorker> logger,
         IProcessHubSubscription processHubSubscription,
-        IProcessManager processManager,
+        IProcessManager<ProcessKey> processManager,
         IProcessGroupService processGroupService
     ) : BackgroundService
     {
@@ -32,31 +32,39 @@ namespace ConsoleContainer.WorkerService
         private async Task InitializeProcessesAsync(CancellationToken stoppingToken)
         {
             var groups = await processGroupService.GetProcessGroupsAsync(stoppingToken);
-            var processes = groups.SelectMany(g => g.Processes);
+            var processDetails = from g in groups
+                                 from p in g.Processes
+                                 select new
+                                 {
+                                     Key = new ProcessKey(g.ProcessGroupId, p.ProcessLocator),
+                                     Details = new ProcessDetails(
+                                         p.FilePath.Required(),
+                                         p.Arguments,
+                                         p.WorkingDirectory
+                                     )
+                                 };
 
-            var processDetails = processes.Select(p => new ProcessDetails(p.ProcessLocator.Required(), p.FilePath.Required(), p.Arguments, p.WorkingDirectory));
-
-            var tasks = processDetails.Select(d => processManager.CreateProcessAsync(d));
+            var tasks = processDetails.Select(d => processManager.CreateProcessAsync(d.Key, d.Details));
 
             await Task.WhenAll(tasks);
         }
 
-        private void ProcessManager_ProcessAdded(object? sender, ProcessAddedEventArgs e)
+        private void ProcessManager_ProcessAdded(object? sender, ProcessAddedEventArgs<ProcessKey> e)
         {
             var process = e.Process;
             process.OutputDataReceived += Process_OutputDataReceived;
         }
 
-        private void ProcessManager_ProcessRemoved(object? sender, ProcessRemovedEventArgs e)
+        private void ProcessManager_ProcessRemoved(object? sender, ProcessRemovedEventArgs<ProcessKey> e)
         {
             var process = e.Process;
             process.OutputDataReceived -= Process_OutputDataReceived;
         }
 
-        private void Process_OutputDataReceived(object? sender, ProcessOutputDataEventArgs e)
+        private void Process_OutputDataReceived(object? sender, ProcessOutputDataEventArgs<ProcessKey> e)
         {
-            logger.LogInformation($"Sending output data to process {e.ProcessDetails.ProcessLocator}: {e.Data}");
-            _ = processHubSubscription.ProcessOutputDataReceivedAsync(e.ProcessDetails.ProcessLocator, new ProcessOutputDataDto()
+            logger.LogInformation($"Sending output data to process {e.ProcessKey}: {e.Data}");
+            _ = processHubSubscription.ProcessOutputDataReceivedAsync(e.ProcessKey.ProcessGroupId, e.ProcessKey.ProcessLocator, new ProcessOutputDataDto()
             {
                 Data = e.Data.Data,
                 IsProcessError = e.Data.IsProcessError

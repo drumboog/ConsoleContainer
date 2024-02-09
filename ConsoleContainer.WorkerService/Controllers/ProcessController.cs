@@ -25,6 +25,20 @@ namespace ConsoleContainer.WorkerService.Controllers
             await processGroupService.UpdateProcessAsync(processGroupId, processLocator, process);
         }
 
+        [HttpPut("{processLocator}/start", Name = "StartProcess")]
+        public async Task Start(Guid processGroupId, Guid processLocator)
+        {
+            logger.LogInformation("Starting Process");
+            await processGroupService.StartProcessAsync(processGroupId, processLocator);
+        }
+
+        [HttpPut("{processLocator}/stop", Name = "StopProcess")]
+        public async Task Stop(Guid processGroupId, Guid processLocator)
+        {
+            logger.LogInformation("Stopping Process");
+            await processGroupService.StopProcessAsync(processGroupId, processLocator);
+        }
+
         [HttpDelete("{processLocator}", Name = "DeleteProcess")]
         public async Task Delete(Guid processGroupId, Guid processLocator)
         {

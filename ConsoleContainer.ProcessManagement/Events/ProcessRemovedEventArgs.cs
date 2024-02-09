@@ -1,10 +1,10 @@
 ﻿namespace ConsoleContainer.ProcessManagement.Events
 {
-    public class ProcessRemovedEventArgs
+    public class ProcessRemovedEventArgs<TKey>
     {
-        public IProcessWrapper Process { get; }
+        public IProcessWrapper<TKey> Process { get; }
 
-        public ProcessRemovedEventArgs(IProcessWrapper process)
+        public ProcessRemovedEventArgs(IProcessWrapper<TKey> process)
         {
             Process = process;
         }

@@ -1,4 +1,4 @@
-﻿using ConsoleContainer.ProcessManagement;
+﻿using ConsoleContainer.Contracts;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;

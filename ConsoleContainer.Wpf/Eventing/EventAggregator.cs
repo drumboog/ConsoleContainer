@@ -142,7 +142,7 @@ namespace ConsoleContainer.Wpf.Eventing
                     var tasks = _supportedHandlers
                         .Where(handler => handler.Key.GetTypeInfo().IsAssignableFrom(messageType.GetTypeInfo()))
                         .Select(pair => pair.Value.Invoke(target, new[] { message, cancellationToken }))
-                        .Select(result => (Task)result)
+                        .Cast<Task>()
                         .ToList();
 
                     return Task.WhenAll(tasks);

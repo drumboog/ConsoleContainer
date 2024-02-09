@@ -19,7 +19,7 @@ namespace ConsoleContainer.WorkerService.Mappers
             {
                 ProcessGroupId = group.ProcessGroupId,
                 GroupName = group.GroupName,
-                Processes = group.Processes.Select(p => processMapper.Map(p)).ToList()
+                Processes = group.Processes.Select(p => processMapper.Map(group.ProcessGroupId, p)).ToList()
             };
     }
 }

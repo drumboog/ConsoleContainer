@@ -24,7 +24,7 @@
 
     <DockPanel>
         <StackPanel DockPanel.Dock="Top">
-            <TextBlock Text="{Binding DisplayName}" FontSize="16" FontWeight="Bold" Foreground="{Binding State, Converter={StaticResource ProcessStatusToForegroundBrushConverter}}"></TextBlock>
+            <TextBlock Text="{Binding ProcessName}" FontSize="16" FontWeight="Bold" Foreground="{Binding State, Converter={StaticResource ProcessStatusToForegroundBrushConverter}}"></TextBlock>
             <StackPanel Orientation="Horizontal">
                 <TextBlock>Process ID:</TextBlock>
                 <TextBlock Text="{Binding ProcessId}" />

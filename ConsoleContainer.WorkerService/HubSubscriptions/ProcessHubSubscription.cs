@@ -48,9 +48,9 @@ namespace ConsoleContainer.WorkerService.HubSubscriptions
             return processHubContext.Clients.All.ProcessDeletedAsync(processGroupId, processLocator);
         }
 
-        public Task ProcessOutputDataReceivedAsync(Guid processLocator, ProcessOutputDataDto data)
+        public Task ProcessOutputDataReceivedAsync(Guid processGroupId, Guid processLocator, ProcessOutputDataDto data)
         {
-            return processHubContext.Clients.All.ProcessOutputDataReceivedAsync(processLocator, data);
+            return processHubContext.Clients.All.ProcessOutputDataReceivedAsync(processGroupId, processLocator, data);
         }
     }
 }

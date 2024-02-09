@@ -1,7 +1,7 @@
 ﻿namespace ConsoleContainer.ProcessManagement
 {
-    public interface IProcessWrapperFactory
+    public interface IProcessWrapperFactory<TKey>
     {
-        IProcessWrapper CreateProcessWrapper(ProcessDetails processDetails);
+        IProcessWrapper<TKey> CreateProcessWrapper(TKey key, ProcessDetails processDetails);
     }
 }

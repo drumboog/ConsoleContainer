@@ -6,8 +6,8 @@ namespace ConsoleContainer.ProcessManagement
     {
         public static IServiceCollection AddProcessManagement(this IServiceCollection services)
         {
-            services.AddSingleton<IProcessManager, ProcessManager>();
-            services.AddTransient<IProcessWrapperFactory, ProcessWrapperFactory>();
+            services.AddSingleton(typeof(IProcessManager<>), typeof(ProcessManager<>));
+            services.AddTransient(typeof(IProcessWrapperFactory<>), typeof(ProcessWrapperFactory<>));
             return services;
         }
     }

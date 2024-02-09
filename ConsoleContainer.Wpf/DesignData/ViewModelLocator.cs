@@ -1,26 +1,22 @@
-﻿using ConsoleContainer.ProcessManagement;
-using ConsoleContainer.ProcessManagement.Events;
-using ConsoleContainer.Wpf.Eventing;
-using ConsoleContainer.Wpf.Services;
+﻿using ConsoleContainer.Contracts;
 using ConsoleContainer.Wpf.ViewModels;
-using ConsoleContainer.Wpf.ViewModels.Dialogs;
-using System.Collections.ObjectModel;
+using ConsoleContainer.Wpf.ViewModels.Factories;
 
 namespace ConsoleContainer.Wpf.DesignData
 {
-    internal class ViewModelLocator
+    internal partial class ViewModelLocator
     {
         public static ProcessContainerVM ProcessContainer { get; } = CreateProcessContainer();
 
-        public static ProcessGroupVM ProcessGroup { get; } = ProcessContainer.ProcessGroups.First();
+        public static ProcessGroupVM ProcessGroup { get; } = CreateProcessContainer().ProcessGroups.First();
 
         public static ProcessVM Process { get; } = CreateProcessVM("Application UI", @"C:\Application\FE\ApplicationFE.exe", @"", @"C:\Application\FE\", 12345, ProcessState.Running);
 
 
         private static ProcessContainerVM CreateProcessContainer()
         {
-            var result = new ProcessContainerVM(new MockDialogService(), new MockEventAggregator());
-            result.ProcessGroups.Add(
+            var result = new ProcessContainerVM(new MockDialogService(), new MockWorkerServiceClient(), new ProcessVmFactory(new MockWorkerServiceClient(), new MockEventAggregator()), new MockEventAggregator());
+            result.AddProcessGroup(
                 CreateProcessGroup(
                     "Application Processes",
                     CreateProcessVM("Application UI", @"C:\Application\FE\ApplicationFE.exe", @"", @"C:\Application\FE\", 15434, ProcessState.Running),
@@ -29,12 +25,12 @@ namespace ConsoleContainer.Wpf.DesignData
                     CreateProcessVM("Application Database", @"C:\Application\DB\DatabaseService.exe", @"", @"C:\Application\DB\", 20938, ProcessState.Stopping)
                 )
             );
-            result.ProcessGroups.Add(
+            result.AddProcessGroup(
                 CreateProcessGroup(
                     "Windows Processes"
                 )
             );
-            result.ProcessGroups.Add(
+            result.AddProcessGroup(
                 CreateProcessGroup(
                     "Other Processes"
                 )
@@ -44,8 +40,7 @@ namespace ConsoleContainer.Wpf.DesignData
 
         private static ProcessGroupVM CreateProcessGroup(string groupName, params ProcessVM[] processes)
         {
-            var result = new ProcessGroupVM();
-            result.GroupName = groupName;
+            var result = new ProcessGroupVM(Guid.NewGuid(), groupName);
             foreach (var p in processes)
             {
                 result.Processes.Add(p);
@@ -53,99 +48,20 @@ namespace ConsoleContainer.Wpf.DesignData
             return result;
         }
 
-        private static ProcessVM CreateProcessVM(string displayName, string filePath, string arguments, string workingDirectory, int pid, ProcessState state)
+        private static ProcessVM CreateProcessVM(string processName, string filePath, string arguments, string workingDirectory, int processId, ProcessState state)
         {
             return new ProcessVM(
-                displayName,
-                new MockProcessWrapper()
-                {
-                    ProcessDetails = new ProcessDetails(Guid.NewGuid(), filePath, arguments, workingDirectory),
-                    ProcessId = pid,
-                    State = state
-                }
+                new MockWorkerServiceClient(),
+                new MockEventAggregator(),
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                processId,
+                processName,
+                filePath,
+                arguments,
+                workingDirectory,
+                state
             );
-        }
-
-
-        private class MockProcessWrapper : IProcessWrapper
-        {
-            public event EventHandler<ProcessOutputDataEventArgs>? OutputDataReceived;
-            public event EventHandler<ProcessStateChangedEventArgs>? StateChanged;
-
-            public int? ProcessId { get; set; }
-
-            public Guid ProcessLocator { get; } = Guid.NewGuid();
-
-            public ProcessDetails ProcessDetails { get; set; } = new ProcessDetails(Guid.NewGuid(), string.Empty);
-
-            public ProcessState State { get; set; }
-
-            public List<ProcessOutputData> OutputData = new List<ProcessOutputData>();
-            IReadOnlyCollection<ProcessOutputData> IProcessWrapper.OutputData => OutputData;
-
-            public Task StartProcessAsync()
-            {
-                return Task.CompletedTask;
-            }
-
-            public Task StopProcessAsync()
-            {
-                return Task.CompletedTask;
-            }
-
-            public Task UpdateProcessDetails(ProcessDetails processDetails)
-            {
-                return Task.CompletedTask;
-            }
-        }
-
-        private class MockDialogService : IDialogService
-        {
-            public Task<EditProcessVM?> CreateProcessAsync()
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<EditProcessGroupVM?> CreateProcessGroupAsync()
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<bool> EditProcessAsync(EditProcessVM process)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<bool> EditProcessGroupAsync(EditProcessGroupVM processGroup)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<bool> ShowConfirmationDialogAsync(ConfirmationDialogVM confirmationDialog)
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        private class MockEventAggregator : IEventAggregator
-        {
-            public bool HandlerExistsFor(Type messageType)
-            {
-                return true;
-            }
-
-            public Task PublishAsync(object message, Func<Func<Task>, Task> marshal, CancellationToken cancellationToken = default)
-            {
-                return Task.CompletedTask;
-            }
-
-            public void Subscribe(object subscriber, Func<Func<Task>, Task> marshal)
-            {
-            }
-
-            public void Unsubscribe(object subscriber)
-            {
-            }
         }
     }
 }

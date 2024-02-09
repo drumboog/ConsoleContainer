@@ -19,7 +19,7 @@
                             <StackPanel>
                                 <Border x:Name="RunningIndicator" Margin="-1,0,0,0" Height="4" CornerRadius="3,3,0,0"  BorderBrush="#666666" BorderThickness="1,1,1,0" Background="{Binding State, Converter={StaticResource ProcessStatusToTabbedRunningIndicatorBrushConverter}}" />
                                 <Border Name="Border" Margin="-1,0,0,0" Background="Transparent" BorderBrush="#666666" BorderThickness="1,0,1,0">
-                                    <TextBlock x:Name="DisplayName" Text="{Binding DisplayName}" Margin="12,2,12,2" VerticalAlignment="Center" />
+                                    <TextBlock x:Name="ProcessName" Text="{Binding ProcessName}" Margin="12,2,12,2" VerticalAlignment="Center" />
                                 </Border>
                             </StackPanel>
                             <ControlTemplate.Triggers>
@@ -30,7 +30,7 @@
                                     <Setter TargetName="RunningIndicator" Property="Margin" Value="-1 -3 0 0" />
                                     <Setter TargetName="RunningIndicator" Property="Height" Value="7" />
                                     <Setter TargetName="RunningIndicator" Property="CornerRadius" Value="5 5 0 0" />
-                                    <Setter TargetName="DisplayName" Property="FontWeight" Value="Bold" />
+                                    <Setter TargetName="ProcessName" Property="FontWeight" Value="Bold" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>

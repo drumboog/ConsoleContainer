@@ -4,19 +4,19 @@ using System.Management;
 
 namespace ConsoleContainer.ProcessManagement
 {
-    public class ProcessWrapper : IProcessWrapper
+    public class ProcessWrapper<TKey> : IProcessWrapper<TKey>
     {
         private readonly object lockTarget = new();
 
         private Process? process;
 
-        public event EventHandler<ProcessOutputDataEventArgs>? OutputDataReceived;
+        public event EventHandler<ProcessOutputDataEventArgs<TKey>>? OutputDataReceived;
 
-        public event EventHandler<ProcessStateChangedEventArgs>? StateChanged;
+        public event EventHandler<ProcessStateChangedEventArgs<TKey>>? StateChanged;
+
+        public TKey Key { get; }
 
         public int? ProcessId => process?.Id;
-
-        public Guid ProcessLocator => ProcessDetails.ProcessLocator;
 
         public ProcessDetails ProcessDetails { get; private set; }
 
@@ -31,25 +31,26 @@ namespace ConsoleContainer.ProcessManagement
                     return;
                 }
                 state = value;
-                OnStateChanged(new ProcessStateChangedEventArgs(value, process?.Id));
+                OnStateChanged(new ProcessStateChangedEventArgs<TKey>(Key, value, process?.Id));
             }
         }
 
         private readonly List<ProcessOutputData> outputData = new List<ProcessOutputData>();
         public IReadOnlyCollection<ProcessOutputData> OutputData => outputData;
 
-        public ProcessWrapper(ProcessDetails processDetails)
+        public ProcessWrapper(TKey key, ProcessDetails processDetails)
         {
+            Key = key;
             ProcessDetails = processDetails;
         }
 
-        public Task StartProcessAsync()
+        public Task<bool> StartProcessAsync()
         {
             lock (lockTarget)
             {
                 if (process is not null)
                 {
-                    return Task.CompletedTask;
+                    return Task.FromResult(false);
                 }
 
                 State = ProcessState.Starting;
@@ -76,16 +77,16 @@ namespace ConsoleContainer.ProcessManagement
                 process.BeginErrorReadLine();
             }
 
-            return Task.CompletedTask;
+            return Task.FromResult(true);
         }
 
-        public Task StopProcessAsync()
+        public Task<bool> StopProcessAsync()
         {
             lock (lockTarget)
             {
                 if (process is null)
                 {
-                    return Task.CompletedTask;
+                    return Task.FromResult(false);
                 }
 
                 State = ProcessState.Stopping;
@@ -102,7 +103,7 @@ namespace ConsoleContainer.ProcessManagement
                 State = ProcessState.Idle;
             }
 
-            return Task.CompletedTask;
+            return Task.FromResult(true);
         }
 
         public Task UpdateProcessDetails(ProcessDetails processDetails)
@@ -138,15 +139,15 @@ namespace ConsoleContainer.ProcessManagement
         private void AddOutputData(ProcessOutputData outputData)
         {
             this.outputData.Add(outputData);
-            OnOutputDataReceived(new ProcessOutputDataEventArgs(ProcessDetails, outputData));
+            OnOutputDataReceived(new ProcessOutputDataEventArgs<TKey>(Key, ProcessDetails, outputData));
         }
 
-        protected virtual void OnOutputDataReceived(ProcessOutputDataEventArgs e)
+        protected virtual void OnOutputDataReceived(ProcessOutputDataEventArgs<TKey> e)
         {
             OutputDataReceived?.Invoke(this, e);
         }
 
-        protected virtual void OnStateChanged(ProcessStateChangedEventArgs e)
+        protected virtual void OnStateChanged(ProcessStateChangedEventArgs<TKey> e)
         {
             StateChanged?.Invoke(this, e);
         }

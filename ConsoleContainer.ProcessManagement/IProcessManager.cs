@@ -2,14 +2,14 @@
 
 namespace ConsoleContainer.ProcessManagement
 {
-    public interface IProcessManager
+    public interface IProcessManager<TKey>
     {
-        event EventHandler<ProcessAddedEventArgs>? ProcessAdded;
-        event EventHandler<ProcessRemovedEventArgs>? ProcessRemoved;
+        event EventHandler<ProcessAddedEventArgs<TKey>>? ProcessAdded;
+        event EventHandler<ProcessRemovedEventArgs<TKey>>? ProcessRemoved;
 
-        IEnumerable<IProcessWrapper> GetProcesses();
-        IProcessWrapper? GetProcess(Guid processLocator);
-        Task<IProcessWrapper> CreateProcessAsync(ProcessDetails processDetails);
-        Task<bool> DeleteProcessAsync(Guid processLocator);
+        IEnumerable<IProcessWrapper<TKey>> GetProcesses();
+        IProcessWrapper<TKey>? GetProcess(TKey key);
+        Task<IProcessWrapper<TKey>> CreateProcessAsync(TKey key, ProcessDetails processDetails);
+        Task<bool> DeleteProcessAsync(TKey key);
     }
 }

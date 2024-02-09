@@ -3,52 +3,53 @@ using System.Collections.Concurrent;
 
 namespace ConsoleContainer.ProcessManagement
 {
-    public class ProcessManager : IProcessManager
+    public class ProcessManager<TKey> : IProcessManager<TKey>
+        where TKey: notnull
     {
-        private readonly ConcurrentDictionary<Guid, IProcessWrapper> processes = new();
-        private readonly IProcessWrapperFactory processWrapperFactory;
+        private readonly ConcurrentDictionary<TKey, IProcessWrapper<TKey>> processes = new();
+        private readonly IProcessWrapperFactory<TKey> processWrapperFactory;
 
-        public event EventHandler<ProcessAddedEventArgs>? ProcessAdded;
-        public event EventHandler<ProcessRemovedEventArgs>? ProcessRemoved;
+        public event EventHandler<ProcessAddedEventArgs<TKey>>? ProcessAdded;
+        public event EventHandler<ProcessRemovedEventArgs<TKey>>? ProcessRemoved;
 
         public ProcessManager()
         {
-            processWrapperFactory = new ProcessWrapperFactory();
+            processWrapperFactory = new ProcessWrapperFactory<TKey>();
         }
 
-        public ProcessManager(IProcessWrapperFactory processWrapperFactory)
+        public ProcessManager(IProcessWrapperFactory<TKey> processWrapperFactory)
         {
             this.processWrapperFactory = processWrapperFactory;
         }
 
-        public IEnumerable<IProcessWrapper> GetProcesses()
+        public IEnumerable<IProcessWrapper<TKey>> GetProcesses()
         {
             return processes.Values;
         }
 
-        public IProcessWrapper? GetProcess(Guid processLocator)
+        public IProcessWrapper<TKey>? GetProcess(TKey key)
         {
-            processes.TryGetValue(processLocator, out var p);
+            processes.TryGetValue(key, out var p);
             return p;
         }
 
-        public Task<IProcessWrapper> CreateProcessAsync(ProcessDetails processDetails)
+        public Task<IProcessWrapper<TKey>> CreateProcessAsync(TKey key, ProcessDetails processDetails)
         {
             var process = processes.AddOrUpdate(
-                processDetails.ProcessLocator,
-                locator => processWrapperFactory.CreateProcessWrapper(processDetails),
+                key,
+                locator => processWrapperFactory.CreateProcessWrapper(key, processDetails),
                 (locator, pw) => throw new Exception($"Process already exists with process locator {locator}")
             );
 
-            OnProcessAdded(new ProcessAddedEventArgs(process));
+            OnProcessAdded(new ProcessAddedEventArgs<TKey>(process));
 
             return Task.FromResult(process);
         }
 
-        public Task UpdateProcessAsync(ProcessDetails processDetails)
+        public Task UpdateProcessAsync(TKey key, ProcessDetails processDetails)
         {
             var process = processes.AddOrUpdate(
-                processDetails.ProcessLocator,
+                key,
                 locator => throw new Exception($"Process does not exist with process locator {locator}"),
                 (locator, pw) =>
                 {
@@ -60,26 +61,26 @@ namespace ConsoleContainer.ProcessManagement
             return Task.CompletedTask;
         }
 
-        public async Task<bool> DeleteProcessAsync(Guid processLocator)
+        public async Task<bool> DeleteProcessAsync(TKey key)
         {
-            if (!processes.Remove(processLocator, out var process))
+            if (!processes.Remove(key, out var process))
             {
                 return false;
             }
 
             await process.StopProcessAsync();
 
-            OnProcessRemoved(new ProcessRemovedEventArgs(process));
+            OnProcessRemoved(new ProcessRemovedEventArgs<TKey>(process));
 
             return true;
         }
 
-        protected virtual void OnProcessAdded(ProcessAddedEventArgs e)
+        protected virtual void OnProcessAdded(ProcessAddedEventArgs<TKey> e)
         {
             ProcessAdded?.Invoke(this, e);
         }
 
-        protected virtual void OnProcessRemoved(ProcessRemovedEventArgs e)
+        protected virtual void OnProcessRemoved(ProcessRemovedEventArgs<TKey> e)
         {
             ProcessRemoved?.Invoke(this, e);
         }

@@ -10,6 +10,8 @@ namespace ConsoleContainer.WorkerService.Services
         Task<bool> DeleteProcessGroupAsync(Guid processGroupId);
         Task<bool> CreateProcessAsync(Guid processGroupId, ProcessInformationDto processInformation);
         Task<bool> UpdateProcessAsync(Guid processGroupId, Guid processLocator, ProcessInformationUpdateDto processInformation);
+        Task<bool> StartProcessAsync(Guid processGroupId, Guid processLocator);
+        Task<bool> StopProcessAsync(Guid processGroupId, Guid processLocator);
         Task<bool> DeleteProcessAsync(Guid processGroupId, Guid processLocator);
     }
 }

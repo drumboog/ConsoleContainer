@@ -7,10 +7,12 @@ namespace ConsoleContainer.Wpf.ViewModels
 {
     public class ProcessGroupVM : ViewModel
     {
+        public Guid ProcessGroupId { get; }
+
         public string GroupName
         {
             get => GetProperty(() => string.Empty);
-            set => SetProperty(value);
+            private set => SetProperty(value);
         }
 
         public List<ProcessGroupViewType> ViewTypes { get; }
@@ -33,31 +35,19 @@ namespace ConsoleContainer.Wpf.ViewModels
 
         public ObservableCollection<ProcessVM> Processes { get; } = new();
 
-        public ProcessGroupVM()
+        public ProcessGroupVM(Guid processGroupId, string groupName)
         {
+            ProcessGroupId = processGroupId;
+            GroupName = groupName;
+
             ViewTypes = ProcessGroupViewType.ViewTypes.ToList();
 
             Processes.CollectionChanged += Processes_CollectionChanged;
         }
 
-        private void Processes_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        public void Update(string groupName)
         {
-            if (e.OldItems is not null)
-            {
-                foreach (ProcessVM oldItem in e.OldItems)
-                {
-                    oldItem.PropertyChanged -= Process_PropertyChanged;
-                }
-            }
-            if (e.NewItems is not null)
-            {
-                foreach (ProcessVM newItem in e.NewItems)
-                {
-                    newItem.PropertyChanged += Process_PropertyChanged;
-                }
-            }
-
-            OnPropertyChanged(nameof(TotalProcesses));
+            GroupName = groupName;
         }
 
         public async Task StartAllAsync()
@@ -78,10 +68,10 @@ namespace ConsoleContainer.Wpf.ViewModels
             await Task.WhenAll(tasks);
         }
 
-        public void AddProcess(ProcessInformation processInformation)
-        {
-            Processes.Add(new ProcessVM(processInformation));
-        }
+        //public void AddProcess(ProcessInformation processInformation)
+        //{
+        //    Processes.Add(new ProcessVM(processInformation));
+        //}
 
         private void Process_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -89,6 +79,26 @@ namespace ConsoleContainer.Wpf.ViewModels
             {
                 OnPropertyChanged(nameof(RunningProcesses));
             }
+        }
+
+        private void Processes_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.OldItems is not null)
+            {
+                foreach (ProcessVM oldItem in e.OldItems)
+                {
+                    oldItem.PropertyChanged -= Process_PropertyChanged;
+                }
+            }
+            if (e.NewItems is not null)
+            {
+                foreach (ProcessVM newItem in e.NewItems)
+                {
+                    newItem.PropertyChanged += Process_PropertyChanged;
+                }
+            }
+
+            OnPropertyChanged(nameof(TotalProcesses));
         }
     }
 }

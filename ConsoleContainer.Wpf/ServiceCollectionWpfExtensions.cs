@@ -2,6 +2,8 @@
 using ConsoleContainer.Wpf.Eventing;
 using ConsoleContainer.Wpf.Hubs;
 using ConsoleContainer.Wpf.Services;
+using ConsoleContainer.Wpf.ViewModels;
+using ConsoleContainer.Wpf.ViewModels.Factories;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleContainer.Wpf
@@ -13,6 +15,8 @@ namespace ConsoleContainer.Wpf
             services.AddSingleton<IEventAggregator, EventAggregator>();
             services.AddSingleton<ProcessHubSubscription>();
             services.AddSingleton<IDialogService, DialogService>();
+            services.AddSingleton<ProcessContainerVM>();
+            services.AddTransient<IProcessVmFactory, ProcessVmFactory>();
 
             services.Scan(scan =>
             {

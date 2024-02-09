@@ -1,27 +1,56 @@
-﻿using ConsoleContainer.Domain;
-using ConsoleContainer.ProcessManagement;
-using ConsoleContainer.ProcessManagement.Events;
+﻿using ConsoleContainer.Contracts;
+using ConsoleContainer.Domain;
+using ConsoleContainer.WorkerService.Client;
+using ConsoleContainer.Wpf.Eventing;
 using System.Windows.Media;
 
 namespace ConsoleContainer.Wpf.ViewModels
 {
     public class ProcessVM : ViewModel
     {
-        private IProcessWrapper process;
+        private readonly IWorkerServiceClient workerServiceClient;
+        private readonly IEventAggregator eventAggregator;
+        private readonly Guid processGroupId;
 
-        public string DisplayName => ProcessInformation.ProcessName;
+        public Guid ProcessLocator { get; }
 
-        public ProcessInformation ProcessInformation
+        public int? ProcessId
         {
-            get => GetProperty<ProcessInformation>()!;
-            private set => SetProperty(value, [nameof(DisplayName)]);
+            get => GetProperty<int?>();
+            private set => SetProperty(value);
+        }
+
+        public string ProcessName
+        {
+            get => GetProperty(() => string.Empty);
+            private set => SetProperty(value);
+        }
+
+        public string FilePath
+        {
+            get => GetProperty(() => string.Empty);
+            private set => SetProperty(value);
+        }
+
+        public string? Arguments
+        {
+            get => GetProperty<string>();
+            private set => SetProperty(value);
+        }
+
+        public string? WorkingDirectory
+        {
+            get => GetProperty<string>();
+            private set => SetProperty(value);
+        }
+
+        public ProcessState State
+        {
+            get => GetProperty(ProcessState.Idle);
+            private set => SetProperty(value);
         }
 
         public ProcessOutputVM Output { get; } = new ProcessOutputVM();
-
-        public int? ProcessId => process.ProcessId;
-
-        public ProcessState State => process.State;
 
         public bool IsRunning => State is ProcessState.Starting or ProcessState.Running or ProcessState.Stopping;
 
@@ -29,27 +58,33 @@ namespace ConsoleContainer.Wpf.ViewModels
 
         public bool CanStop => IsRunning;
 
-        public ProcessVM(ProcessInformation processInformation)
+        public ProcessVM(
+            IWorkerServiceClient workerServiceClient,
+            IEventAggregator eventAggregator,
+            Guid processGroupId,
+            Guid processLocator,
+            int? processId,
+            string processName,
+            string filePath,
+            string? arguments,
+            string? workingDirectory,
+            ProcessState state)
         {
-            ProcessInformation = processInformation;
-            process = CreateProcessWrapper(processInformation);
+            this.workerServiceClient = workerServiceClient;
+            this.eventAggregator = eventAggregator;
+            this.processGroupId = processGroupId;
+            ProcessLocator = processLocator;
+            Update(processId, processName, filePath, arguments, workingDirectory, state);
         }
 
-        internal ProcessVM(string processName, IProcessWrapper processWrapper)
+        public void Update(int? processId, string processName, string filePath, string? arguments, string? workingDirectory, ProcessState state)
         {
-            process = processWrapper;
-            ProcessInformation = new ProcessInformation(Guid.NewGuid(), processName, processWrapper.ProcessDetails.FilePath, processWrapper.ProcessDetails.Arguments, process.ProcessDetails.WorkingDirectory);
-        }
-
-        public void Update(ProcessInformation processInformation)
-        {
-            if (process is not null && process.State is ProcessState.Idle)
-            {
-                throw new Exception("Can't update process while it is running");
-            }
-
-            ProcessInformation = processInformation;
-            process = CreateProcessWrapper(processInformation);
+            ProcessId = processId;
+            ProcessName = processName;
+            FilePath = filePath;
+            Arguments = arguments;
+            WorkingDirectory = workingDirectory;
+            State = state;
         }
 
         public async Task StartProcessAsync()
@@ -59,57 +94,18 @@ namespace ConsoleContainer.Wpf.ViewModels
                 return;
             }
 
-            await process.StartProcessAsync();
+            await workerServiceClient.StartProcessAsync(processGroupId, ProcessLocator);
         }
 
         public async Task StopProcessAsync()
         {
-            await process.StopProcessAsync();
+            await workerServiceClient.StopProcessAsync(processGroupId, ProcessLocator);
         }
 
         public Task ClearOutputAsync()
         {
             Output.ClearLogs();
             return Task.CompletedTask;
-        }
-
-        private ProcessWrapper CreateProcessWrapper(ProcessInformation processInformation)
-        {
-            var details = new ProcessDetails(Guid.NewGuid(), processInformation.FilePath, processInformation.Arguments, processInformation.WorkingDirectory);
-            var result = new ProcessWrapper(details);
-            result.OutputDataReceived += Result_OutputDataReceived;
-            result.StateChanged += Result_StateChanged;
-            return result;
-        }
-
-        private void Result_OutputDataReceived(object? sender, ProcessOutputDataEventArgs e)
-        {
-            Output.AddOutput(e.Data.Data, e.Data.IsProcessError ? Brushes.DarkRed : null);
-        }
-
-        private void Result_StateChanged(object? sender, ProcessStateChangedEventArgs e)
-        {
-            switch (e.State)
-            {
-                case ProcessState.Idle:
-                    Output.AddOutput("Process stopped", Brushes.Red);
-                    break;
-                case ProcessState.Starting:
-                    Output.AddOutput("Process starting", Brushes.Green);
-                    break;
-                case ProcessState.Running:
-                    Output.AddOutput("Process started", Brushes.LightGreen);
-                    break;
-                case ProcessState.Stopping:
-                    Output.AddOutput("Stopping process", Brushes.IndianRed);
-                    break;
-            }
-
-            OnPropertyChanged(nameof(ProcessId));
-            OnPropertyChanged(nameof(State));
-            OnPropertyChanged(nameof(IsRunning));
-            OnPropertyChanged(nameof(CanStart));
-            OnPropertyChanged(nameof(CanStop));
         }
     }
 }

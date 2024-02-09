@@ -4,13 +4,14 @@ using ConsoleContainer.Kernel.Validation;
 using ConsoleContainer.ProcessManagement;
 using ConsoleContainer.Repositories;
 using ConsoleContainer.WorkerService.Mappers;
+using ProcessManagement = ConsoleContainer.ProcessManagement;
 
 namespace ConsoleContainer.WorkerService.Services
 {
     public class ProcessGroupService(
         IProcessGroupMapper processGroupMapper,
         IProcessMapper processMapper,
-        IProcessManager processManager,
+        IProcessManager<ProcessKey> processManager,
         IProcessGroupCollectionRepository processGroupCollectionRepository,
         IProcessHubSubscription processHubSubscription
     ) : IProcessGroupService
@@ -66,7 +67,7 @@ namespace ConsoleContainer.WorkerService.Services
                     return false;
                 }
 
-                var deleteProcessTasks = group.Processes.Select(p => processManager.DeleteProcessAsync(p.ProcessLocator));
+                var deleteProcessTasks = group.Processes.Select(p => processManager.DeleteProcessAsync(new ProcessKey(processGroupId, p.ProcessLocator)));
                 await Task.WhenAll(deleteProcessTasks);
 
                 var result = collection.DeleteGroup(processGroupId);
@@ -97,11 +98,16 @@ namespace ConsoleContainer.WorkerService.Services
                     throw new Exception($"Process already exists with locator {processInformation.ProcessLocator}");
                 }
 
-                await processManager.CreateProcessAsync(new ProcessDetails(processInformation.ProcessLocator.Required(), processInformation.FilePath.Required(), processInformation.Arguments, processInformation.WorkingDirectory));
+                await processManager.CreateProcessAsync(
+                    new ProcessKey(processGroupId, processInformation.ProcessLocator),
+                    new ProcessDetails(
+                        processInformation.FilePath.Required(),
+                        processInformation.Arguments,
+                        processInformation.WorkingDirectory));
 
-                var newProcess = group.AddProcess(processInformation.ProcessLocator.Required(), processInformation);
+                var newProcess = group.AddProcess(processInformation.ProcessLocator, processInformation);
 
-                context.QueuePostProcessingAction(() => processHubSubscription.ProcessCreatedAsync(processGroupId, processMapper.Map(newProcess)));
+                context.QueuePostProcessingAction(() => processHubSubscription.ProcessCreatedAsync(processGroupId, processMapper.Map(group.ProcessGroupId, newProcess)));
 
                 return true;
             });
@@ -118,10 +124,11 @@ namespace ConsoleContainer.WorkerService.Services
                     return false;
                 }
 
-                EnsureProcessIsStopped(processLocator);
+                EnsureProcessIsStopped(processGroupId, processLocator);
 
-                var currentProcess = processManager.GetProcess(processLocator);
-                currentProcess?.UpdateProcessDetails(new ProcessDetails(processLocator, processInformation.FilePath.Required(), processInformation.Arguments, processInformation.WorkingDirectory));
+                var key = new ProcessKey(processGroupId, processLocator);
+                var currentProcess = processManager.GetProcess(key);
+                currentProcess?.UpdateProcessDetails(new ProcessDetails(processInformation.FilePath.Required(), processInformation.Arguments, processInformation.WorkingDirectory));
 
                 var newProcess = group.ReplaceProcess(processLocator, processInformation);
                 if (newProcess is null)
@@ -129,10 +136,32 @@ namespace ConsoleContainer.WorkerService.Services
                     return false;
                 }
 
-                context.QueuePostProcessingAction(() => processHubSubscription.ProcessUpdatedAsync(processGroupId, processMapper.Map(newProcess)));
+                context.QueuePostProcessingAction(() => processHubSubscription.ProcessUpdatedAsync(processGroupId, processMapper.Map(processGroupId, newProcess)));
 
                 return true;
             });
+        }
+
+        public async Task<bool> StartProcessAsync(Guid processGroupId, Guid processLocator)
+        {
+            var process = processManager.GetProcess(new ProcessKey(processGroupId, processLocator));
+            if (process is null)
+            {
+                return false;
+            }
+
+            return await process.StartProcessAsync();
+        }
+
+        public async Task<bool> StopProcessAsync(Guid processGroupId, Guid processLocator)
+        {
+            var process = processManager.GetProcess(new ProcessKey(processGroupId, processLocator));
+            if (process is null)
+            {
+                return false;
+            }
+
+            return await process.StopProcessAsync();
         }
 
         public Task<bool> DeleteProcessAsync(Guid processGroupId, Guid processLocator)
@@ -146,9 +175,9 @@ namespace ConsoleContainer.WorkerService.Services
                     return false;
                 }
 
-                EnsureProcessIsStopped(processLocator);
+                EnsureProcessIsStopped(processGroupId, processLocator);
 
-                await processManager.DeleteProcessAsync(processLocator);
+                await processManager.DeleteProcessAsync(new ProcessKey(processGroupId, processLocator));
 
                 var result = group.DeleteProcess(processLocator);
 
@@ -216,19 +245,23 @@ namespace ConsoleContainer.WorkerService.Services
             await processGroupCollectionRepository.SaveAsync(collection);
         }
 
-        private void EnsureProcessIsStopped(Guid processLocator)
+        private void EnsureProcessIsStopped(Guid processGroupId, Guid processLocator)
         {
-            var p = processManager.GetProcess(processLocator);
-            if (p is null)
-            {
-                return;
-            }
-            if (p.State != ProcessState.Idle)
+            if (IsProcessRunning(processGroupId, processLocator))
             {
                 throw new Exception($"Cannot update running process: {processLocator}");
             }
         }
 
+        private bool IsProcessRunning(Guid processGroupId, Guid processLocator)
+        {
+            var p = processManager.GetProcess(new ProcessKey(processGroupId, processLocator));
+            if (p is null)
+            {
+                return false;
+            }
+            return p.State != ProcessManagement.ProcessState.Idle;
+        }
 
         private class UpdateContext
         {

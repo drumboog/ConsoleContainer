@@ -1,4 +1,5 @@
 ﻿using ConsoleContainer.WorkerService.Client;
+using ConsoleContainer.Wpf.Eventing;
 using System.Windows;
 
 namespace ConsoleContainer.Wpf
@@ -12,6 +13,8 @@ namespace ConsoleContainer.Wpf
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            PlatformProvider.Current = new WindowsPlatformProvider();
+
             processHubClient = ServiceLocator.GetService<IProcessHubClient>();
             processHubClient.StartAsync().Wait();
 

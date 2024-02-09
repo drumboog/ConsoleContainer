@@ -8,17 +8,6 @@ namespace ConsoleContainer.Wpf.Eventing
     public static class Execute
     {
         /// <summary>
-        ///   Indicates whether or not the framework is in design-time mode.
-        /// </summary>
-        public static bool InDesignMode
-        {
-            get
-            {
-                return PlatformProvider.Current.InDesignMode;
-            }
-        }
-
-        /// <summary>
         ///   Executes the action on the UI thread asynchronously.
         /// </summary>
         /// <param name="action">The action to execute.</param>
