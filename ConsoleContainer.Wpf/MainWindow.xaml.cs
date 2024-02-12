@@ -1,7 +1,6 @@
 ﻿using ConsoleContainer.Wpf.Eventing;
 using ConsoleContainer.Wpf.Eventing.Events;
 using ConsoleContainer.Wpf.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;

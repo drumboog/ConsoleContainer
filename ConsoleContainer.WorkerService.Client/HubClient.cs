@@ -39,8 +39,8 @@ namespace ConsoleContainer.WorkerService.Client
 
         public async Task CloseHubAsync()
         {
-            await HubConnection.StopAsync();
-            await HubConnection.DisposeAsync();
+            await HubConnection.StopAsync().ConfigureAwait(false);
+            await HubConnection.DisposeAsync().ConfigureAwait(false);
         }
 
         public Task StartAsync()
