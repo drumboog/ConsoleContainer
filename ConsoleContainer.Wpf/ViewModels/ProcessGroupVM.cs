@@ -68,10 +68,20 @@ namespace ConsoleContainer.Wpf.ViewModels
             await Task.WhenAll(tasks);
         }
 
-        //public void AddProcess(ProcessInformation processInformation)
-        //{
-        //    Processes.Add(new ProcessVM(processInformation));
-        //}
+        public void AddProcess(ProcessVM process)
+        {
+            Processes.Add(process);
+        }
+
+        public bool DeleteProcess(Guid processLocator)
+        {
+            var process = Processes.FirstOrDefault(p => p.ProcessLocator == processLocator);
+            if (process is null)
+            {
+                return false;
+            }
+            return Processes.Remove(process);
+        }
 
         private void Process_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {

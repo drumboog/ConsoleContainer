@@ -33,14 +33,9 @@ namespace ConsoleContainer.WorkerService.HubSubscriptions
             return processHubContext.Clients.All.ProcessUpdatedAsync(processGroupId, process);
         }
 
-        public Task ProcessStartedAsync(Guid processGroupId, ProcessInformationDto process)
+        public Task ProcessStateUpdatedAsync(Guid processGroupId, Guid processLocator, ProcessState state, int? processId)
         {
-            return processHubContext.Clients.All.ProcessStartedAsync(processGroupId, process);
-        }
-
-        public Task ProcessStoppedAsync(Guid processGroupId, ProcessInformationDto process)
-        {
-            return processHubContext.Clients.All.ProcessStoppedAsync(processGroupId, process);
+            return processHubContext.Clients.All.ProcessStateUpdatedAsync(processGroupId, processLocator, state, processId);
         }
 
         public Task ProcessDeletedAsync(Guid processGroupId, Guid processLocator)

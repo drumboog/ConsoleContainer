@@ -52,13 +52,21 @@ namespace ConsoleContainer.WorkerService
         private void ProcessManager_ProcessAdded(object? sender, ProcessAddedEventArgs<ProcessKey> e)
         {
             var process = e.Process;
+            process.StateChanged += Process_StateChanged;
             process.OutputDataReceived += Process_OutputDataReceived;
         }
 
         private void ProcessManager_ProcessRemoved(object? sender, ProcessRemovedEventArgs<ProcessKey> e)
         {
             var process = e.Process;
+            process.StateChanged -= Process_StateChanged;
             process.OutputDataReceived -= Process_OutputDataReceived;
+        }
+
+        private void Process_StateChanged(object? sender, ProcessStateChangedEventArgs<ProcessKey> e)
+        {
+            logger.LogInformation($"Sending state changed to process {e.ProcessKey}: {e.State}");
+            _ = processHubSubscription.ProcessStateUpdatedAsync(e.ProcessKey.ProcessGroupId, e.ProcessKey.ProcessLocator, (Contracts.ProcessState)e.State, e.ProcessId);
         }
 
         private void Process_OutputDataReceived(object? sender, ProcessOutputDataEventArgs<ProcessKey> e)

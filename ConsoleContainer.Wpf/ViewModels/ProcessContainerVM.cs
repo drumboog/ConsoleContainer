@@ -14,7 +14,12 @@ namespace ConsoleContainer.Wpf.ViewModels
         IHandle<EditProcessEvent>,
         IHandle<DeleteProcessEvent>,
         IHandle<ProcessGroupCreatedEvent>,
-        IHandle<ProcessGroupUpdatedEvent>
+        IHandle<ProcessGroupUpdatedEvent>,
+        IHandle<ProcessGroupDeletedEvent>,
+        IHandle<ProcessCreatedEvent>,
+        IHandle<ProcessUpdatedEvent>,
+        IHandle<ProcessStateUpdatedEvent>,
+        IHandle<ProcessDeletedEvent>
     {
         private readonly IDialogService dialogService;
         private readonly IWorkerServiceClient workerServiceClient;
@@ -77,7 +82,7 @@ namespace ConsoleContainer.Wpf.ViewModels
                 return;
             }
 
-            ProcessGroups.Remove(processGroup);
+            await workerServiceClient.DeleteProcessGroupAsync(processGroup.ProcessGroupId);
         }
 
         public async Task CreateProcessAsync(ProcessGroupVM processGroup)
@@ -132,7 +137,7 @@ namespace ConsoleContainer.Wpf.ViewModels
             return vm;
         }
 
-        public async Task HandleAsync(EditProcessEvent message, CancellationToken cancellationToken)
+        async Task IHandle<EditProcessEvent>.HandleAsync(EditProcessEvent message, CancellationToken cancellationToken)
         {
             var process = message.Process;
             var processGroup = ProcessGroups.FirstOrDefault(g => g.Processes.Any(p => p.ProcessLocator == process.ProcessLocator));
@@ -166,7 +171,7 @@ namespace ConsoleContainer.Wpf.ViewModels
                 });
         }
 
-        public async Task HandleAsync(DeleteProcessEvent message, CancellationToken cancellationToken)
+        async Task IHandle<DeleteProcessEvent>.HandleAsync(DeleteProcessEvent message, CancellationToken cancellationToken)
         {
             var process = message.Process;
             var result = await dialogService.ShowConfirmationDialogAsync(new ConfirmationDialogVM("Delete Process?", $"Are you sure you want to delete the process: {process.ProcessName}?"));
@@ -175,20 +180,17 @@ namespace ConsoleContainer.Wpf.ViewModels
                 return;
             }
 
-            foreach (var group in ProcessGroups)
-            {
-                group.Processes.Remove(process);
-            }
+            await workerServiceClient.DeleteProcessAsync(process.ProcessGroupId, process.ProcessLocator);
         }
 
-        public Task HandleAsync(ProcessGroupCreatedEvent message, CancellationToken cancellationToken)
+        Task IHandle<ProcessGroupCreatedEvent>.HandleAsync(ProcessGroupCreatedEvent message, CancellationToken cancellationToken)
         {
             var group = message.ProcessGroup;
             ProcessGroups.Add(new ProcessGroupVM(group.ProcessGroupId, group.GroupName));
             return Task.CompletedTask;
         }
 
-        public Task HandleAsync(ProcessGroupUpdatedEvent message, CancellationToken cancellationToken)
+        Task IHandle<ProcessGroupUpdatedEvent>.HandleAsync(ProcessGroupUpdatedEvent message, CancellationToken cancellationToken)
         {
             var updatedGroup = message.ProcessGroup;
             var group = ProcessGroups.FirstOrDefault(p => p.ProcessGroupId == updatedGroup.ProcessGroupId);
@@ -196,7 +198,89 @@ namespace ConsoleContainer.Wpf.ViewModels
             {
                 return Task.CompletedTask;
             }
+
             group.Update(updatedGroup.GroupName);
+
+            return Task.CompletedTask;
+        }
+
+        Task IHandle<ProcessGroupDeletedEvent>.HandleAsync(ProcessGroupDeletedEvent message, CancellationToken cancellationToken)
+        {
+            var group = ProcessGroups.FirstOrDefault(p => p.ProcessGroupId == message.ProcessGroupId);
+            if (group is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            ProcessGroups.Remove(group);
+
+            return Task.CompletedTask;
+        }
+
+        Task IHandle<ProcessCreatedEvent>.HandleAsync(ProcessCreatedEvent message, CancellationToken cancellationToken)
+        {
+            var group = ProcessGroups.FirstOrDefault(g => g.ProcessGroupId == message.ProcessGroupId);
+            if (group is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            var pi = message.ProcessInformation;
+            var process = processVmFactory.Create(message.ProcessGroupId, pi.ProcessLocator, pi.ProcessId, pi.ProcessName, pi.FilePath, pi.Arguments, pi.WorkingDirectory, pi.State);
+            group.AddProcess(process);
+
+            return Task.CompletedTask;
+        }
+
+        Task IHandle<ProcessUpdatedEvent>.HandleAsync(ProcessUpdatedEvent message, CancellationToken cancellationToken)
+        {
+            var group = ProcessGroups.FirstOrDefault(g => g.ProcessGroupId == message.ProcessGroupId);
+            if (group is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            var pi = message.ProcessInformation;
+            var process = group.Processes.FirstOrDefault(p => p.ProcessLocator == pi.ProcessLocator);
+            if (process is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            process.Update(pi.ProcessName, pi.FilePath, pi.Arguments, pi.WorkingDirectory);
+
+            return Task.CompletedTask;
+        }
+
+        Task IHandle<ProcessStateUpdatedEvent>.HandleAsync(ProcessStateUpdatedEvent message, CancellationToken cancellationToken)
+        {
+            var group = ProcessGroups.FirstOrDefault(g => g.ProcessGroupId == message.ProcessGroupId);
+            if (group is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            var process = group.Processes.FirstOrDefault(p => p.ProcessLocator == message.ProcessLocator);
+            if (process is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            process.UpdateState(message.State, message.ProcessId);
+
+            return Task.CompletedTask;
+        }
+
+        Task IHandle<ProcessDeletedEvent>.HandleAsync(ProcessDeletedEvent message, CancellationToken cancellationToken)
+        {
+            var group = ProcessGroups.FirstOrDefault(g => g.ProcessGroupId == message.ProcessGroupId);
+            if (group is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            group.DeleteProcess(message.ProcessLocator);
+
             return Task.CompletedTask;
         }
     }

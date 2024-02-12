@@ -35,7 +35,7 @@ namespace ConsoleContainer.WorkerService.Client
 
         public async Task CreateProcessAsync(Guid processGroupId, ProcessInformationDto processInformation)
         {
-            var response = await httpClient.PutAsJsonAsync($"processGroup/{processGroupId}/process", processInformation);
+            var response = await httpClient.PostAsJsonAsync($"processGroup/{processGroupId}/process", processInformation);
             response.EnsureSuccessStatusCode();
         }
 

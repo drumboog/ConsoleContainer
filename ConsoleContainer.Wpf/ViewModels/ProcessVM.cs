@@ -1,8 +1,7 @@
 ﻿using ConsoleContainer.Contracts;
-using ConsoleContainer.Domain;
 using ConsoleContainer.WorkerService.Client;
 using ConsoleContainer.Wpf.Eventing;
-using System.Windows.Media;
+using System.Diagnostics;
 
 namespace ConsoleContainer.Wpf.ViewModels
 {
@@ -10,7 +9,8 @@ namespace ConsoleContainer.Wpf.ViewModels
     {
         private readonly IWorkerServiceClient workerServiceClient;
         private readonly IEventAggregator eventAggregator;
-        private readonly Guid processGroupId;
+
+        public Guid ProcessGroupId { get; }
 
         public Guid ProcessLocator { get; }
 
@@ -47,7 +47,7 @@ namespace ConsoleContainer.Wpf.ViewModels
         public ProcessState State
         {
             get => GetProperty(ProcessState.Idle);
-            private set => SetProperty(value);
+            private set => SetProperty(value, [nameof(IsRunning), nameof(CanStart), nameof(CanStop)]);
         }
 
         public ProcessOutputVM Output { get; } = new ProcessOutputVM();
@@ -72,19 +72,24 @@ namespace ConsoleContainer.Wpf.ViewModels
         {
             this.workerServiceClient = workerServiceClient;
             this.eventAggregator = eventAggregator;
-            this.processGroupId = processGroupId;
+            ProcessGroupId = processGroupId;
             ProcessLocator = processLocator;
-            Update(processId, processName, filePath, arguments, workingDirectory, state);
+            Update(processName, filePath, arguments, workingDirectory);
+            UpdateState(state, processId);
         }
 
-        public void Update(int? processId, string processName, string filePath, string? arguments, string? workingDirectory, ProcessState state)
+        public void Update(string processName, string filePath, string? arguments, string? workingDirectory)
         {
-            ProcessId = processId;
             ProcessName = processName;
             FilePath = filePath;
             Arguments = arguments;
             WorkingDirectory = workingDirectory;
+        }
+
+        public void UpdateState(ProcessState state, int? processId)
+        {
             State = state;
+            ProcessId = processId;
         }
 
         public async Task StartProcessAsync()
@@ -94,12 +99,12 @@ namespace ConsoleContainer.Wpf.ViewModels
                 return;
             }
 
-            await workerServiceClient.StartProcessAsync(processGroupId, ProcessLocator);
+            await workerServiceClient.StartProcessAsync(ProcessGroupId, ProcessLocator);
         }
 
         public async Task StopProcessAsync()
         {
-            await workerServiceClient.StopProcessAsync(processGroupId, ProcessLocator);
+            await workerServiceClient.StopProcessAsync(ProcessGroupId, ProcessLocator);
         }
 
         public Task ClearOutputAsync()

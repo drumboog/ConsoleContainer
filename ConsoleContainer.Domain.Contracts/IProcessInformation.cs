@@ -2,8 +2,8 @@
 {
     public interface IProcessInformation
     {
-        string? ProcessName { get; }
-        string? FilePath { get; }
+        string ProcessName { get; }
+        string FilePath { get; }
         string? Arguments { get; }
         string? WorkingDirectory { get; }
     }

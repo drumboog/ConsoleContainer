@@ -48,33 +48,43 @@ namespace ConsoleContainer.ProcessManagement
         {
             lock (lockTarget)
             {
-                if (process is not null)
+                try
                 {
-                    return Task.FromResult(false);
+                    if (process is not null)
+                    {
+                        return Task.FromResult(false);
+                    }
+
+                    State = ProcessState.Starting;
+
+                    var p = new Process();
+                    p.StartInfo.FileName = ProcessDetails.FilePath;
+                    p.StartInfo.WorkingDirectory = ProcessDetails.WorkingDirectory;
+                    p.StartInfo.Arguments = ProcessDetails.Arguments;
+                    p.StartInfo.RedirectStandardInput = true;
+                    p.StartInfo.RedirectStandardOutput = true;
+                    p.StartInfo.RedirectStandardError = true;
+                    p.StartInfo.CreateNoWindow = true;
+                    p.StartInfo.UseShellExecute = false;
+                    p.OutputDataReceived += Process_OutputDataReceived;
+                    p.ErrorDataReceived += Process_ErrorDataReceived;
+                    p.EnableRaisingEvents = true;
+                    p.Exited += Process_Exited;
+                    p.Start();
+                    ChildProcessTracker.AddProcess(p);
+
+                    State = ProcessState.Running;
+
+                    p.BeginOutputReadLine();
+                    p.BeginErrorReadLine();
+
+                    process = p;
                 }
-
-                State = ProcessState.Starting;
-
-                process = new Process();
-                process.StartInfo.FileName = ProcessDetails.FilePath;
-                process.StartInfo.WorkingDirectory = ProcessDetails.WorkingDirectory;
-                process.StartInfo.Arguments = ProcessDetails.Arguments;
-                process.StartInfo.RedirectStandardInput = true;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.CreateNoWindow = true;
-                process.StartInfo.UseShellExecute = false;
-                process.OutputDataReceived += Process_OutputDataReceived;
-                process.ErrorDataReceived += Process_ErrorDataReceived;
-                process.EnableRaisingEvents = true;
-                process.Exited += Process_Exited;
-                process.Start();
-                ChildProcessTracker.AddProcess(process);
-
-                State = ProcessState.Running;
-
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
+                catch
+                {
+                    State = ProcessState.Idle;
+                    throw;
+                }
             }
 
             return Task.FromResult(true);

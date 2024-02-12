@@ -38,14 +38,9 @@ namespace ConsoleContainer.Wpf.Hubs
             return eventAggregator.PublishOnCurrentThreadAsync(new ProcessUpdatedEvent(processGroupId, process));
         }
 
-        public Task ProcessStartedAsync(Guid processGroupId, ProcessInformationDto process)
+        public Task ProcessStateUpdatedAsync(Guid processGroupId, Guid processLocator, ProcessState state, int? processId)
         {
-            return eventAggregator.PublishOnCurrentThreadAsync(new ProcessStartedEvent(processGroupId, process));
-        }
-
-        public Task ProcessStoppedAsync(Guid processGroupId, ProcessInformationDto process)
-        {
-            return eventAggregator.PublishOnCurrentThreadAsync(new ProcessStoppedEvent(processGroupId, process));
+            return eventAggregator.PublishOnCurrentThreadAsync(new ProcessStateUpdatedEvent(processGroupId, processLocator, state, processId));
         }
 
         public Task ProcessDeletedAsync(Guid processGroupId, Guid processLocator)
