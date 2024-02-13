@@ -73,12 +73,12 @@ namespace ConsoleContainer.ProcessManagement
                     p.Start();
                     ChildProcessTracker.AddProcess(p);
 
+                    process = p;
+
                     State = ProcessState.Running;
 
                     p.BeginOutputReadLine();
                     p.BeginErrorReadLine();
-
-                    process = p;
                 }
                 catch
                 {

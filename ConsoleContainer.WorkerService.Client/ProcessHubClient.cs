@@ -18,6 +18,11 @@ namespace ConsoleContainer.WorkerService.Client
             return HubConnection.Register(hub);
         }
 
+        public IAsyncEnumerable<ProcessOutputDataDto> GetProcessOutputDataStream(CancellationToken cancellationToken = default)
+        {
+            return HubConnection.StreamAsync<ProcessOutputDataDto>("ProcessOutputDataStream", cancellationToken);
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

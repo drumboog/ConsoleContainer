@@ -1,6 +1,7 @@
 ﻿using ConsoleContainer.Contracts;
 using ConsoleContainer.WorkerService.HubSubscriptions;
 using ConsoleContainer.WorkerService.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleContainer.WorkerService
 {
@@ -19,6 +20,9 @@ namespace ConsoleContainer.WorkerService
 
             services.AddTransient<IProcessHubSubscription, ProcessHubSubscription>();
             services.AddSingleton<IProcessGroupService, ProcessGroupService>();
+            services.AddSingleton<OutputDataChannelManager>();
+            services.AddSingleton<IOutputDataChannelReader>(provider => provider.GetRequiredService<OutputDataChannelManager>());
+            services.AddSingleton<IOutputDataChannelWriter>(provider => provider.GetRequiredService<OutputDataChannelManager>());
 
             services.AddHostedService<ProcessWorker>();
 

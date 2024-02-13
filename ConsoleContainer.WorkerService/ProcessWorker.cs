@@ -9,6 +9,7 @@ namespace ConsoleContainer.WorkerService
     public sealed class ProcessWorker(
         ILogger<ProcessWorker> logger,
         IProcessHubSubscription processHubSubscription,
+        IOutputDataChannelWriter outputDataChannelWriter,
         IProcessManager<ProcessKey> processManager,
         IProcessGroupService processGroupService
     ) : BackgroundService
@@ -72,8 +73,10 @@ namespace ConsoleContainer.WorkerService
         private void Process_OutputDataReceived(object? sender, ProcessOutputDataEventArgs<ProcessKey> e)
         {
             logger.LogInformation($"Sending output data to process {e.ProcessKey}: {e.Data}");
-            _ = processHubSubscription.ProcessOutputDataReceivedAsync(e.ProcessKey.ProcessGroupId, e.ProcessKey.ProcessLocator, new ProcessOutputDataDto()
+            _ = outputDataChannelWriter.WriteOutputDataAsync(new ProcessOutputDataDto()
             {
+                ProcessGroupId = e.ProcessKey.ProcessGroupId,
+                ProcessLocator = e.ProcessKey.ProcessLocator,
                 Data = e.Data.Data,
                 IsProcessError = e.Data.IsProcessError
             });

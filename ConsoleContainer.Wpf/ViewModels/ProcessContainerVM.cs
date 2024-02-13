@@ -19,6 +19,7 @@ namespace ConsoleContainer.Wpf.ViewModels
         IHandle<ProcessCreatedEvent>,
         IHandle<ProcessUpdatedEvent>,
         IHandle<ProcessStateUpdatedEvent>,
+        IHandle<ProcessOutputDataReceivedEvent>,
         IHandle<ProcessDeletedEvent>
     {
         private readonly IDialogService dialogService;
@@ -267,6 +268,27 @@ namespace ConsoleContainer.Wpf.ViewModels
             }
 
             process.UpdateState(message.State, message.ProcessId);
+
+            return Task.CompletedTask;
+        }
+
+        Task IHandle<ProcessOutputDataReceivedEvent>.HandleAsync(ProcessOutputDataReceivedEvent message, CancellationToken cancellationToken)
+        {
+            var data = message.Data;
+
+            var group = ProcessGroups.FirstOrDefault(g => g.ProcessGroupId == data.ProcessGroupId);
+            if (group is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            var process = group.Processes.FirstOrDefault(p => p.ProcessLocator == data.ProcessLocator);
+            if (process is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            process.Output.AddOutput(data.Data);
 
             return Task.CompletedTask;
         }

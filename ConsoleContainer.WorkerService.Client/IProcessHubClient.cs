@@ -6,5 +6,6 @@ namespace ConsoleContainer.WorkerService.Client
     {
         IDisposable CreateSubscription(IProcessHubSubscription hub);
         Task StartAsync();
+        IAsyncEnumerable<ProcessOutputDataDto> GetProcessOutputDataStream(CancellationToken cancellationToken = default);
     }
 }
