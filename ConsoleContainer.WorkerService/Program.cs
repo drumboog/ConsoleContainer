@@ -3,10 +3,11 @@ using ConsoleContainer.Repositories;
 using ConsoleContainer.WorkerService;
 using ConsoleContainer.WorkerService.Hubs;
 using NReco.Logging.File;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var loggingRootPath = Path.Join(builder.Environment.ContentRootPath, "Logs");
+var loggingRootPath = Path.Join(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Logs");
 var logFile = Path.Join(loggingRootPath, "app.log");
 
 //Directory.CreateDirectory(loggingRootPath);
