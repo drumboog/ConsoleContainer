@@ -1,7 +1,6 @@
 ﻿using ConsoleContainer.Contracts;
 using ConsoleContainer.WorkerService.HubSubscriptions;
 using ConsoleContainer.WorkerService.Services;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleContainer.WorkerService
 {

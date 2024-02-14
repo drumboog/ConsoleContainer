@@ -1,4 +1,5 @@
 ﻿using ConsoleContainer.ProcessManagement.Events;
+using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Concurrent;
 
 namespace ConsoleContainer.ProcessManagement
@@ -14,7 +15,7 @@ namespace ConsoleContainer.ProcessManagement
 
         public ProcessManager()
         {
-            processWrapperFactory = new ProcessWrapperFactory<TKey>();
+            processWrapperFactory = new ProcessWrapperFactory<TKey>(NullLogger<ProcessWrapper<TKey>>.Instance);
         }
 
         public ProcessManager(IProcessWrapperFactory<TKey> processWrapperFactory)

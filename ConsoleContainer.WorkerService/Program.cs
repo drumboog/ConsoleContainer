@@ -2,8 +2,21 @@ using ConsoleContainer.ProcessManagement;
 using ConsoleContainer.Repositories;
 using ConsoleContainer.WorkerService;
 using ConsoleContainer.WorkerService.Hubs;
+using NReco.Logging.File;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var loggingRootPath = Path.Join(builder.Environment.ContentRootPath, "Logs");
+var logFile = Path.Join(loggingRootPath, "app.log");
+
+//Directory.CreateDirectory(loggingRootPath);
+builder.Logging.AddFile(logFile, options =>
+{
+    options.Append = true;
+    options.MaxRollingFiles = 100;
+    options.FileSizeLimitBytes = 1024 * 1024 * 10; // 10MB
+});
+builder.Logging.AddConsole();
 
 // Add services to the container.
 builder.Services.AddWorkerService();

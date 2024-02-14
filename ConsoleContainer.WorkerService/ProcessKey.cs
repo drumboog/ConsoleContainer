@@ -10,5 +10,10 @@
             ProcessGroupId = processGroupId;
             ProcessLocator = processLocator;
         }
+
+        public override string ToString()
+        {
+            return $"ProcessGroupId: {ProcessGroupId}, ProcessLocator: {ProcessLocator}";
+        }
     }
 }
