@@ -17,6 +17,8 @@ namespace ConsoleContainer.WorkerService.Client
                 throw new Exception("WorkerServiceUrl must be configured.");
             }
 
+            services.AddTransient<LoggingHttpMessageHandler>();
+
             services.AddSingleton<IProcessHubClient>(provider =>
             {
                 var hubClient = new ProcessHubClient(provider.GetRequiredService<ILogger<HubClient>>(), $"{configuration.WorkerServiceUrl}/signalr/Process", "Process");
@@ -31,7 +33,8 @@ namespace ConsoleContainer.WorkerService.Client
             services.AddHttpClient<IWorkerServiceClient, WorkerServiceClient>(client =>
             {
                 client.BaseAddress = new Uri(configuration.WorkerServiceUrl);
-            });
+            })
+                .ConfigurePrimaryHttpMessageHandler<LoggingHttpMessageHandler>();
 
             return services;
         }
