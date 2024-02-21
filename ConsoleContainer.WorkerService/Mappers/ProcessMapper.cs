@@ -8,26 +8,19 @@ namespace ConsoleContainer.WorkerService.Mappers
         IProcessManager<ProcessKey> processManager
     ) : IProcessMapper
     {
-        public ProcessInformationDto Map(Guid processGroupId, ProcessInformation pi) =>
-            new ProcessInformationDto()
+        public ProcessInformationDto Map(Guid processGroupId, ProcessInformation pi)
+        {
+            var process = processManager.GetProcess(new ProcessKey(processGroupId, pi.ProcessLocator));
+            return new ProcessInformationDto()
             {
                 ProcessLocator = pi.ProcessLocator,
-                ProcessId = null,
+                ProcessId = process?.ProcessId,
                 ProcessName = pi.ProcessName,
                 FilePath = pi.FilePath,
                 Arguments = pi.Arguments,
                 WorkingDirectory = pi.WorkingDirectory,
-                State = GetState(processGroupId, pi.ProcessLocator)
+                State = (Contracts.ProcessState)(process?.State ?? ProcessManagement.ProcessState.Idle)
             };
-
-        private Contracts.ProcessState GetState(Guid processGroupId, Guid processLocator)
-        {
-            var process = processManager.GetProcess(new ProcessKey(processGroupId, processLocator));
-            if (process is null)
-            {
-                return Contracts.ProcessState.Idle;
-            }
-            return Contracts.ProcessState.Idle;
         }
     }
 }

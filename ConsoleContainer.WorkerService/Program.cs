@@ -4,13 +4,13 @@ using ConsoleContainer.WorkerService;
 using ConsoleContainer.WorkerService.Hubs;
 using NReco.Logging.File;
 using System.Reflection;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var loggingRootPath = Path.Join(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Logs");
-var logFile = Path.Join(loggingRootPath, "app.log");
+var logFile = Path.Join(loggingRootPath, "workerService.log");
 
-//Directory.CreateDirectory(loggingRootPath);
 builder.Logging.AddFile(logFile, options =>
 {
     options.Append = true;
@@ -25,7 +25,11 @@ builder.Services.AddProcessManagement();
 builder.Services.AddRepositories();
 builder.Services.AddSignalR();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
