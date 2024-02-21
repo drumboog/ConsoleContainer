@@ -1,5 +1,6 @@
 ﻿using ConsoleContainer.Contracts;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace ConsoleContainer.WorkerService.Client
 {
@@ -18,7 +19,7 @@ namespace ConsoleContainer.WorkerService.Client
 
             services.AddSingleton<IProcessHubClient>(provider =>
             {
-                var hubClient = new ProcessHubClient($"{configuration.WorkerServiceUrl}/signalr/Process", "Process");
+                var hubClient = new ProcessHubClient(provider.GetRequiredService<ILogger<HubClient>>(), $"{configuration.WorkerServiceUrl}/signalr/Process", "Process");
 
                 foreach (var factory in configuration.ProcessHubSubscriptionFactories)
                 {

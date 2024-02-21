@@ -1,8 +1,8 @@
 ﻿using ConsoleContainer.Contracts;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.Net.Http.Json;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace ConsoleContainer.WorkerService.Client
 {
@@ -82,9 +82,7 @@ namespace ConsoleContainer.WorkerService.Client
 
             try
             {
-                var options = new JsonSerializerOptions();
-                options.Converters.Add(new JsonStringEnumConverter());
-                var result = JsonSerializer.Deserialize<T>(content, options)!;
+                var result = JsonConvert.DeserializeObject<T>(content, new StringEnumConverter())!;
                 return result;
             }
             catch (Exception ex)
@@ -103,7 +101,7 @@ namespace ConsoleContainer.WorkerService.Client
 
             var content = await response.Content.ReadAsStringAsync(cancellationToken);
             var logData = new { response.StatusCode, ResponseContent = content };
-            var logDataString = JsonSerializer.Serialize(logData);
+            var logDataString = JsonConvert.SerializeObject(logData);
             logger.LogError($"Response returned unsuccessful status code: {logDataString}");
 
             response.EnsureSuccessStatusCode();

@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
-using TypedSignalR.Client;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace ConsoleContainer.WorkerService.Client
 {
     public abstract class HubClient
     {
+        private readonly ILogger<HubClient> logger;
+
         protected HubConnection HubConnection { get; }
 
         public string HubConnectionUrl { get; }
@@ -15,8 +18,9 @@ namespace ConsoleContainer.WorkerService.Client
             get { return HubConnection.State; }
         }
 
-        protected HubClient(string hubConnectionUrl, string hubProxyName)
+        protected HubClient(ILogger<HubClient> logger, string hubConnectionUrl, string hubProxyName)
         {
+            this.logger = logger;
             HubConnectionUrl = hubConnectionUrl;
             HubProxyName = hubProxyName;
 
@@ -28,6 +32,7 @@ namespace ConsoleContainer.WorkerService.Client
             var hubConnection = new HubConnectionBuilder()
                 .WithUrl(HubConnectionUrl)
                 .WithAutomaticReconnect()
+                .AddMessagePackProtocol()
                 .Build();
 
             hubConnection.Reconnected += HubConnection_Reconnected;
@@ -56,7 +61,7 @@ namespace ConsoleContainer.WorkerService.Client
             }
             catch (Exception ex)
             {
-                //HubClientEvents.Log.Warning(ex.Message + " " + ex.StackTrace);
+                logger.LogError(ex, "Could not start hub.");
             }
         }
 
@@ -82,8 +87,8 @@ namespace ConsoleContainer.WorkerService.Client
     {
         protected T Hub { get; }
 
-        protected HubClient(string hubConnectionUrl, string hubProxyName)
-            : base(hubConnectionUrl, hubProxyName)
+        protected HubClient(ILogger<HubClient> logger, string hubConnectionUrl, string hubProxyName)
+            : base(logger, hubConnectionUrl, hubProxyName)
         {
             Hub = CreateHub(HubConnection);
         }

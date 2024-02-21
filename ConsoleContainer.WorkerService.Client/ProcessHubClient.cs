@@ -1,5 +1,6 @@
 ﻿using ConsoleContainer.Contracts;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Logging;
 using TypedSignalR.Client;
 
 namespace ConsoleContainer.WorkerService.Client
@@ -8,8 +9,8 @@ namespace ConsoleContainer.WorkerService.Client
     {
         private bool disposedValue;
 
-        public ProcessHubClient(string hubConnectionUrl, string hubProxyName)
-            : base(hubConnectionUrl, hubProxyName)
+        public ProcessHubClient(ILogger<HubClient> logger, string hubConnectionUrl, string hubProxyName)
+            : base(logger, hubConnectionUrl, hubProxyName)
         {
         }
 

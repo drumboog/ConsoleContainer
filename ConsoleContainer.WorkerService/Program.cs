@@ -23,7 +23,8 @@ builder.Logging.AddConsole();
 builder.Services.AddWorkerService();
 builder.Services.AddProcessManagement();
 builder.Services.AddRepositories();
-builder.Services.AddSignalR();
+builder.Services.AddSignalR()
+    .AddMessagePackProtocol();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
