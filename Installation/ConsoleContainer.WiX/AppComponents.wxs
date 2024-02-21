@@ -1,0 +1,9 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+    <ComponentGroup Id="AppComponents" Directory="INSTALLFOLDER">
+      <Component Guid="{29A38EDE-D2D2-4B44-8A92-C41FB385825A}">
+        <File Source="ConsoleContainer.Wpf.exe" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

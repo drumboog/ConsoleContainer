@@ -1,0 +1,8 @@
+﻿<Project Sdk="WixToolset.Sdk/4.0.4">
+  <PropertyGroup>
+    <OutputName>ConsoleContainer</OutputName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ConsoleContainer.Wpf\ConsoleContainer.Wpf.csproj" />
+  </ItemGroup>
+</Project>
