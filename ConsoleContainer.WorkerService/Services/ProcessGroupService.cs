@@ -4,7 +4,6 @@ using ConsoleContainer.Kernel.Validation;
 using ConsoleContainer.ProcessManagement;
 using ConsoleContainer.Repositories;
 using ConsoleContainer.WorkerService.Mappers;
-using ProcessManagement = ConsoleContainer.ProcessManagement;
 
 namespace ConsoleContainer.WorkerService.Services
 {

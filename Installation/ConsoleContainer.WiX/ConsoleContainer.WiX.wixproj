@@ -11,7 +11,7 @@
       <ComponentGroupName>WorkerServiceFilesComponents</ComponentGroupName>
       <DirectoryRefId>ServicesFolder</DirectoryRefId>
       <SuppressRootDirectory>true</SuppressRootDirectory>
-      <!--<Transforms>.\HarvestTransforms\WorkerService.xsl</Transforms>-->
+      <Transforms>.\HarvestTransforms\WorkerService.xsl</Transforms>
     </HarvestDirectory>
     <HarvestDirectory Include=".\obj\$(Platform)\$(Configuration)\publish\ConsoleContainer.Wpf">
       <ComponentGroupName>FrontEndFilesComponents</ComponentGroupName>

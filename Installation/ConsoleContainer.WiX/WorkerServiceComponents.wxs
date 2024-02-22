@@ -3,10 +3,10 @@
 		<ComponentGroup Id="WorkerServiceComponents">
 			<ComponentGroupRef Id="WorkerServiceFilesComponents" />
 
-			<!--<Component Id="WorkerServiceExeComponent" Directory="ServicesFolder" Guid="31D5BD9D-0FD9-4004-A68D-3C46F69AA5DB">
+			<Component Id="WorkerServiceExeComponent" Directory="ServicesFolder" Guid="31D5BD9D-0FD9-4004-A68D-3C46F69AA5DB">
 				<File Id="WorkerServiceExe" KeyPath="yes" Source="SourceDir\ConsoleContainer.WorkerService.exe" />
 
-				--><!--<ServiceInstall Id="WorkerServiceWindowsServiceInstall"
+				<ServiceInstall Id="WorkerServiceWindowsServiceInstall"
 								Name="ConsoleContainer"
 								DisplayName="Console Container"
 								Description="Manages and runs processes that are available in the Console Container application."
@@ -21,8 +21,8 @@
 								Start="install"
 								Stop="both"
 								Remove="uninstall"
-								Wait="yes" />--><!--
-			</Component>-->
+								Wait="yes" />
+			</Component>
 		</ComponentGroup>
 	</Fragment>
 </Wix>
