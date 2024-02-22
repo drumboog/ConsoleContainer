@@ -6,7 +6,7 @@
 
 		<Feature Id="Main">
 			<ComponentGroupRef Id="WorkerServiceComponents" />
-			<ComponentGroupRef Id="WpfComponents" />
+			<ComponentGroupRef Id="FrontEndComponents" />
 		</Feature>
 	</Package>
 </Wix>

@@ -6,5 +6,8 @@
 			<Directory Id="FrontEndFolder" Name="UI" />
 		</Directory>
     </StandardDirectory>
+	<Directory Id="ProgramMenuFolder">
+	  <Directory Id="StartMenuFolder" Name="Console Container"/>
+	</Directory>
   </Fragment>
 </Wix>

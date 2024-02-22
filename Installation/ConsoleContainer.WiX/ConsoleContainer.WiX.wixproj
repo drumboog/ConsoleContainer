@@ -1,26 +1,30 @@
 ﻿<Project Sdk="WixToolset.Sdk/4.0.4">
-	<PropertyGroup>
-		<OutputName>ConsoleContainer</OutputName>
-	</PropertyGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\..\ConsoleContainer.WorkerService\ConsoleContainer.WorkerService.csproj" Publish="true" />
-		<ProjectReference Include="..\..\ConsoleContainer.Wpf\ConsoleContainer.Wpf.csproj" Publish="true" />
-	</ItemGroup>
-	<ItemGroup>
-		<HarvestDirectory Include=".\obj\$(Platform)\$(Configuration)\publish\ConsoleContainer.WorkerService">
-			<ComponentGroupName>WorkerServiceComponents</ComponentGroupName>
-			<DirectoryRefId>ServicesFolder</DirectoryRefId>
-			<SuppressRootDirectory>true</SuppressRootDirectory>
-		</HarvestDirectory>
-		<HarvestDirectory Include=".\obj\$(Platform)\$(Configuration)\publish\ConsoleContainer.Wpf">
-			<ComponentGroupName>WpfComponents</ComponentGroupName>
-			<DirectoryRefId>FrontEndFolder</DirectoryRefId>
-			<SuppressRootDirectory>true</SuppressRootDirectory>
-		</HarvestDirectory>
-		<BindPath Include=".\$(Platform)\$(Configuration)\publish\ConsoleContainer.Wpf" />
-	</ItemGroup>
-	<ItemGroup>
-		<PackageReference Include="WixToolset.Heat" Version="4.0.4" />
-		<PackageReference Include="WixToolset.Util.wixext" Version="4.0.4" />
-	</ItemGroup>
+  <PropertyGroup>
+    <OutputName>ConsoleContainer</OutputName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ConsoleContainer.WorkerService\ConsoleContainer.WorkerService.csproj" Publish="true" />
+    <ProjectReference Include="..\..\ConsoleContainer.Wpf\ConsoleContainer.Wpf.csproj" Publish="true" />
+  </ItemGroup>
+  <ItemGroup>
+    <HarvestDirectory Include=".\obj\$(Platform)\$(Configuration)\publish\ConsoleContainer.WorkerService">
+      <ComponentGroupName>WorkerServiceFilesComponents</ComponentGroupName>
+      <DirectoryRefId>ServicesFolder</DirectoryRefId>
+      <SuppressRootDirectory>true</SuppressRootDirectory>
+      <!--<Transforms>.\HarvestTransforms\WorkerService.xsl</Transforms>-->
+    </HarvestDirectory>
+    <HarvestDirectory Include=".\obj\$(Platform)\$(Configuration)\publish\ConsoleContainer.Wpf">
+      <ComponentGroupName>FrontEndFilesComponents</ComponentGroupName>
+      <DirectoryRefId>FrontEndFolder</DirectoryRefId>
+      <SuppressRootDirectory>true</SuppressRootDirectory>
+    </HarvestDirectory>
+    <BindPath Include=".\$(Platform)\$(Configuration)\publish\ConsoleContainer.Wpf" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="WixToolset.Heat" Version="4.0.4" />
+    <PackageReference Include="WixToolset.Util.wixext" Version="4.0.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HarvestTransforms\WorkerService.xsl" />
+  </ItemGroup>
 </Project>

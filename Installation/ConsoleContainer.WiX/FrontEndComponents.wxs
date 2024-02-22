@@ -1,0 +1,26 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+	<Fragment>
+		<ComponentGroup Id="FrontEndComponents">
+			<ComponentGroupRef Id="FrontEndFilesComponents" />
+
+			<Component Id="FrontEndApplicationShortcut" Guid="3AE09F76-CC76-42DD-A482-329AE0FD7EC5" Directory="StartMenuFolder">
+				<Shortcut Id="FrontEndApplicationStartMenuShortcut"
+						  Name="Console Container"
+						  Target="[FrontEndFolder]\ConsoleContainer.Wpf.exe"
+						  WorkingDirectory="FrontEndFolder" />
+
+				<RemoveFolder Id="DeleteFrontEndApplicationStartMenuShortcuts"
+							   Directory="StartMenuFolder"
+							   On="uninstall" />
+
+				<RegistryValue
+								Root="HKCU"
+								Key="Software\ConsoleContainer"
+								Name="installed"
+								Type="integer"
+								Value="1"
+								KeyPath="yes"/>
+			</Component>
+		</ComponentGroup>
+	</Fragment>
+</Wix>
