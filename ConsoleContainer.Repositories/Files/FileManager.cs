@@ -4,7 +4,7 @@ using ConsoleContainer.Repositories.Serialization;
 namespace ConsoleContainer.Repositories.Files
 {
     internal class FileManager<T>(
-        RepositoryOptions options,
+        IRepositoryOptions options,
         string fileName,
         IBinarySerializer serializer,
         Func<T> factory
@@ -37,8 +37,7 @@ namespace ConsoleContainer.Repositories.Files
 
         private string GetFilePath()
         {
-            var applicationDirectory = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-            var path = Path.Combine(applicationDirectory, options.RootDirectoryName, fileName);
+            var path = Path.Combine(options.RootDirectory, fileName);
             return path;
         }
     }

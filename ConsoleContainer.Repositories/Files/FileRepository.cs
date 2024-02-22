@@ -7,12 +7,12 @@ namespace ConsoleContainer.Repositories.Files
     {
         private readonly FileManager<T> fileManager;
 
-        public FileRepository(RepositoryOptions options, string fileName, Func<T> factory)
+        public FileRepository(IRepositoryOptions options, string fileName, Func<T> factory)
             : this(options, fileName, new JsonBinarySerializer(true), factory)
         {
         }
 
-        public FileRepository(RepositoryOptions options, string fileName, IBinarySerializer serializer, Func<T> factory)
+        public FileRepository(IRepositoryOptions options, string fileName, IBinarySerializer serializer, Func<T> factory)
         {
             fileManager = new FileManager<T>(options, fileName, serializer, factory);
         }

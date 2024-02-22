@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NReco.Logging.File;
+using System.Configuration;
 using System.IO;
-using System.Reflection;
 
 namespace ConsoleContainer.Wpf
 {
@@ -20,7 +20,9 @@ namespace ConsoleContainer.Wpf
         {
             IServiceCollection services = new ServiceCollection();
 
-            var loggingRootPath = Path.Join(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Logs");
+            var applicationDataDirectoryName = ConfigurationManager.AppSettings["ApplicationDataDirectoryName"] ?? throw new Exception("Application Data Directory Name not configured");
+            var applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), applicationDataDirectoryName);
+            var loggingRootPath = Path.Join(applicationDataDirectory, "Logs");
             var logFile = Path.Join(loggingRootPath, "wpf.log");
 
             services.AddLogging(loggingBuilder =>

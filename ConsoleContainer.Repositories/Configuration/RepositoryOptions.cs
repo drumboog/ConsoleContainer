@@ -1,7 +1,7 @@
 ﻿namespace ConsoleContainer.Repositories.Configuration
 {
-    public class RepositoryOptions
+    public class RepositoryOptions : IRepositoryOptions
     {
-        public string RootDirectoryName { get; set; } = "ConsoleContainer";
+        public string RootDirectory { get; set; } = null!;
     }
 }

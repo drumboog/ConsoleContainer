@@ -2,17 +2,17 @@ using ConsoleContainer.ProcessManagement;
 using ConsoleContainer.Repositories;
 using ConsoleContainer.Repositories.Configuration;
 using ConsoleContainer.WorkerService;
+using ConsoleContainer.WorkerService.Configuration;
 using ConsoleContainer.WorkerService.Hubs;
 using NReco.Logging.File;
-using System.Reflection;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var loggingRootPath = Path.Join(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Logs");
+var applicationSettings = builder.Configuration.GetRequiredValue<ApplicationSettings>("ApplicationSettings");
+var applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), applicationSettings.ApplicationDataDirectoryName);
+var loggingRootPath = Path.Join(applicationDataDirectory, "Logs");
 var logFile = Path.Join(loggingRootPath, "workerService.log");
-
-var repositoryOptions = builder.Configuration.GetRequiredValue<RepositoryOptions>("Repositories") ;
 
 builder.Logging.AddFile(logFile, options =>
 {
@@ -25,7 +25,10 @@ builder.Logging.AddConsole();
 // Add services to the container.
 builder.Services.AddWorkerService();
 builder.Services.AddProcessManagement();
-builder.Services.AddRepositories(repositoryOptions);
+builder.Services.AddRepositories(options =>
+{
+    options.WithRootDirectory(applicationDataDirectory);
+});
 builder.Services.AddSignalR()
     .AddMessagePackProtocol();
 

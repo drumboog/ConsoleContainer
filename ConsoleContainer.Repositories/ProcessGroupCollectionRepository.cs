@@ -1,23 +1,12 @@
 ﻿using ConsoleContainer.Domain;
-using ConsoleContainer.Repositories.Configuration;
 using ConsoleContainer.Repositories.Files;
 
 namespace ConsoleContainer.Repositories
 {
-    public class ProcessGroupCollectionRepository : IProcessGroupCollectionRepository
+    public class ProcessGroupCollectionRepository (
+        IFileRepository<ProcessGroupCollection> fileRepository
+    ) : IProcessGroupCollectionRepository
     {
-        private readonly IFileRepository<ProcessGroupCollection> fileRepository;
-
-        public ProcessGroupCollectionRepository()
-            : this(new FileRepository<ProcessGroupCollection>(new RepositoryOptions() { RootDirectoryName = "UnknownRoot" }, "processGroups.json", () => new ProcessGroupCollection()))
-        {
-        }
-
-        public ProcessGroupCollectionRepository(IFileRepository<ProcessGroupCollection> fileRepository)
-        {
-            this.fileRepository = fileRepository;
-        }
-
         public Task<ProcessGroupCollection> ReadAsync()
         {
             return fileRepository.ReadAsync();
