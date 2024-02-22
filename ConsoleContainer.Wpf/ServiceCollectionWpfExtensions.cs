@@ -28,7 +28,7 @@ namespace ConsoleContainer.Wpf
 
             services.AddWorkerServiceClient(config =>
             {
-                config.WithWorkerServiceUrl("https://localhost:7276");
+                config.WithWorkerServiceUrl("http://localhost:5000");
                 config.AddProcessHubSubscription<ProcessHubSubscription>();
             });
 

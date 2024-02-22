@@ -1,5 +1,6 @@
 using ConsoleContainer.ProcessManagement;
 using ConsoleContainer.Repositories;
+using ConsoleContainer.Repositories.Configuration;
 using ConsoleContainer.WorkerService;
 using ConsoleContainer.WorkerService.Hubs;
 using NReco.Logging.File;
@@ -10,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 var loggingRootPath = Path.Join(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Logs");
 var logFile = Path.Join(loggingRootPath, "workerService.log");
+
+var repositoryOptions = builder.Configuration.GetRequiredValue<RepositoryOptions>("Repositories") ;
 
 builder.Logging.AddFile(logFile, options =>
 {
@@ -22,7 +25,7 @@ builder.Logging.AddConsole();
 // Add services to the container.
 builder.Services.AddWorkerService();
 builder.Services.AddProcessManagement();
-builder.Services.AddRepositories();
+builder.Services.AddRepositories(repositoryOptions);
 builder.Services.AddSignalR()
     .AddMessagePackProtocol();
 
@@ -34,6 +37,8 @@ builder.Services.AddControllers()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddWindowsService();
 
 var app = builder.Build();
 

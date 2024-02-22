@@ -1,20 +1,15 @@
-﻿using ConsoleContainer.Repositories.Serialization;
+﻿using ConsoleContainer.Repositories.Configuration;
+using ConsoleContainer.Repositories.Serialization;
 
 namespace ConsoleContainer.Repositories.Files
 {
-    internal class FileManager<T>
+    internal class FileManager<T>(
+        RepositoryOptions options,
+        string fileName,
+        IBinarySerializer serializer,
+        Func<T> factory
+    )
     {
-        private readonly string fileName;
-        private readonly IBinarySerializer serializer;
-        private readonly Func<T> factory;
-
-        public FileManager(string fileName, IBinarySerializer serializer, Func<T> factory)
-        {
-            this.fileName = fileName;
-            this.serializer = serializer;
-            this.factory = factory;
-        }
-
         public async Task<T> ReadAsync()
         {
             try
@@ -43,7 +38,7 @@ namespace ConsoleContainer.Repositories.Files
         private string GetFilePath()
         {
             var applicationDirectory = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-            var path = Path.Combine(applicationDirectory, "ConsoleContainer", fileName);
+            var path = Path.Combine(applicationDirectory, options.RootDirectoryName, fileName);
             return path;
         }
     }

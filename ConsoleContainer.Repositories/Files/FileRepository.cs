@@ -1,4 +1,5 @@
-﻿using ConsoleContainer.Repositories.Serialization;
+﻿using ConsoleContainer.Repositories.Configuration;
+using ConsoleContainer.Repositories.Serialization;
 
 namespace ConsoleContainer.Repositories.Files
 {
@@ -6,14 +7,14 @@ namespace ConsoleContainer.Repositories.Files
     {
         private readonly FileManager<T> fileManager;
 
-        public FileRepository(string fileName, Func<T> factory)
-            : this(fileName, new JsonBinarySerializer(true), factory)
+        public FileRepository(RepositoryOptions options, string fileName, Func<T> factory)
+            : this(options, fileName, new JsonBinarySerializer(true), factory)
         {
         }
 
-        public FileRepository(string fileName, IBinarySerializer serializer, Func<T> factory)
+        public FileRepository(RepositoryOptions options, string fileName, IBinarySerializer serializer, Func<T> factory)
         {
-            fileManager = new FileManager<T>(fileName, serializer, factory);
+            fileManager = new FileManager<T>(options, fileName, serializer, factory);
         }
 
         public Task<T> ReadAsync()

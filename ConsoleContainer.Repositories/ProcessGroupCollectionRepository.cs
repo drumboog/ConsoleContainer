@@ -1,4 +1,5 @@
 ﻿using ConsoleContainer.Domain;
+using ConsoleContainer.Repositories.Configuration;
 using ConsoleContainer.Repositories.Files;
 
 namespace ConsoleContainer.Repositories
@@ -8,7 +9,7 @@ namespace ConsoleContainer.Repositories
         private readonly IFileRepository<ProcessGroupCollection> fileRepository;
 
         public ProcessGroupCollectionRepository()
-            : this(new FileRepository<ProcessGroupCollection>("processGroups.json", () => new ProcessGroupCollection()))
+            : this(new FileRepository<ProcessGroupCollection>(new RepositoryOptions() { RootDirectoryName = "UnknownRoot" }, "processGroups.json", () => new ProcessGroupCollection()))
         {
         }
 
