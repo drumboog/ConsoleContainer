@@ -2,6 +2,7 @@
 using ConsoleContainer.WorkerService.Client;
 using ConsoleContainer.Wpf.Eventing;
 using ConsoleContainer.Wpf.Eventing.Events;
+using Microsoft.Extensions.Logging;
 using System.Windows;
 
 namespace ConsoleContainer.Wpf
@@ -15,13 +16,27 @@ namespace ConsoleContainer.Wpf
         private readonly List<Task> cancellableTasks = new();
         private IProcessHubClient? processHubClient;
 
+        private readonly Lazy<ILogger<App>> lazyLogger = new Lazy<ILogger<App>>(() => ServiceLocator.GetService<ILogger<App>>());
+        private ILogger<App> Logger => lazyLogger.Value;
+
         protected override void OnStartup(StartupEventArgs e)
         {
-            PlatformProvider.Current = new WindowsPlatformProvider();
+            try
+            {
+                PlatformProvider.Current = new WindowsPlatformProvider();
 
-            StartProcessHubClient().Wait();
+                StartProcessHubClient().Wait();
 
-            base.OnStartup(e);
+                base.OnStartup(e);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error running application.");
+
+                MessageBox.Show("Could not start application.");
+
+                throw;
+            }
         }
 
         protected override async void OnExit(ExitEventArgs e)
@@ -39,7 +54,11 @@ namespace ConsoleContainer.Wpf
 
         private async Task StartProcessHubClient()
         {
+            Logger.LogInformation("Getting Process Hub Client");
+
             processHubClient = ServiceLocator.GetService<IProcessHubClient>();
+
+            Logger.LogInformation("Starting Process Hub Client");
             await processHubClient.StartAsync().ConfigureAwait(false);
 
             var eventAggregator = ServiceLocator.GetService<IEventAggregator>();
@@ -49,6 +68,7 @@ namespace ConsoleContainer.Wpf
 
         private async Task HandleOutputDataAsync(IAsyncEnumerable<ProcessOutputDataDto> stream, IEventAggregator eventAggregator)
         {
+            Logger.LogInformation("Listenning on ProcessOutputDataStream");
             await foreach (var data in stream)
             {
                 await eventAggregator.PublishOnCurrentThreadAsync(new ProcessOutputDataReceivedEvent(data));

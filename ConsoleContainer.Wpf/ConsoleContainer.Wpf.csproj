@@ -34,6 +34,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NReco.Logging.File" Version="1.2.0" />
     <PackageReference Include="Scrutor" Version="4.2.2" />
@@ -47,6 +50,15 @@
   <ItemGroup>
     <ProjectReference Include="..\ConsoleContainer.Contracts\ConsoleContainer.Contracts.csproj" />
     <ProjectReference Include="..\ConsoleContainer.WorkerService.Client\ConsoleContainer.WorkerService.Client.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

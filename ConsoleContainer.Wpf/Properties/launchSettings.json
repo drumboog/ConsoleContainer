@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "ConsoleContainer.Wpf": {
+      "commandName": "Project",
+      "nativeDebugging": false,
+      "environmentVariables": {
+        "ASPCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

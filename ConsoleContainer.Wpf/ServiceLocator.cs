@@ -1,6 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using ConsoleContainer.Wpf.Configuration;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using NReco.Logging.File;
-using System.Configuration;
 using System.IO;
 
 namespace ConsoleContainer.Wpf
@@ -20,8 +21,10 @@ namespace ConsoleContainer.Wpf
         {
             IServiceCollection services = new ServiceCollection();
 
-            var applicationDataDirectoryName = ConfigurationManager.AppSettings["ApplicationDataDirectoryName"] ?? throw new Exception("Application Data Directory Name not configured");
-            var applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), applicationDataDirectoryName);
+            var config = BuildConfiguration();
+
+            var applicationSettings = config.GetRequiredValue<ApplicationSettings>("ApplicationSettings");
+            var applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), applicationSettings.ApplicationDataDirectoryName);
             var loggingRootPath = Path.Join(applicationDataDirectory, "Logs");
             var logFile = Path.Join(loggingRootPath, "wpf.log");
 
@@ -38,6 +41,21 @@ namespace ConsoleContainer.Wpf
             services.AddWpf();
 
             return services.BuildServiceProvider();
+        }
+
+        private static IConfigurationRoot BuildConfiguration()
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", false, true);
+
+            var environment = Environment.GetEnvironmentVariable("ASPCORE_ENVIRONMENT");
+            if (environment is not null)
+            {
+                builder.AddJsonFile($"appsettings.{environment}.json", true, true);
+            }
+
+            return builder.Build();
         }
     }
 }
