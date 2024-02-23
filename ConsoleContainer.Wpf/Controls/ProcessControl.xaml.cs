@@ -1,6 +1,4 @@
-﻿using ConsoleContainer.Wpf.Eventing;
-using ConsoleContainer.Wpf.Eventing.Events;
-using ConsoleContainer.Wpf.ViewModels;
+﻿using ConsoleContainer.Wpf.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -12,7 +10,6 @@ namespace ConsoleContainer.Wpf.Controls
     public partial class ProcessControl : UserControl
     {
         public static DependencyProperty ProcessProperty = DependencyProperty.Register("Process", typeof(ProcessVM), typeof(ProcessControl));
-        private IEventAggregator eventAggregator = ServiceLocator.GetService<IEventAggregator>();
 
         internal ProcessVM Process
         {
@@ -42,12 +39,12 @@ namespace ConsoleContainer.Wpf.Controls
 
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
-            _ = eventAggregator.PublishOnCurrentThreadAsync(new EditProcessEvent(Process));
+            _ = Process.EditProcessAsync();
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            _ = eventAggregator.PublishOnCurrentThreadAsync(new DeleteProcessEvent(Process));
+            _ = Process.DeleteProcessAsync();
         }
     }
 }

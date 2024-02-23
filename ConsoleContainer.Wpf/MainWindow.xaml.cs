@@ -14,17 +14,17 @@ namespace ConsoleContainer.Wpf
     {
         private readonly ProcessContainerVM viewModel;
 
-        public MainWindow()
+        public MainWindow(ProcessContainerVM processContainer, IEventAggregator eventAggregator)
         {
             InitializeComponent();
 
-            viewModel = ServiceLocator.GetService<ProcessContainerVM>();
+            viewModel = processContainer;
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
                 _ = viewModel.RefreshProcessesAsync();
                 DataContext = viewModel;
 
-                ServiceLocator.GetService<IEventAggregator>().SubscribeOnUIThread(this);
+                eventAggregator.SubscribeOnUIThread(this);
             }
         }
 

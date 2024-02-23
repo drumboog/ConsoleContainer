@@ -1,26 +1,25 @@
 ﻿using ConsoleContainer.Wpf.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using NReco.Logging.File;
 using System.IO;
 
 namespace ConsoleContainer.Wpf
 {
-    internal class ServiceLocator
+    internal static class WpfHost
     {
-        private static Lazy<IServiceProvider> serviceProvider = new Lazy<IServiceProvider>(CreateServiceProvider);
-        public static IServiceProvider ServiceProvider => serviceProvider.Value;
-
-        public static T GetService<T>()
-            where T : notnull
+        public static IHostBuilder CreateDefaultBuilder()
         {
-            return serviceProvider.Value.GetRequiredService<T>();
+            return Host.CreateDefaultBuilder()
+                .ConfigureServices((hostContext, services) =>
+                {
+                    ConfigureServices(services);
+                });
         }
 
-        private static IServiceProvider CreateServiceProvider()
+        private static void ConfigureServices(IServiceCollection services)
         {
-            IServiceCollection services = new ServiceCollection();
-
             var config = BuildConfiguration();
 
             var applicationSettings = config.GetRequiredValue<ApplicationSettings>("ApplicationSettings");
@@ -38,9 +37,9 @@ namespace ConsoleContainer.Wpf
                 });
             });
 
-            services.AddWpf();
+            services.AddSingleton<AppManager>();
 
-            return services.BuildServiceProvider();
+            services.AddWpf();
         }
 
         private static IConfigurationRoot BuildConfiguration()
@@ -49,11 +48,8 @@ namespace ConsoleContainer.Wpf
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", false, true);
 
-            var environment = Environment.GetEnvironmentVariable("ASPCORE_ENVIRONMENT");
-            if (environment is not null)
-            {
-                builder.AddJsonFile($"appsettings.{environment}.json", true, true);
-            }
+            var environment = Environment.GetEnvironmentVariable("DOTNETCORE_ENVIRONMENT") ?? "Production";
+            builder.AddJsonFile($"appsettings.{environment}.json", true, true);
 
             return builder.Build();
         }

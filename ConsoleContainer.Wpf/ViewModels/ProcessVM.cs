@@ -1,6 +1,7 @@
 ﻿using ConsoleContainer.Contracts;
 using ConsoleContainer.WorkerService.Client;
 using ConsoleContainer.Wpf.Eventing;
+using ConsoleContainer.Wpf.Eventing.Events;
 using System.Diagnostics;
 
 namespace ConsoleContainer.Wpf.ViewModels
@@ -90,6 +91,16 @@ namespace ConsoleContainer.Wpf.ViewModels
         {
             State = state;
             ProcessId = processId;
+        }
+
+        public async Task EditProcessAsync()
+        {
+            await eventAggregator.PublishOnCurrentThreadAsync(new EditProcessEvent(this));
+        }
+
+        public async Task DeleteProcessAsync()
+        {
+            await eventAggregator.PublishOnCurrentThreadAsync(new DeleteProcessEvent(this));
         }
 
         public async Task StartProcessAsync()

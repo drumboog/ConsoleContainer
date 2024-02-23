@@ -12,6 +12,8 @@ namespace ConsoleContainer.Wpf
     {
         public static IServiceCollection AddWpf(this IServiceCollection services)
         {
+            services.AddSingleton<MainWindow>();
+
             services.AddSingleton<IEventAggregator, EventAggregator>();
             services.AddSingleton<ProcessHubSubscription>();
             services.AddSingleton<IDialogService, DialogService>();
