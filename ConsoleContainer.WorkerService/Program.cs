@@ -10,6 +10,7 @@ using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 var applicationSettings = builder.Configuration.GetRequiredValue<ApplicationSettings>("ApplicationSettings");
+
 var applicationDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), applicationSettings.ApplicationDataDirectoryName);
 var loggingRootPath = Path.Join(applicationDataDirectory, "Logs");
 var logFile = Path.Join(loggingRootPath, "workerService.log");
@@ -51,8 +52,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
