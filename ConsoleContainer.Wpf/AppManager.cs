@@ -57,7 +57,7 @@ namespace ConsoleContainer.Wpf
 
         private async Task HandleOutputDataAsync(IAsyncEnumerable<ProcessOutputDataDto> stream, IEventAggregator eventAggregator)
         {
-            logger.LogInformation("Listenning on ProcessOutputDataStream");
+            logger.LogInformation("Listening on ProcessOutputDataStream");
             await foreach (var data in stream)
             {
                 await eventAggregator.PublishOnCurrentThreadAsync(new ProcessOutputDataReceivedEvent(data));

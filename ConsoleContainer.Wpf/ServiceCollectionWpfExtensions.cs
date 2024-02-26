@@ -1,4 +1,5 @@
 ﻿using ConsoleContainer.WorkerService.Client;
+using ConsoleContainer.Wpf.Configuration;
 using ConsoleContainer.Wpf.Eventing;
 using ConsoleContainer.Wpf.Hubs;
 using ConsoleContainer.Wpf.Services;
@@ -10,7 +11,7 @@ namespace ConsoleContainer.Wpf
 {
     public static class ServiceCollectionWpfExtensions
     {
-        public static IServiceCollection AddWpf(this IServiceCollection services)
+        public static IServiceCollection AddWpf(this IServiceCollection services, ApplicationSettings applicationSettings)
         {
             services.AddSingleton<MainWindow>();
 
@@ -30,8 +31,7 @@ namespace ConsoleContainer.Wpf
 
             services.AddWorkerServiceClient(config =>
             {
-                config.WithWorkerServiceUrl("http://localhost:5000");
-                config.WithWorkerServiceUrl("https://localhost:7276");
+                config.WithWorkerServiceUrl(applicationSettings.WorkerServiceUrl);
                 config.AddProcessHubSubscription<ProcessHubSubscription>();
             });
 

@@ -1,24 +1,28 @@
 ﻿<Project Sdk="WixToolset.Sdk/4.0.4">
   <PropertyGroup>
     <OutputName>ConsoleContainer</OutputName>
+	<WorkerServiceTargetDir>.\obj\$(Platform)\$(Configuration)\publish\ConsoleContainer.WorkerService</WorkerServiceTargetDir>
+	<FrontEndTargetDir>.\obj\$(Platform)\$(Configuration)\publish\ConsoleContainer.Wpf</FrontEndTargetDir>
+	<DefineConstants>WorkerServiceTargetDir=$(WorkerServiceTargetDir);FrontEndTargetDir=$(FrontEndTargetDir)</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ConsoleContainer.WorkerService\ConsoleContainer.WorkerService.csproj" Publish="true" />
+	  <ProjectReference Include="..\..\ConsoleContainer.WorkerService\ConsoleContainer.WorkerService.csproj" Publish="true" />
     <ProjectReference Include="..\..\ConsoleContainer.Wpf\ConsoleContainer.Wpf.csproj" Publish="true" />
   </ItemGroup>
   <ItemGroup>
-    <HarvestDirectory Include=".\obj\$(Platform)\$(Configuration)\publish\ConsoleContainer.WorkerService">
+    <HarvestDirectory Include="$(WorkerServiceTargetDir)">
       <ComponentGroupName>WorkerServiceFilesComponents</ComponentGroupName>
       <DirectoryRefId>ServicesFolder</DirectoryRefId>
       <SuppressRootDirectory>true</SuppressRootDirectory>
-      <Transforms>.\HarvestTransforms\WorkerService.xsl</Transforms>
+		<PreprocessorVariable>WorkerServiceTargetDir</PreprocessorVariable>
+		<Transforms>.\HarvestTransforms\WorkerService.xsl</Transforms>
     </HarvestDirectory>
-    <HarvestDirectory Include=".\obj\$(Platform)\$(Configuration)\publish\ConsoleContainer.Wpf">
+    <HarvestDirectory Include="$(FrontEndTargetDir)">
       <ComponentGroupName>FrontEndFilesComponents</ComponentGroupName>
+		<PreprocessorVariable>FrontEndTargetDir</PreprocessorVariable>
       <DirectoryRefId>FrontEndFolder</DirectoryRefId>
       <SuppressRootDirectory>true</SuppressRootDirectory>
     </HarvestDirectory>
-    <BindPath Include=".\$(Platform)\$(Configuration)\publish\ConsoleContainer.Wpf" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="WixToolset.Heat" Version="4.0.4" />

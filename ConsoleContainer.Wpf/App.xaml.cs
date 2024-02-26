@@ -15,18 +15,40 @@ namespace ConsoleContainer.Wpf
         private static IHost AppHost => lazyHost.Value;
 
         private AppManager? appManager;
+        private const string LogPath = @"C:\ProgramData\ConsoleContainer\FrontEnd\Logs\test.log";
 
         protected override async void OnStartup(StartupEventArgs e)
         {
-            await AppHost.StartAsync();
+            try
+            {
+                System.IO.File.AppendAllLines(LogPath, ["Starting application!!!!"]);
 
-            appManager = AppHost.Services.GetRequiredService<AppManager>();
-            await appManager.StartAsync(cancellationTokenSource.Token);
+                await AppHost.StartAsync();
 
-            base.OnStartup(e);
+                appManager = AppHost.Services.GetRequiredService<AppManager>();
+                await appManager.StartAsync(cancellationTokenSource.Token);
+
+                base.OnStartup(e);
+            }
+            catch (Exception ex)
+            {
+                var loggedException = ex;
+                while (loggedException is not null)
+                {
+                    System.IO.File.AppendAllLines(LogPath, [loggedException.Message]);
+                    loggedException = loggedException.InnerException;
+                }
+            }
         }
 
-        protected override async void OnExit(ExitEventArgs e)
+        protected override void OnExit(ExitEventArgs e)
+        {
+            OnExit().Wait();
+
+            base.OnExit(e);
+        }
+
+        private async Task OnExit()
         {
             using (AppHost)
             {
@@ -40,8 +62,6 @@ namespace ConsoleContainer.Wpf
 
                 await AppHost.StopAsync();
             }
-
-            base.OnExit(e);
         }
     }
 }

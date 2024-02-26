@@ -6,6 +6,13 @@
       "environmentVariables": {
         "DOTNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "Production": {
+      "commandName": "Project",
+      "nativeDebugging": false,
+      "environmentVariables": {
+        "DOTNETCORE_ENVIRONMENT": "Production"
+      }
     }
   }
 }

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using NReco.Logging.File;
 using System.IO;
 
@@ -9,6 +10,8 @@ namespace ConsoleContainer.Wpf
 {
     internal static class WpfHost
     {
+        private const string LogPath = @"C:\ProgramData\ConsoleContainer\FrontEnd\Logs\test.log";
+
         public static IHostBuilder CreateDefaultBuilder()
         {
             return Host.CreateDefaultBuilder()
@@ -29,6 +32,7 @@ namespace ConsoleContainer.Wpf
 
             services.AddLogging(loggingBuilder =>
             {
+                loggingBuilder.AddConsole();
                 loggingBuilder.AddFile(logFile, options =>
                 {
                     options.Append = true;
@@ -39,7 +43,7 @@ namespace ConsoleContainer.Wpf
 
             services.AddSingleton<AppManager>();
 
-            services.AddWpf();
+            services.AddWpf(applicationSettings);
         }
 
         private static IConfigurationRoot BuildConfiguration()
@@ -49,6 +53,7 @@ namespace ConsoleContainer.Wpf
                 .AddJsonFile("appsettings.json", false, true);
 
             var environment = Environment.GetEnvironmentVariable("DOTNETCORE_ENVIRONMENT") ?? "Production";
+            System.IO.File.AppendAllLines(LogPath, [$"Environment: {environment}"]);
             builder.AddJsonFile($"appsettings.{environment}.json", true, true);
 
             return builder.Build();
