@@ -15,30 +15,15 @@ namespace ConsoleContainer.Wpf
         private static IHost AppHost => lazyHost.Value;
 
         private AppManager? appManager;
-        private const string LogPath = @"C:\ProgramData\ConsoleContainer\FrontEnd\Logs\test.log";
 
         protected override async void OnStartup(StartupEventArgs e)
         {
-            try
-            {
-                System.IO.File.AppendAllLines(LogPath, ["Starting application!!!!"]);
+            await AppHost.StartAsync();
 
-                await AppHost.StartAsync();
+            appManager = AppHost.Services.GetRequiredService<AppManager>();
+            await appManager.StartAsync(cancellationTokenSource.Token);
 
-                appManager = AppHost.Services.GetRequiredService<AppManager>();
-                await appManager.StartAsync(cancellationTokenSource.Token);
-
-                base.OnStartup(e);
-            }
-            catch (Exception ex)
-            {
-                var loggedException = ex;
-                while (loggedException is not null)
-                {
-                    System.IO.File.AppendAllLines(LogPath, [loggedException.Message]);
-                    loggedException = loggedException.InnerException;
-                }
-            }
+            base.OnStartup(e);
         }
 
         protected override void OnExit(ExitEventArgs e)

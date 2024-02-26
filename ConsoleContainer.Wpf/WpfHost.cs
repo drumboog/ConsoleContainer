@@ -10,8 +10,6 @@ namespace ConsoleContainer.Wpf
 {
     internal static class WpfHost
     {
-        private const string LogPath = @"C:\ProgramData\ConsoleContainer\FrontEnd\Logs\test.log";
-
         public static IHostBuilder CreateDefaultBuilder()
         {
             return Host.CreateDefaultBuilder()
@@ -53,7 +51,6 @@ namespace ConsoleContainer.Wpf
                 .AddJsonFile("appsettings.json", false, true);
 
             var environment = Environment.GetEnvironmentVariable("DOTNETCORE_ENVIRONMENT") ?? "Production";
-            System.IO.File.AppendAllLines(LogPath, [$"Environment: {environment}"]);
             builder.AddJsonFile($"appsettings.{environment}.json", true, true);
 
             return builder.Build();
