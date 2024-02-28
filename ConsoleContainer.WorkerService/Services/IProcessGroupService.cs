@@ -11,7 +11,9 @@ namespace ConsoleContainer.WorkerService.Services
         Task<bool> CreateProcessAsync(Guid processGroupId, ProcessInformationDto processInformation);
         Task<bool> UpdateProcessAsync(Guid processGroupId, Guid processLocator, ProcessInformationUpdateDto processInformation);
         Task<bool> StartProcessAsync(Guid processGroupId, Guid processLocator);
+        Task<int> StartProcessesAsync(Guid processGroupId, IEnumerable<Guid> processLocators);
         Task<bool> StopProcessAsync(Guid processGroupId, Guid processLocator);
+        Task<int> StopProcessesAsync(Guid processGroupId, IEnumerable<Guid> processLocators);
         Task<bool> DeleteProcessAsync(Guid processGroupId, Guid processLocator);
     }
 }

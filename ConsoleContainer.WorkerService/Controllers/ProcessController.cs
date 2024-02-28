@@ -32,11 +32,27 @@ namespace ConsoleContainer.WorkerService.Controllers
             await processGroupService.StartProcessAsync(processGroupId, processLocator);
         }
 
+        [HttpPut("start", Name = "StartProcesses")]
+        public async Task StartMultiple(Guid processGroupId, ProcessStartStopCollectionDto processCollection)
+        {
+            var processLocators = processCollection.Processes.Select(x => x.ProcessLocator);
+            logger.LogInformation($"ProcessGroupId: {processGroupId} - Starting Processes: {string.Join(", ", processLocators)}");
+            await processGroupService.StartProcessesAsync(processGroupId, processLocators);
+        }
+
         [HttpPut("{processLocator}/stop", Name = "StopProcess")]
         public async Task Stop(Guid processGroupId, Guid processLocator)
         {
             logger.LogInformation($"ProcessGroupId: {processGroupId}, ProcessLocator: {processLocator} - Stopping Process");
             await processGroupService.StopProcessAsync(processGroupId, processLocator);
+        }
+
+        [HttpPut("stop", Name = "StopProcesses")]
+        public async Task StopMultiple(Guid processGroupId, ProcessStartStopCollectionDto processCollection)
+        {
+            var processLocators = processCollection.Processes.Select(x => x.ProcessLocator);
+            logger.LogInformation($"ProcessGroupId: {processGroupId} - Stopping Processes: {string.Join(", ", processLocators)}");
+            await processGroupService.StopProcessesAsync(processGroupId, processLocators);
         }
 
         [HttpDelete("{processLocator}", Name = "DeleteProcess")]

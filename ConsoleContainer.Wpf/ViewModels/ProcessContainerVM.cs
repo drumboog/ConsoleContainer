@@ -24,6 +24,7 @@ namespace ConsoleContainer.Wpf.ViewModels
     {
         private readonly IDialogService dialogService;
         private readonly IWorkerServiceClient workerServiceClient;
+        private readonly IProcessGroupVmFactory processGroupVmFactory;
         private readonly IProcessVmFactory processVmFactory;
 
         public ObservableCollection<ProcessGroupVM> ProcessGroups { get; } = new();
@@ -37,12 +38,14 @@ namespace ConsoleContainer.Wpf.ViewModels
         public ProcessContainerVM(
             IDialogService dialogService,
             IWorkerServiceClient workerServiceClient,
+            IProcessGroupVmFactory processGroupVmFactory,
             IProcessVmFactory processVmFactory,
             IEventAggregator eventAggregator
         )
         {
             this.dialogService = dialogService;
             this.workerServiceClient = workerServiceClient;
+            this.processGroupVmFactory = processGroupVmFactory;
             this.processVmFactory = processVmFactory;
 
             eventAggregator.SubscribeOnUIThread(this);
@@ -128,7 +131,7 @@ namespace ConsoleContainer.Wpf.ViewModels
 
         private ProcessGroupVM CreateProcessGroup(ProcessGroupSummaryDto processGroup)
         {
-            var vm = new ProcessGroupVM(processGroup.ProcessGroupId, processGroup.GroupName);
+            var vm = processGroupVmFactory.Create(processGroup.ProcessGroupId, processGroup.GroupName);
             foreach(var p in processGroup.Processes)
             {
                 var newProcess = processVmFactory.Create(processGroup.ProcessGroupId, p.ProcessLocator, p.ProcessId, p.ProcessName ?? string.Empty, p.FilePath ?? string.Empty, p.Arguments, p.WorkingDirectory, p.State);
@@ -187,7 +190,7 @@ namespace ConsoleContainer.Wpf.ViewModels
         Task IHandle<ProcessGroupCreatedEvent>.HandleAsync(ProcessGroupCreatedEvent message, CancellationToken cancellationToken)
         {
             var group = message.ProcessGroup;
-            ProcessGroups.Add(new ProcessGroupVM(group.ProcessGroupId, group.GroupName));
+            ProcessGroups.Add(processGroupVmFactory.Create(group.ProcessGroupId, group.GroupName));
             return Task.CompletedTask;
         }
 

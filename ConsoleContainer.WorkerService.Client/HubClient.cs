@@ -24,15 +24,20 @@ namespace ConsoleContainer.WorkerService.Client
             HubConnectionUrl = hubConnectionUrl;
             HubProxyName = hubProxyName;
 
-            HubConnection = CreateConnection();
+            HubConnection = CreateConnection(logger);
         }
 
-        private HubConnection CreateConnection()
+        private HubConnection CreateConnection(ILogger logger)
         {
             var hubConnection = new HubConnectionBuilder()
                 .WithUrl(HubConnectionUrl)
                 .WithAutomaticReconnect()
                 .AddMessagePackProtocol()
+                .ConfigureLogging(logging =>
+                {
+                    logging.AddProvider(new WorkerServiceClientLoggingProvider(logger));
+                    logging.SetMinimumLevel(LogLevel.Trace);
+                })
                 .Build();
 
             hubConnection.Reconnected += HubConnection_Reconnected;
@@ -67,18 +72,19 @@ namespace ConsoleContainer.WorkerService.Client
 
         private Task HubConnection_Closed(Exception? arg)
         {
+            logger.LogInformation("HubConnection_Closed");
             return Task.CompletedTask;
         }
 
         private Task HubConnection_Reconnecting(Exception? ex)
         {
-            //HubClientEvents.Log.ClientEvents("_hubConnection_Reconnecting New State:" + _hubConnection.State + " " + _hubConnection.ConnectionId);
+            logger.LogInformation("HubConnection_Reconnected");
             return Task.CompletedTask;
         }
 
         private Task HubConnection_Reconnected(string? connectionId)
         {
-            //HubClientEvents.Log.ClientEvents("_hubConnection_Reconnected New State:" + _hubConnection.State + " " + _hubConnection.ConnectionId);
+            logger.LogInformation($"HubConnection_Reconnected - Connection ID: {connectionId}");
             return Task.CompletedTask;
         }
     }

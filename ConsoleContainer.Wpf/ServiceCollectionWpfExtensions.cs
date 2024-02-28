@@ -19,6 +19,7 @@ namespace ConsoleContainer.Wpf
             services.AddSingleton<ProcessHubSubscription>();
             services.AddSingleton<IDialogService, DialogService>();
             services.AddSingleton<ProcessContainerVM>();
+            services.AddTransient<IProcessGroupVmFactory, ProcessGroupVmFactory>();
             services.AddTransient<IProcessVmFactory, ProcessVmFactory>();
 
             services.Scan(scan =>

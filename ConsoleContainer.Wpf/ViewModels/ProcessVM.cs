@@ -2,7 +2,6 @@
 using ConsoleContainer.WorkerService.Client;
 using ConsoleContainer.Wpf.Eventing;
 using ConsoleContainer.Wpf.Eventing.Events;
-using System.Diagnostics;
 
 namespace ConsoleContainer.Wpf.ViewModels
 {
@@ -105,11 +104,6 @@ namespace ConsoleContainer.Wpf.ViewModels
 
         public async Task StartProcessAsync()
         {
-            if (IsRunning)
-            {
-                return;
-            }
-
             await workerServiceClient.StartProcessAsync(ProcessGroupId, ProcessLocator);
         }
 

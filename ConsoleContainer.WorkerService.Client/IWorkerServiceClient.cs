@@ -12,7 +12,9 @@ namespace ConsoleContainer.WorkerService.Client
         Task CreateProcessAsync(Guid processGroupId, ProcessInformationDto processInformation);
         Task UpdateProcessAsync(Guid processGroupId, Guid processLocator, ProcessInformationUpdateDto processInformation);
         Task StartProcessAsync(Guid processGroupId, Guid processLocator);
+        Task StartProcessesAsync(Guid processGroupId, IEnumerable<Guid> processLocators);
         Task StopProcessAsync(Guid processGroupId, Guid processLocator);
+        Task StopProcessesAsync(Guid processGroupId, IEnumerable<Guid> processLocators);
         Task DeleteProcessAsync(Guid processGroupId, Guid processLocator);
     }
 }

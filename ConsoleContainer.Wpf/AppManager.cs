@@ -60,6 +60,7 @@ namespace ConsoleContainer.Wpf
             logger.LogInformation("Listening on ProcessOutputDataStream");
             await foreach (var data in stream)
             {
+                logger.LogTrace($"ProcessGroupId: {data.ProcessGroupId}, ProcessLocator: {data.ProcessLocator} - Stream data received: {data.Data}");
                 await eventAggregator.PublishOnCurrentThreadAsync(new ProcessOutputDataReceivedEvent(data));
             }
         }

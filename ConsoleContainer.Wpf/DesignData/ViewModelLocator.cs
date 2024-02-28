@@ -15,7 +15,13 @@ namespace ConsoleContainer.Wpf.DesignData
 
         private static ProcessContainerVM CreateProcessContainer()
         {
-            var result = new ProcessContainerVM(new MockDialogService(), new MockWorkerServiceClient(), new ProcessVmFactory(new MockWorkerServiceClient(), new MockEventAggregator()), new MockEventAggregator());
+            var result = new ProcessContainerVM(
+                new MockDialogService(),
+                new MockWorkerServiceClient(),
+                new ProcessGroupVmFactory(new MockWorkerServiceClient()),
+                new ProcessVmFactory(new MockWorkerServiceClient(), new MockEventAggregator()),
+                new MockEventAggregator()
+            );
             result.AddProcessGroup(
                 CreateProcessGroup(
                     "Application Processes",
@@ -40,7 +46,7 @@ namespace ConsoleContainer.Wpf.DesignData
 
         private static ProcessGroupVM CreateProcessGroup(string groupName, params ProcessVM[] processes)
         {
-            var result = new ProcessGroupVM(Guid.NewGuid(), groupName);
+            var result = new ProcessGroupVM(Guid.NewGuid(), groupName, new MockWorkerServiceClient());
             foreach (var p in processes)
             {
                 result.Processes.Add(p);

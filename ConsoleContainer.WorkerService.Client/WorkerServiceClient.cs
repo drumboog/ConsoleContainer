@@ -53,9 +53,23 @@ namespace ConsoleContainer.WorkerService.Client
             await ValidateResponseAsync(response);
         }
 
+        public async Task StartProcessesAsync(Guid processGroupId, IEnumerable<Guid> processLocators)
+        {
+            var payload = new ProcessStartStopCollectionDto() { Processes = processLocators.Select(p => new ProcessStartStopDto() { ProcessLocator = p }) };
+            var response = await httpClient.PutAsJsonAsync($"processGroup/{processGroupId}/process/start", payload);
+            await ValidateResponseAsync(response);
+        }
+
         public async Task StopProcessAsync(Guid processGroupId, Guid processLocator)
         {
             var response = await httpClient.PutAsync($"processGroup/{processGroupId}/process/{processLocator}/stop", new StringContent(string.Empty));
+            await ValidateResponseAsync(response);
+        }
+
+        public async Task StopProcessesAsync(Guid processGroupId, IEnumerable<Guid> processLocators)
+        {
+            var payload = new ProcessStartStopCollectionDto() { Processes = processLocators.Select(p => new ProcessStartStopDto() { ProcessLocator = p }) };
+            var response = await httpClient.PutAsJsonAsync($"processGroup/{processGroupId}/process/stop", payload);
             await ValidateResponseAsync(response);
         }
 

@@ -1,4 +1,4 @@
-﻿using ConsoleContainer.Domain;
+﻿using ConsoleContainer.WorkerService.Client;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -7,6 +7,8 @@ namespace ConsoleContainer.Wpf.ViewModels
 {
     public class ProcessGroupVM : ViewModel
     {
+        private readonly IWorkerServiceClient workerServiceClient;
+
         public Guid ProcessGroupId { get; }
 
         public string GroupName
@@ -35,8 +37,10 @@ namespace ConsoleContainer.Wpf.ViewModels
 
         public ObservableCollection<ProcessVM> Processes { get; } = new();
 
-        public ProcessGroupVM(Guid processGroupId, string groupName)
+        public ProcessGroupVM(Guid processGroupId, string groupName, IWorkerServiceClient workerServiceClient)
         {
+            this.workerServiceClient = workerServiceClient;
+
             ProcessGroupId = processGroupId;
             GroupName = groupName;
 
@@ -52,14 +56,14 @@ namespace ConsoleContainer.Wpf.ViewModels
 
         public async Task StartAllAsync()
         {
-            var tasks = Processes.Select(x => x.StartProcessAsync());
-            await Task.WhenAll(tasks);
+            var processLocators = Processes.Select(x => x.ProcessLocator);
+            await workerServiceClient.StartProcessesAsync(ProcessGroupId, processLocators);
         }
 
         public async Task StopAllAsync()
         {
-            var tasks = Processes.Select(x => x.StopProcessAsync());
-            await Task.WhenAll(tasks);
+            var processLocators = Processes.Select(x => x.ProcessLocator);
+            await workerServiceClient.StopProcessesAsync(ProcessGroupId, processLocators);
         }
 
         public async Task ClearAllAsync()

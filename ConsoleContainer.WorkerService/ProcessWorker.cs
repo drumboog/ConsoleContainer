@@ -3,6 +3,7 @@ using ConsoleContainer.Kernel.Validation;
 using ConsoleContainer.ProcessManagement;
 using ConsoleContainer.ProcessManagement.Events;
 using ConsoleContainer.WorkerService.Services;
+using Newtonsoft.Json;
 
 namespace ConsoleContainer.WorkerService
 {
@@ -72,7 +73,7 @@ namespace ConsoleContainer.WorkerService
 
         private void Process_OutputDataReceived(object? sender, ProcessOutputDataEventArgs<ProcessKey> e)
         {
-            logger.LogInformation($"Sending output data to process {e.ProcessKey}: {e.Data}");
+            logger.LogInformation($"Sending output data to process {e.ProcessKey}: {JsonConvert.SerializeObject(e.Data)}");
             _ = outputDataChannelWriter.WriteOutputDataAsync(new ProcessOutputDataDto()
             {
                 ProcessGroupId = e.ProcessKey.ProcessGroupId,

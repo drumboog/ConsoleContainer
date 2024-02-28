@@ -152,6 +152,12 @@ namespace ConsoleContainer.WorkerService.Services
             return await process.StartProcessAsync();
         }
 
+        public async Task<int> StartProcessesAsync(Guid processGroupId, IEnumerable<Guid> processLocators)
+        {
+            var result = await Task.WhenAll(processLocators.Select(p => StartProcessAsync(processGroupId, p)));
+            return result.Count(x => x);
+        }
+
         public async Task<bool> StopProcessAsync(Guid processGroupId, Guid processLocator)
         {
             var process = processManager.GetProcess(new ProcessKey(processGroupId, processLocator));
@@ -161,6 +167,12 @@ namespace ConsoleContainer.WorkerService.Services
             }
 
             return await process.StopProcessAsync();
+        }
+
+        public async Task<int> StopProcessesAsync(Guid processGroupId, IEnumerable<Guid> processLocators)
+        {
+            var result = await Task.WhenAll(processLocators.Select(p => StopProcessAsync(processGroupId, p)));
+            return result.Count(x => x);
         }
 
         public Task<bool> DeleteProcessAsync(Guid processGroupId, Guid processLocator)

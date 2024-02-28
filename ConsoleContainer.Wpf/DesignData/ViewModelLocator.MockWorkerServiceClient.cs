@@ -42,7 +42,17 @@ namespace ConsoleContainer.Wpf.DesignData
                 throw new NotImplementedException();
             }
 
+            public Task StartProcessesAsync(Guid processGroupId, IEnumerable<Guid> processLocators)
+            {
+                throw new NotImplementedException();
+            }
+
             public Task StopProcessAsync(Guid processGroupId, Guid processLocator)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task StopProcessesAsync(Guid processGroupId, IEnumerable<Guid> processLocators)
             {
                 throw new NotImplementedException();
             }
