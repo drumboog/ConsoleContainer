@@ -58,9 +58,9 @@ namespace ConsoleContainer.ProcessManagement
                         return Task.FromResult(false);
                     }
 
-                    logger.LogInformation($"{Key} - Starting process");
+                    logger.LogInformation($"{Key} - Changing state to Starting");
                     State = ProcessState.Starting;
-                    logger.LogInformation($"{Key} - Status changed to Starting");
+                    logger.LogInformation($"{Key} - State changed to Starting");
 
                     logger.LogInformation($"{Key} - Configuring new process");
                     var p = new Process();
@@ -85,9 +85,9 @@ namespace ConsoleContainer.ProcessManagement
 
                     process = p;
 
-                    logger.LogInformation($"{Key} - Status changing to Running");
+                    logger.LogInformation($"{Key} - Changing state to Running");
                     State = ProcessState.Running;
-                    logger.LogInformation($"{Key} - Status changed to Running");
+                    logger.LogInformation($"{Key} - State changed to Running");
 
                     logger.LogInformation($"{Key} - Beginning to read output and error streams");
                     p.BeginOutputReadLine();
@@ -96,7 +96,9 @@ namespace ConsoleContainer.ProcessManagement
                 }
                 catch (Exception ex)
                 {
+                    logger.LogInformation($"{Key} - Changing state to Idle");
                     State = ProcessState.Idle;
+                    logger.LogInformation($"{Key} - State changed to Idle");
                     process = null;
                     logger.LogError(ex, $"{Key} - An error occurred starting the process");
                     throw;
@@ -117,9 +119,9 @@ namespace ConsoleContainer.ProcessManagement
                     return Task.FromResult(false);
                 }
 
-                logger.LogInformation($"{Key} - Stopping process");
+                logger.LogInformation($"{Key} - Changing state to Stopping");
                 State = ProcessState.Stopping;
-                logger.LogInformation($"{Key} - Status changed to Stopping");
+                logger.LogInformation($"{Key} - State changed to Stopping");
 
                 logger.LogInformation($"{Key} - Cancelling output and error streams");
                 process.CancelOutputRead();
@@ -134,9 +136,9 @@ namespace ConsoleContainer.ProcessManagement
 
                 process = null;
 
-                logger.LogInformation($"{Key} - Status changing to Idle");
+                logger.LogInformation($"{Key} - Changing state to Idle");
                 State = ProcessState.Idle;
-                logger.LogInformation($"{Key} - Status changed to Idle");
+                logger.LogInformation($"{Key} - State changed to Idle");
             }
 
             return Task.FromResult(true);
