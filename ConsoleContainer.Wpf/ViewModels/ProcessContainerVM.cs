@@ -134,7 +134,7 @@ namespace ConsoleContainer.Wpf.ViewModels
             var vm = processGroupVmFactory.Create(processGroup.ProcessGroupId, processGroup.GroupName);
             foreach(var p in processGroup.Processes)
             {
-                var newProcess = processVmFactory.Create(processGroup.ProcessGroupId, p.ProcessLocator, p.ProcessId, p.ProcessName ?? string.Empty, p.FilePath ?? string.Empty, p.Arguments, p.WorkingDirectory, p.State);
+                var newProcess = processVmFactory.Create(processGroup.ProcessGroupId, p.ProcessLocator, p.ProcessId, p.ProcessName ?? string.Empty, p.FilePath ?? string.Empty, p.Arguments, p.WorkingDirectory, p.AutoStart, p.State);
                 vm.Processes.Add(newProcess);
             }
 
@@ -155,7 +155,8 @@ namespace ConsoleContainer.Wpf.ViewModels
                 ProcessName = process.ProcessName,
                 FilePath = process.FilePath,
                 Arguments = process.Arguments,
-                WorkingDirectory = process.WorkingDirectory
+                WorkingDirectory = process.WorkingDirectory,
+                AutoStart = process.AutoStart
             };
 
             if (!await dialogService.EditProcessAsync(vm))
@@ -171,7 +172,8 @@ namespace ConsoleContainer.Wpf.ViewModels
                     ProcessName = vm.ProcessName,
                     FilePath = vm.FilePath,
                     Arguments = vm.Arguments,
-                    WorkingDirectory = vm.WorkingDirectory
+                    WorkingDirectory = vm.WorkingDirectory,
+                    AutoStart = vm.AutoStart
                 });
         }
 
@@ -230,7 +232,7 @@ namespace ConsoleContainer.Wpf.ViewModels
             }
 
             var pi = message.ProcessInformation;
-            var process = processVmFactory.Create(message.ProcessGroupId, pi.ProcessLocator, pi.ProcessId, pi.ProcessName, pi.FilePath, pi.Arguments, pi.WorkingDirectory, pi.State);
+            var process = processVmFactory.Create(message.ProcessGroupId, pi.ProcessLocator, pi.ProcessId, pi.ProcessName, pi.FilePath, pi.Arguments, pi.WorkingDirectory, pi.AutoStart, pi.State);
             group.AddProcess(process);
 
             return Task.CompletedTask;
@@ -251,7 +253,7 @@ namespace ConsoleContainer.Wpf.ViewModels
                 return Task.CompletedTask;
             }
 
-            process.Update(pi.ProcessName, pi.FilePath, pi.Arguments, pi.WorkingDirectory);
+            process.Update(pi.ProcessName, pi.FilePath, pi.Arguments, pi.WorkingDirectory, pi.AutoStart);
 
             return Task.CompletedTask;
         }

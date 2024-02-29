@@ -6,5 +6,6 @@
         string FilePath { get; }
         string? Arguments { get; }
         string? WorkingDirectory { get; }
+        bool AutoStart { get; }
     }
 }

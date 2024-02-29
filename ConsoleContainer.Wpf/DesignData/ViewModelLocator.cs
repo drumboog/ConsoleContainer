@@ -66,6 +66,7 @@ namespace ConsoleContainer.Wpf.DesignData
                 filePath,
                 arguments,
                 workingDirectory,
+                true,
                 state
             );
         }

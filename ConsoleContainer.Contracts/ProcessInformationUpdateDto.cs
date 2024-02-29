@@ -8,5 +8,6 @@ namespace ConsoleContainer.Contracts
         public string FilePath { get; set; }
         public string? Arguments { get; set; }
         public string? WorkingDirectory { get; set; }
+        public bool AutoStart { get; set; }
     }
 }

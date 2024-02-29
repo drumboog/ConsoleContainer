@@ -19,6 +19,7 @@ namespace ConsoleContainer.WorkerService.Mappers
                 FilePath = pi.FilePath,
                 Arguments = pi.Arguments,
                 WorkingDirectory = pi.WorkingDirectory,
+                AutoStart = pi.AutoStart,
                 State = (Contracts.ProcessState)(process?.State ?? ProcessManagement.ProcessState.Idle)
             };
         }

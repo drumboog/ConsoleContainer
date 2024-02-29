@@ -43,10 +43,18 @@ namespace ConsoleContainer.WorkerService
                                          p.FilePath.Required(),
                                          p.Arguments,
                                          p.WorkingDirectory
-                                     )
+                                     ),
+                                     p.AutoStart
                                  };
 
-            var tasks = processDetails.Select(d => processManager.CreateProcessAsync(d.Key, d.Details));
+            var tasks = processDetails.Select(async d =>
+            {
+                var process = await processManager.CreateProcessAsync(d.Key, d.Details);
+                if (d.AutoStart)
+                {
+                    await process.StartProcessAsync();
+                }
+            });
 
             await Task.WhenAll(tasks);
         }

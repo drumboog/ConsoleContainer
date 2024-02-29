@@ -9,9 +9,9 @@ namespace ConsoleContainer.Wpf.ViewModels.Factories
         IEventAggregator eventAggregator
     ) : IProcessVmFactory
     {
-        public ProcessVM Create(Guid processGroupId, Guid processLocator, int? processId, string processName, string filePath, string? arguments, string? workingDirectory, ProcessState state)
+        public ProcessVM Create(Guid processGroupId, Guid processLocator, int? processId, string processName, string filePath, string? arguments, string? workingDirectory, bool autoStart, ProcessState state)
         {
-            return new ProcessVM(workerServiceClient, eventAggregator, processGroupId, processLocator, processId, processName, filePath, arguments, workingDirectory, state);
+            return new ProcessVM(workerServiceClient, eventAggregator, processGroupId, processLocator, processId, processName, filePath, arguments, workingDirectory, autoStart, state);
         }
     }
 }

@@ -44,6 +44,12 @@ namespace ConsoleContainer.Wpf.ViewModels
             private set => SetProperty(value);
         }
 
+        public bool AutoStart
+        {
+            get => GetProperty<bool>();
+            private set => SetProperty(value);
+        }
+
         public ProcessState State
         {
             get => GetProperty(ProcessState.Idle);
@@ -68,22 +74,24 @@ namespace ConsoleContainer.Wpf.ViewModels
             string filePath,
             string? arguments,
             string? workingDirectory,
+            bool autoStart,
             ProcessState state)
         {
             this.workerServiceClient = workerServiceClient;
             this.eventAggregator = eventAggregator;
             ProcessGroupId = processGroupId;
             ProcessLocator = processLocator;
-            Update(processName, filePath, arguments, workingDirectory);
+            Update(processName, filePath, arguments, workingDirectory, autoStart);
             UpdateState(state, processId);
         }
 
-        public void Update(string processName, string filePath, string? arguments, string? workingDirectory)
+        public void Update(string processName, string filePath, string? arguments, string? workingDirectory, bool autoStart)
         {
             ProcessName = processName;
             FilePath = filePath;
             Arguments = arguments;
             WorkingDirectory = workingDirectory;
+            AutoStart = autoStart;
         }
 
         public void UpdateState(ProcessState state, int? processId)

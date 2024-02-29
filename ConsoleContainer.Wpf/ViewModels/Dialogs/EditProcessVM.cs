@@ -40,6 +40,12 @@ namespace ConsoleContainer.Wpf.ViewModels.Dialogs
             set => SetProperty(value);
         }
 
+        public bool AutoStart
+        {
+            get => GetProperty<bool>();
+            set => SetProperty(value);
+        }
+
         public bool Validate()
         {
             try
