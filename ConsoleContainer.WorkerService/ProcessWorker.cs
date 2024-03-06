@@ -42,7 +42,9 @@ namespace ConsoleContainer.WorkerService
                                      Details = new ProcessDetails(
                                          p.FilePath.Required(),
                                          p.Arguments,
-                                         p.WorkingDirectory
+                                         p.WorkingDirectory,
+                                         p.RestartOnError,
+                                         p.RestartOnExit
                                      ),
                                      p.AutoStart
                                  };

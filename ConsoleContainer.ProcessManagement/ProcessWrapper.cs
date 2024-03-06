@@ -10,6 +10,7 @@ namespace ConsoleContainer.ProcessManagement
         private readonly object lockTarget = new();
         private readonly ILogger<ProcessWrapper<TKey>> logger;
         private Process? process;
+        private bool isStopping = false;
 
         public event EventHandler<ProcessOutputDataEventArgs<TKey>>? OutputDataReceived;
         public event EventHandler<ProcessStateChangedEventArgs<TKey>>? StateChanged;
@@ -119,26 +120,35 @@ namespace ConsoleContainer.ProcessManagement
                     return Task.FromResult(false);
                 }
 
-                logger.LogInformation($"{Key} - Changing state to Stopping");
-                State = ProcessState.Stopping;
-                logger.LogInformation($"{Key} - State changed to Stopping");
+                isStopping = true;
 
-                logger.LogInformation($"{Key} - Cancelling output and error streams");
-                process.CancelOutputRead();
-                process.CancelErrorRead();
-
-                logger.LogInformation($"{Key} - Closing main window");
-                if (!process.CloseMainWindow())
+                try
                 {
-                    logger.LogInformation($"{Key} - Main window failed to close, killing processes and children");
-                    KillProcessAndChildren(process.Id);
+                    logger.LogInformation($"{Key} - Changing state to Stopping");
+                    State = ProcessState.Stopping;
+                    logger.LogInformation($"{Key} - State changed to Stopping");
+
+                    logger.LogInformation($"{Key} - Cancelling output and error streams");
+                    process.CancelOutputRead();
+                    process.CancelErrorRead();
+
+                    logger.LogInformation($"{Key} - Closing main window");
+                    if (!process.CloseMainWindow())
+                    {
+                        logger.LogInformation($"{Key} - Main window failed to close, killing processes and children");
+                        KillProcessAndChildren(process.Id);
+                    }
+
+                    process = null;
+
+                    logger.LogInformation($"{Key} - Changing state to Idle");
+                    State = ProcessState.Idle;
+                    logger.LogInformation($"{Key} - State changed to Idle");
                 }
-
-                process = null;
-
-                logger.LogInformation($"{Key} - Changing state to Idle");
-                State = ProcessState.Idle;
-                logger.LogInformation($"{Key} - State changed to Idle");
+                finally
+                {
+                    isStopping = false;
+                }
             }
 
             return Task.FromResult(true);
@@ -163,6 +173,12 @@ namespace ConsoleContainer.ProcessManagement
             return Task.CompletedTask;
         }
 
+        private async Task RestartProcessAsync()
+        {
+            await StopProcessAsync();
+            await StartProcessAsync();
+        }
+
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
             logger.LogInformation($"{Key} - Output data received - {e.Data}");
@@ -175,10 +191,33 @@ namespace ConsoleContainer.ProcessManagement
             AddOutputData(new ProcessOutputData(e.Data, true));
         }
 
-        private void Process_Exited(object? sender, EventArgs e)
+        private async void Process_Exited(object? sender, EventArgs e)
         {
-            logger.LogInformation($"{Key} - Process exited");
-            _ = StopProcessAsync();
+            var exitCode = process?.ExitCode;
+            logger.LogInformation($"{Key} - Process exited with code: {exitCode}");
+            AddOutputData(new ProcessOutputData($"Process existed with code {exitCode}", exitCode is not null or 0));
+
+            if (isStopping)
+            {
+                return;
+            }
+            if (ShouldRestartExitedProcess(exitCode ?? 0))
+            {
+                await RestartProcessAsync();
+            }
+            else
+            {
+                await StopProcessAsync();
+            }
+        }
+
+        private bool ShouldRestartExitedProcess(int exitCode)
+        {
+            if (exitCode == 0)
+            {
+                return ProcessDetails.RestartOnExit;
+            }
+            return ProcessDetails.RestartOnError;
         }
 
         private void AddOutputData(ProcessOutputData outputData)

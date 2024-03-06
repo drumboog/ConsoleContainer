@@ -50,6 +50,18 @@ namespace ConsoleContainer.Wpf.ViewModels
             private set => SetProperty(value);
         }
 
+        public bool RestartOnError
+        {
+            get => GetProperty<bool>();
+            private set => SetProperty(value);
+        }
+
+        public bool RestartOnExit
+        {
+            get => GetProperty<bool>();
+            private set => SetProperty(value);
+        }
+
         public ProcessState State
         {
             get => GetProperty(ProcessState.Idle);
@@ -75,23 +87,27 @@ namespace ConsoleContainer.Wpf.ViewModels
             string? arguments,
             string? workingDirectory,
             bool autoStart,
+            bool restartOnError,
+            bool restartOnExit,
             ProcessState state)
         {
             this.workerServiceClient = workerServiceClient;
             this.eventAggregator = eventAggregator;
             ProcessGroupId = processGroupId;
             ProcessLocator = processLocator;
-            Update(processName, filePath, arguments, workingDirectory, autoStart);
+            Update(processName, filePath, arguments, workingDirectory, autoStart, restartOnError, restartOnExit);
             UpdateState(state, processId);
         }
 
-        public void Update(string processName, string filePath, string? arguments, string? workingDirectory, bool autoStart)
+        public void Update(string processName, string filePath, string? arguments, string? workingDirectory, bool autoStart, bool restartOnError, bool restartOnExit)
         {
             ProcessName = processName;
             FilePath = filePath;
             Arguments = arguments;
             WorkingDirectory = workingDirectory;
             AutoStart = autoStart;
+            RestartOnError = restartOnError;
+            RestartOnExit = restartOnExit;
         }
 
         public void UpdateState(ProcessState state, int? processId)

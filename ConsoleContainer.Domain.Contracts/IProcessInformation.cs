@@ -7,5 +7,7 @@
         string? Arguments { get; }
         string? WorkingDirectory { get; }
         bool AutoStart { get; }
+        bool RestartOnError { get; }
+        bool RestartOnExit { get; }
     }
 }

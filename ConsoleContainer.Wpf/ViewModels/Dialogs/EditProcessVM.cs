@@ -46,6 +46,18 @@ namespace ConsoleContainer.Wpf.ViewModels.Dialogs
             set => SetProperty(value);
         }
 
+        public bool RestartOnError
+        {
+            get => GetProperty<bool>();
+            set => SetProperty(value);
+        }
+
+        public bool RestartOnExit
+        {
+            get => GetProperty<bool>();
+            set => SetProperty(value);
+        }
+
         public bool Validate()
         {
             try

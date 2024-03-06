@@ -47,6 +47,8 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -68,6 +70,12 @@
 
                 <TextBlock Grid.Column="0" Grid.Row="4">Start on Boot:</TextBlock>
                 <CheckBox Grid.Column="2" Grid.Row="4" IsChecked="{Binding AutoStart}" />
+
+                <TextBlock Grid.Column="0" Grid.Row="5">Restart on Error</TextBlock>
+                <CheckBox Grid.Column="2" Grid.Row="5" IsChecked="{Binding RestartOnError}" />
+
+                <TextBlock Grid.Column="0" Grid.Row="6">Restart on Exit</TextBlock>
+                <CheckBox Grid.Column="2" Grid.Row="6" IsChecked="{Binding RestartOnExit}" />
             </Grid>
             <StackPanel Grid.Row="5" Orientation="Horizontal">
                 <Button Click="Save_Click" Margin="5" IsEnabled="{Binding CanUpdateSettings}">Save</Button>

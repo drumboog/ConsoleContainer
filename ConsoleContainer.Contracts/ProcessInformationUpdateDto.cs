@@ -9,5 +9,7 @@ namespace ConsoleContainer.Contracts
         public string? Arguments { get; set; }
         public string? WorkingDirectory { get; set; }
         public bool AutoStart { get; set; }
+        public bool RestartOnError { get; set; }
+        public bool RestartOnExit { get; set; }
     }
 }

@@ -102,7 +102,9 @@ namespace ConsoleContainer.WorkerService.Services
                     new ProcessDetails(
                         processInformation.FilePath.Required(),
                         processInformation.Arguments,
-                        processInformation.WorkingDirectory));
+                        processInformation.WorkingDirectory,
+                        processInformation.RestartOnError,
+                        processInformation.RestartOnExit));
 
                 var newProcess = group.AddProcess(processInformation.ProcessLocator, processInformation);
 
@@ -127,7 +129,7 @@ namespace ConsoleContainer.WorkerService.Services
 
                 var key = new ProcessKey(processGroupId, processLocator);
                 var currentProcess = processManager.GetProcess(key);
-                currentProcess?.UpdateProcessDetails(new ProcessDetails(processInformation.FilePath.Required(), processInformation.Arguments, processInformation.WorkingDirectory));
+                currentProcess?.UpdateProcessDetails(new ProcessDetails(processInformation.FilePath.Required(), processInformation.Arguments, processInformation.WorkingDirectory, processInformation.RestartOnError, processInformation.RestartOnExit));
 
                 var newProcess = group.ReplaceProcess(processLocator, processInformation);
                 if (newProcess is null)

@@ -105,7 +105,10 @@ namespace ConsoleContainer.Wpf.ViewModels
                     ProcessName = result.ProcessName,
                     FilePath = result.FilePath,
                     Arguments = result.Arguments,
-                    WorkingDirectory = result.WorkingDirectory
+                    WorkingDirectory = result.WorkingDirectory,
+                    AutoStart = result.AutoStart,
+                    RestartOnError = result.RestartOnError,
+                    RestartOnExit = result.RestartOnExit
                 });
         }
 
@@ -134,7 +137,7 @@ namespace ConsoleContainer.Wpf.ViewModels
             var vm = processGroupVmFactory.Create(processGroup.ProcessGroupId, processGroup.GroupName);
             foreach(var p in processGroup.Processes)
             {
-                var newProcess = processVmFactory.Create(processGroup.ProcessGroupId, p.ProcessLocator, p.ProcessId, p.ProcessName ?? string.Empty, p.FilePath ?? string.Empty, p.Arguments, p.WorkingDirectory, p.AutoStart, p.State);
+                var newProcess = processVmFactory.Create(processGroup.ProcessGroupId, p.ProcessLocator, p.ProcessId, p.ProcessName ?? string.Empty, p.FilePath ?? string.Empty, p.Arguments, p.WorkingDirectory, p.AutoStart, p.RestartOnError, p.RestartOnExit, p.State);
                 vm.Processes.Add(newProcess);
             }
 
@@ -156,7 +159,9 @@ namespace ConsoleContainer.Wpf.ViewModels
                 FilePath = process.FilePath,
                 Arguments = process.Arguments,
                 WorkingDirectory = process.WorkingDirectory,
-                AutoStart = process.AutoStart
+                AutoStart = process.AutoStart,
+                RestartOnError = process.RestartOnError,
+                RestartOnExit = process.RestartOnExit
             };
 
             if (!await dialogService.EditProcessAsync(vm))
@@ -173,7 +178,9 @@ namespace ConsoleContainer.Wpf.ViewModels
                     FilePath = vm.FilePath,
                     Arguments = vm.Arguments,
                     WorkingDirectory = vm.WorkingDirectory,
-                    AutoStart = vm.AutoStart
+                    AutoStart = vm.AutoStart,
+                    RestartOnError = vm.RestartOnError,
+                    RestartOnExit = vm.RestartOnExit
                 });
         }
 
@@ -232,7 +239,7 @@ namespace ConsoleContainer.Wpf.ViewModels
             }
 
             var pi = message.ProcessInformation;
-            var process = processVmFactory.Create(message.ProcessGroupId, pi.ProcessLocator, pi.ProcessId, pi.ProcessName, pi.FilePath, pi.Arguments, pi.WorkingDirectory, pi.AutoStart, pi.State);
+            var process = processVmFactory.Create(message.ProcessGroupId, pi.ProcessLocator, pi.ProcessId, pi.ProcessName, pi.FilePath, pi.Arguments, pi.WorkingDirectory, pi.AutoStart, pi.RestartOnError, pi.RestartOnExit, pi.State);
             group.AddProcess(process);
 
             return Task.CompletedTask;
@@ -253,7 +260,7 @@ namespace ConsoleContainer.Wpf.ViewModels
                 return Task.CompletedTask;
             }
 
-            process.Update(pi.ProcessName, pi.FilePath, pi.Arguments, pi.WorkingDirectory, pi.AutoStart);
+            process.Update(pi.ProcessName, pi.FilePath, pi.Arguments, pi.WorkingDirectory, pi.AutoStart, pi.RestartOnError, pi.RestartOnExit);
 
             return Task.CompletedTask;
         }

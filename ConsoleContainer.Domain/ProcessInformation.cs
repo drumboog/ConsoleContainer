@@ -12,9 +12,20 @@ namespace ConsoleContainer.Domain
         public string? Arguments { get; private set; }
         public string? WorkingDirectory { get; private set; }
         public bool AutoStart { get; private set; }
+        public bool RestartOnError { get; private set; }
+        public bool RestartOnExit { get; private set; }
 
         [JsonConstructor]
-        public ProcessInformation(Guid processLocator, string processName, string filePath, string? arguments = null, string? workingDirectory = null, bool autoStart = false)
+        public ProcessInformation(
+            Guid processLocator,
+            string processName,
+            string filePath,
+            string? arguments = null,
+            string? workingDirectory = null,
+            bool autoStart = false,
+            bool restartOnError = false,
+            bool restartOnExit = false
+        )
         {
             ProcessLocator = processLocator;
             ProcessName = processName;
@@ -22,6 +33,8 @@ namespace ConsoleContainer.Domain
             Arguments = arguments;
             WorkingDirectory = workingDirectory;
             AutoStart = autoStart;
+            RestartOnError = restartOnError;
+            RestartOnExit = restartOnExit;
         }
 
         public ProcessInformation(Guid processLocator, IProcessInformation processInformation)
@@ -31,7 +44,9 @@ namespace ConsoleContainer.Domain
                   processInformation.FilePath.Required(),
                   processInformation.Arguments,
                   processInformation.WorkingDirectory,
-                  processInformation.AutoStart
+                  processInformation.AutoStart,
+                  processInformation.RestartOnError,
+                  processInformation.RestartOnExit
             )
         {
         }

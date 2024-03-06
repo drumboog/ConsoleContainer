@@ -20,6 +20,8 @@ namespace ConsoleContainer.WorkerService.Mappers
                 Arguments = pi.Arguments,
                 WorkingDirectory = pi.WorkingDirectory,
                 AutoStart = pi.AutoStart,
+                RestartOnError = pi.RestartOnError,
+                RestartOnExit = pi.RestartOnExit,
                 State = (Contracts.ProcessState)(process?.State ?? ProcessManagement.ProcessState.Idle)
             };
         }
