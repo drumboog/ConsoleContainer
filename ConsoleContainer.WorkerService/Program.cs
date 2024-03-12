@@ -56,6 +56,10 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHub<ProcessHub>("/signalr/Process");
+app.MapHub<ProcessHub>("/signalr/Process", options =>
+{
+    // This value can be high since we only expect a single client.
+    options.TransportMaxBufferSize = 10 * 1024 * 1024; // 10 MB
+});
 
 app.Run();
