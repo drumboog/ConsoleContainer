@@ -42,7 +42,7 @@ namespace ConsoleContainer.Wpf.ViewModels
 
         public void Update(ProcessInformation processInformation)
         {
-            if (process is not null && process.State is ProcessState.Idle)
+            if (process is not null && process.State is not ProcessState.Idle)
             {
                 throw new Exception("Can't update process while it is running");
             }
