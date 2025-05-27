@@ -58,12 +58,31 @@ namespace ConsoleContainer.Wpf.ViewModels
                 return;
             }
 
-            process.StartProcess();
+            try
+            {
+                process.StartProcess();
+            }
+            catch (Exception ex)
+            {
+                Output.AddOutput($"Error starting process: {ex.Message}", Brushes.Red);
+                try
+                {
+                    process.StopProcess();
+                }
+                catch { }
+            }
         }
 
         public void StopProcess()
         {
-            process.StopProcess();
+            try
+            {
+                process.StopProcess();
+            }
+            catch (Exception ex)
+            {
+                Output.AddOutput($"Error stopping process: {ex.Message}", Brushes.Red);
+            }
         }
 
         public void ClearOutput()
